@@ -2,752 +2,1293 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover">
+<meta name="theme-color" content="#38bdf8">
 <title>Shadow Chat Daanians</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
-*{box-sizing:border-box}
-html,body{margin:0;width:100%;height:100%;font-family:Inter,Arial,sans-serif;background:#f5fbff;color:#183247}
-body{overflow:hidden}
-button,input,textarea{font:inherit}
-button{cursor:pointer;border:0}
-.hidden{display:none!important}
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+  -webkit-tap-highlight-color:transparent;
+}
 
 :root{
- --blue:#168ce8;
- --blue2:#62bdf5;
- --light:#eef8ff;
- --border:#dcecf7;
- --text:#183247;
- --muted:#8197a5;
- --danger:#ef5b68;
+  --blue:#38bdf8;
+  --blue2:#0ea5e9;
+  --blue3:#0284c7;
+  --light:#f0f9ff;
+  --lighter:#f8fcff;
+  --border:#dceef8;
+  --text:#102a43;
+  --muted:#78909c;
+  --white:#fff;
+  --danger:#ef4444;
+  --green:#22c55e;
+  --shadow:0 8px 30px rgba(14,165,233,.10);
 }
 
-#authPage{
- width:100%;
- height:100dvh;
- display:flex;
- justify-content:center;
- align-items:center;
- padding:20px;
- background:linear-gradient(135deg,#f8fdff,#eaf7ff);
+html,body{
+  width:100%;
+  height:100%;
+  overflow:hidden;
+  font-family:Inter,Arial,sans-serif;
+  background:#f7fbfe;
+  color:var(--text);
 }
 
-.auth-card{
- width:100%;
- max-width:420px;
- background:#fff;
- border:1px solid var(--border);
- border-radius:28px;
- padding:30px;
- box-shadow:0 20px 60px rgba(35,130,190,.12);
+button,input,textarea{
+  font:inherit;
 }
 
-.logo-wrap{display:flex;align-items:center;gap:12px;margin-bottom:25px}
+button{
+  border:0;
+  cursor:pointer;
+}
+
+.app{
+  width:100%;
+  height:100dvh;
+  display:flex;
+  background:#fff;
+}
+
+/* ================= SIDEBAR ================= */
+
+.sidebar{
+  width:285px;
+  min-width:285px;
+  height:100%;
+  border-right:1px solid var(--border);
+  background:#fff;
+  display:flex;
+  flex-direction:column;
+  z-index:10;
+}
+
+.brand{
+  height:74px;
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:12px 16px;
+  border-bottom:1px solid var(--border);
+}
 
 .logo{
- width:54px;
- height:54px;
- border-radius:17px;
- background:var(--blue);
- display:flex;
- align-items:center;
- justify-content:center;
- box-shadow:0 10px 25px rgba(22,140,232,.25);
+  width:48px;
+  height:48px;
+  border-radius:16px;
+  background:linear-gradient(135deg,#7dd3fc,#0284c7);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  box-shadow:0 8px 18px rgba(14,165,233,.25);
+  flex-shrink:0;
 }
 
-.logo svg{width:42px;height:42px}
-
-.logo-title{font-size:21px;font-weight:800}
-.logo-sub{font-size:12px;color:var(--muted);margin-top:3px}
-
-.auth-title{font-size:27px;font-weight:800;margin:0 0 7px}
-.auth-sub{color:var(--muted);font-size:13px;margin-bottom:22px}
-
-.field{margin-bottom:13px}
-.field label{
- display:block;
- font-size:12px;
- font-weight:700;
- color:#587487;
- margin-bottom:6px
+.logo svg{
+  width:34px;
+  height:34px;
 }
 
-.field input,.field textarea{
- width:100%;
- border:1px solid var(--border);
- background:#fbfdff;
- border-radius:13px;
- padding:12px 13px;
- outline:none;
- color:var(--text);
+.brandText h1{
+  font-size:16px;
+  font-weight:800;
 }
 
-.field input:focus,.field textarea:focus{
- border-color:var(--blue2);
- box-shadow:0 0 0 3px rgba(86,183,245,.12);
+.brandText span{
+  font-size:11px;
+  color:var(--muted);
 }
 
-.primary{
- width:100%;
- padding:13px;
- border-radius:13px;
- background:var(--blue);
- color:white;
- font-weight:800;
+.sidebarTop{
+  padding:14px;
 }
 
-.primary:hover{background:#087fd8}
-
-.secondary{
- width:100%;
- padding:12px;
- border-radius:13px;
- background:var(--light);
- color:var(--blue);
- font-weight:700;
-}
-
-.auth-switch{
- text-align:center;
- margin-top:17px;
- font-size:13px;
- color:var(--muted);
-}
-
-.auth-switch span{
- color:var(--blue);
- font-weight:800;
- cursor:pointer;
-}
-
-#app{
- width:100%;
- height:100dvh;
- display:flex;
- flex-direction:column;
-}
-
-.topbar{
- height:70px;
- flex:none;
- background:white;
- border-bottom:1px solid var(--border);
- display:flex;
- align-items:center;
- justify-content:space-between;
- padding:0 18px;
- z-index:10;
-}
-
-.brand{display:flex;align-items:center;gap:10px}
-
-.brand .logo{
- width:44px;
- height:44px;
- border-radius:13px;
-}
-
-.brand .logo svg{width:35px;height:35px}
-
-.brand-name{font-size:17px;font-weight:800}
-.brand-small{font-size:11px;color:var(--muted)}
-
-.top-actions{display:flex;align-items:center;gap:8px}
-
-.icon-btn{
- width:40px;
- height:40px;
- border-radius:12px;
- background:#f1f9ff;
- color:var(--blue);
- position:relative;
- font-size:18px;
-}
-
-.badge{
- position:absolute;
- right:-3px;
- top:-3px;
- min-width:17px;
- height:17px;
- padding:0 4px;
- border-radius:20px;
- background:#ef5b68;
- color:white;
- font-size:9px;
- display:flex;
- align-items:center;
- justify-content:center;
- font-weight:800;
-}
-
-.layout{
- flex:1;
- min-height:0;
- display:grid;
- grid-template-columns:260px minmax(0,1fr) 290px;
-}
-
-.sidebar,.rightbar{
- background:white;
- min-height:0;
- overflow:auto;
-}
-
-.sidebar{border-right:1px solid var(--border);padding:15px}
-.rightbar{border-left:1px solid var(--border);padding:15px}
-
-.center{
- min-width:0;
- min-height:0;
- display:flex;
- flex-direction:column;
- background:#f7fcff;
-}
-
-.section-title{
- font-size:11px;
- color:#8ca1af;
- font-weight:800;
- text-transform:uppercase;
- letter-spacing:.7px;
- margin:8px 7px 9px;
-}
-
-.nav-item{
- display:flex;
- align-items:center;
- gap:11px;
- padding:11px;
- border-radius:13px;
- margin-bottom:4px;
- color:#536d7d;
- font-size:13px;
- font-weight:700;
-}
-
-.nav-item:hover,.nav-item.active{
- background:#edf8ff;
- color:var(--blue);
-}
-
-.nav-icon{font-size:18px}
-
-.profile-mini{
- display:flex;
- gap:10px;
- align-items:center;
- padding:10px;
- background:#f5fbff;
- border:1px solid var(--border);
- border-radius:15px;
- margin-bottom:18px;
- cursor:pointer;
+.userCard{
+  padding:12px;
+  border:1px solid var(--border);
+  border-radius:17px;
+  background:linear-gradient(135deg,#f8fdff,#effaff);
+  display:flex;
+  align-items:center;
+  gap:10px;
 }
 
 .avatar{
- flex:none;
- border-radius:50%;
- overflow:hidden;
- background:linear-gradient(135deg,#8bd1ff,#168ce8);
- color:white;
- display:flex;
- align-items:center;
- justify-content:center;
- font-weight:800;
+  width:42px;
+  height:42px;
+  min-width:42px;
+  border-radius:50%;
+  overflow:hidden;
+  background:linear-gradient(135deg,#7dd3fc,#0ea5e9);
+  color:white;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:800;
+  position:relative;
 }
-
-.avatar.small{width:36px;height:36px;font-size:12px}
-.avatar.medium{width:48px;height:48px;font-size:15px}
-.avatar.large{width:82px;height:82px;font-size:24px}
 
 .avatar img{
- width:100%;
- height:100%;
- object-fit:cover;
+  width:100%;
+  height:100%;
+  object-fit:cover;
 }
 
-.mini-name{font-size:12px;font-weight:800}
-.mini-user{color:var(--muted);font-size:10px}
-
-.search-box{position:relative;margin-bottom:12px}
-
-.search-box input{
- width:100%;
- padding:11px 12px 11px 36px;
- border:1px solid var(--border);
- border-radius:12px;
- outline:none;
- background:#fbfdff;
+.userInfo{
+  min-width:0;
+  flex:1;
 }
 
-.search-box span{
- position:absolute;
- left:12px;
- top:10px;
- color:#91a7b5;
+.userInfo b{
+  display:block;
+  font-size:14px;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
 }
 
-.list{display:flex;flex-direction:column;gap:5px}
-
-.user-row{
- display:flex;
- align-items:center;
- gap:9px;
- padding:9px;
- border-radius:13px;
- cursor:pointer;
+.userInfo span{
+  display:block;
+  color:var(--green);
+  font-size:11px;
+  margin-top:2px;
 }
 
-.user-row:hover{background:#f0f8fd}
-
-.user-info{min-width:0;flex:1}
-
-.user-name{
- font-size:12px;
- font-weight:800;
- white-space:nowrap;
- overflow:hidden;
- text-overflow:ellipsis;
+.iconBtn{
+  width:36px;
+  height:36px;
+  border-radius:11px;
+  background:#eaf8ff;
+  color:var(--blue3);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  transition:.2s;
 }
 
-.user-handle{
- font-size:10px;
- color:var(--muted);
- white-space:nowrap;
- overflow:hidden;
- text-overflow:ellipsis;
+.iconBtn:hover{
+  background:#d9f3ff;
+  transform:translateY(-1px);
 }
 
-.chat-head{
- height:72px;
- flex:none;
- background:white;
- border-bottom:1px solid var(--border);
- display:flex;
- align-items:center;
- gap:11px;
- padding:0 17px;
+.nav{
+  padding:4px 10px;
 }
 
-.chat-head-info{flex:1;min-width:0}
+.navBtn{
+  width:100%;
+  height:45px;
+  padding:0 13px;
+  display:flex;
+  align-items:center;
+  gap:12px;
+  border-radius:12px;
+  background:transparent;
+  color:#526b7a;
+  text-align:left;
+  margin-bottom:4px;
+  font-size:14px;
+  font-weight:600;
+}
 
-.chat-head-name{font-weight:800;font-size:14px}
-.chat-head-sub{font-size:10px;color:#73a7c6;margin-top:2px}
+.navBtn:hover,
+.navBtn.active{
+  background:#eaf8ff;
+  color:var(--blue3);
+}
+
+.navBtn .navIcon{
+  width:23px;
+  text-align:center;
+  font-size:18px;
+}
+
+.sectionTitle{
+  padding:14px 16px 8px;
+  font-size:11px;
+  text-transform:uppercase;
+  letter-spacing:.08em;
+  color:#94a8b5;
+  font-weight:800;
+}
+
+.friendsList{
+  overflow-y:auto;
+  flex:1;
+  padding:0 10px 10px;
+}
+
+.friendItem{
+  width:100%;
+  min-height:58px;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:8px;
+  border-radius:13px;
+  background:white;
+  margin-bottom:3px;
+  text-align:left;
+}
+
+.friendItem:hover{
+  background:#f0f9ff;
+}
+
+.friendText{
+  min-width:0;
+  flex:1;
+}
+
+.friendText b{
+  display:block;
+  font-size:13px;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.friendText span{
+  display:block;
+  font-size:10px;
+  color:var(--muted);
+  margin-top:3px;
+}
+
+.emptyFriends{
+  padding:18px;
+  text-align:center;
+  color:#9aabb5;
+  font-size:12px;
+}
+
+.sidebarFooter{
+  padding:12px;
+  border-top:1px solid var(--border);
+  font-size:10px;
+  color:#9aabb5;
+  text-align:center;
+}
+
+/* ================= MAIN ================= */
+
+.main{
+  flex:1;
+  min-width:0;
+  height:100%;
+  display:flex;
+  flex-direction:column;
+  background:#f9fcfe;
+}
+
+.chatHeader{
+  height:74px;
+  min-height:74px;
+  background:#fff;
+  border-bottom:1px solid var(--border);
+  display:flex;
+  align-items:center;
+  padding:10px 18px;
+  gap:12px;
+  z-index:5;
+}
+
+.headerBack{
+  display:none;
+}
+
+.headerUser{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  min-width:0;
+  flex:1;
+  cursor:pointer;
+}
+
+.headerUserText{
+  min-width:0;
+}
+
+.headerUserText b{
+  display:block;
+  font-size:15px;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.headerUserText span{
+  display:block;
+  font-size:11px;
+  color:var(--muted);
+  margin-top:2px;
+}
+
+.headerActions{
+  display:flex;
+  align-items:center;
+  gap:7px;
+  flex-shrink:0;
+}
+
+.callBtn{
+  height:38px;
+  min-width:40px;
+  padding:0 11px;
+  border-radius:11px;
+  background:#eaf8ff;
+  color:#0284c7;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+  font-weight:700;
+  font-size:12px;
+}
+
+.callBtn:hover{
+  background:#d8f3ff;
+}
+
+.callBtn.video{
+  background:#effdf5;
+  color:#16a34a;
+}
+
+.callBtn.video:hover{
+  background:#dcfce9;
+}
+
+.moreBtn{
+  width:38px;
+  height:38px;
+  border-radius:11px;
+  background:#f4f8fa;
+  color:#607d8b;
+  font-size:19px;
+}
+
+/* ================= CHAT ================= */
 
 .messages{
- flex:1;
- min-height:0;
- overflow:auto;
- padding:20px;
+  flex:1;
+  overflow-y:auto;
+  padding:22px clamp(14px,4vw,50px);
+  display:flex;
+  flex-direction:column;
+  gap:9px;
+  scroll-behavior:smooth;
 }
 
-.empty{
- height:100%;
- display:flex;
- flex-direction:column;
- align-items:center;
- justify-content:center;
- color:#91a6b4;
- text-align:center;
+.welcome{
+  margin:auto;
+  max-width:420px;
+  text-align:center;
+  padding:35px 20px;
 }
 
-.empty-icon{font-size:45px;margin-bottom:8px}
-.empty strong{color:#557386}
-
-.msg{
- display:flex;
- gap:9px;
- margin-bottom:15px;
- max-width:82%;
+.welcomeLogo{
+  width:72px;
+  height:72px;
+  border-radius:25px;
+  background:linear-gradient(135deg,#7dd3fc,#0284c7);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  margin:0 auto 15px;
+  box-shadow:0 15px 35px rgba(14,165,233,.2);
 }
 
-.msg.mine{
- margin-left:auto;
- flex-direction:row-reverse;
+.welcomeLogo svg{
+  width:52px;
+  height:52px;
 }
 
-.msg-content{min-width:0}
-
-.msg-name{
- font-size:10px;
- color:#78909e;
- font-weight:800;
- margin:0 0 4px 3px;
- cursor:pointer;
+.welcome h2{
+  font-size:21px;
+  margin-bottom:7px;
 }
 
-.msg.mine .msg-name{text-align:right}
+.welcome p{
+  color:#8aa0ad;
+  font-size:13px;
+  line-height:1.6;
+}
+
+.messageRow{
+  display:flex;
+  align-items:flex-end;
+  gap:8px;
+  max-width:78%;
+}
+
+.messageRow.mine{
+  margin-left:auto;
+  flex-direction:row-reverse;
+}
+
+.msgAvatar{
+  width:31px;
+  height:31px;
+  min-width:31px;
+  border-radius:50%;
+  overflow:hidden;
+  background:#bae6fd;
+  color:#0369a1;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:11px;
+  font-weight:800;
+  cursor:pointer;
+}
+
+.msgAvatar img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+
+.bubbleWrap{
+  min-width:0;
+}
+
+.senderName{
+  font-size:10px;
+  color:#78909c;
+  margin:0 7px 3px;
+}
+
+.mine .senderName{
+  text-align:right;
+}
 
 .bubble{
- padding:10px 13px;
- border-radius:16px;
- background:white;
- border:1px solid var(--border);
- box-shadow:0 3px 12px rgba(40,100,130,.04);
- font-size:13px;
- line-height:1.45;
- word-break:break-word;
+  padding:9px 12px;
+  border-radius:16px;
+  background:white;
+  border:1px solid var(--border);
+  box-shadow:0 2px 7px rgba(0,0,0,.025);
+  font-size:13px;
+  line-height:1.45;
+  word-break:break-word;
 }
 
-.msg.mine .bubble{
- background:var(--blue);
- color:white;
- border-color:var(--blue);
- border-bottom-right-radius:5px;
+.mine .bubble{
+  background:linear-gradient(135deg,#38bdf8,#0ea5e9);
+  color:white;
+  border:0;
+  border-bottom-right-radius:5px;
 }
 
-.msg:not(.mine) .bubble{border-bottom-left-radius:5px}
-
-.msg-time{
- color:#a1b2bd;
- font-size:9px;
- margin-top:4px;
- padding-left:3px;
+.messageRow:not(.mine) .bubble{
+  border-bottom-left-radius:5px;
 }
 
-.msg.mine .msg-time{
- text-align:right;
- padding-right:3px;
+.unsent{
+  color:#9aaab3!important;
+  background:#f6f8f9!important;
+  border:1px dashed #d5dee3!important;
+  font-style:italic;
 }
 
-.unsent-message{
- padding:10px 13px;
- border:1px dashed #cbdde8;
- background:#f7fafc;
- border-radius:15px;
- color:#9aabb5;
- font-style:italic;
- font-size:12px;
+.msgTime{
+  font-size:9px;
+  color:#9aabb5;
+  margin:3px 7px 0;
 }
 
-.unsent-message strong{
- color:#8296a2;
- font-weight:600;
- margin-right:4px;
+.mine .msgTime{
+  text-align:right;
 }
 
-.unsend-btn{
- display:block;
- margin-top:8px;
- padding:4px 8px;
- border-radius:7px;
- background:rgba(255,255,255,.18);
- color:white;
- font-size:10px;
+.unsendBtn{
+  display:block;
+  margin:4px 7px 0 auto;
+  background:transparent;
+  color:#94a3ad;
+  font-size:9px;
 }
+
+.unsendBtn:hover{
+  color:#ef4444;
+}
+
+/* ================= COMPOSER ================= */
 
 .composer{
- flex:none;
- padding:12px 15px;
- background:white;
- border-top:1px solid var(--border);
- display:flex;
- gap:8px;
- align-items:flex-end;
+  padding:10px 18px max(10px,env(safe-area-inset-bottom));
+  background:#fff;
+  border-top:1px solid var(--border);
 }
 
-.composer textarea{
- flex:1;
- resize:none;
- max-height:100px;
- min-height:43px;
- border:1px solid var(--border);
- border-radius:14px;
- padding:12px;
- outline:none;
+.composerInner{
+  max-width:950px;
+  margin:auto;
+  display:flex;
+  align-items:flex-end;
+  gap:8px;
 }
 
-.send-btn{
- width:44px;
- height:44px;
- border-radius:13px;
- background:var(--blue);
- color:white;
- font-size:18px;
+.messageInput{
+  flex:1;
+  min-height:44px;
+  max-height:120px;
+  resize:none;
+  border:1px solid var(--border);
+  border-radius:15px;
+  outline:none;
+  padding:12px 14px;
+  color:var(--text);
+  background:#fafdff;
 }
 
-.toast-box{
- position:fixed;
- right:18px;
- bottom:18px;
- z-index:1000;
- display:flex;
- flex-direction:column;
- gap:8px;
+.messageInput:focus{
+  border-color:#7dd3fc;
+  box-shadow:0 0 0 3px rgba(56,189,248,.08);
 }
 
-.toast{
- width:min(340px,calc(100vw - 36px));
- background:white;
- border:1px solid var(--border);
- border-radius:16px;
- padding:12px;
- box-shadow:0 15px 45px rgba(30,100,140,.18);
- animation:toastIn .25s ease;
+.sendBtn{
+  width:44px;
+  height:44px;
+  border-radius:14px;
+  background:linear-gradient(135deg,#38bdf8,#0284c7);
+  color:white;
+  font-size:18px;
+  box-shadow:0 7px 15px rgba(14,165,233,.22);
 }
 
-.toast-title{font-size:12px;font-weight:800}
-.toast-text{font-size:11px;color:#78909e;margin-top:3px}
+/* ================= VOICE ROOM ================= */
 
-@keyframes toastIn{
- from{transform:translateY(15px);opacity:0}
- to{transform:translateY(0);opacity:1}
+.voicePanel{
+  display:none;
+  flex:1;
+  overflow:auto;
+  padding:30px;
+}
+
+.voicePanel.show{
+  display:block;
+}
+
+.voiceCard{
+  max-width:700px;
+  margin:auto;
+  background:white;
+  border:1px solid var(--border);
+  border-radius:24px;
+  padding:25px;
+  box-shadow:var(--shadow);
+}
+
+.voiceTitle{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom:22px;
+}
+
+.voiceTitle h2{
+  font-size:21px;
+}
+
+.voiceTitle p{
+  color:#8aa0ad;
+  font-size:12px;
+  margin-top:4px;
+}
+
+.joinVoice{
+  width:100%;
+  height:46px;
+  border-radius:13px;
+  background:linear-gradient(135deg,#38bdf8,#0284c7);
+  color:white;
+  font-weight:800;
+  margin-bottom:20px;
+}
+
+.voiceControls{
+  display:flex;
+  gap:8px;
+  margin-bottom:20px;
+}
+
+.voiceControlBtn{
+  flex:1;
+  height:42px;
+  border-radius:12px;
+  background:#eaf8ff;
+  color:#0284c7;
+  font-weight:700;
+}
+
+.voiceUsers{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(150px,1fr));
+  gap:10px;
+}
+
+.voiceUser{
+  border:1px solid var(--border);
+  border-radius:16px;
+  padding:13px;
+  display:flex;
+  align-items:center;
+  gap:9px;
+}
+
+.voiceUserName{
+  min-width:0;
+  flex:1;
+}
+
+.voiceUserName b{
+  display:block;
+  font-size:12px;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.voiceUserName span{
+  font-size:10px;
+  color:#22c55e;
+}
+
+/* ================= MODALS ================= */
+
+.modalOverlay{
+  position:fixed;
+  inset:0;
+  background:rgba(15,35,50,.35);
+  backdrop-filter:blur(5px);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:18px;
+  z-index:100;
+}
+
+.modalOverlay.show{
+  display:flex;
 }
 
 .modal{
- position:fixed;
- inset:0;
- background:rgba(15,50,70,.28);
- backdrop-filter:blur(5px);
- z-index:500;
- display:flex;
- align-items:center;
- justify-content:center;
- padding:18px;
+  width:min(430px,100%);
+  max-height:90dvh;
+  overflow:auto;
+  background:white;
+  border-radius:23px;
+  box-shadow:0 25px 70px rgba(0,0,0,.18);
+  padding:22px;
 }
 
-.modal-card{
- width:min(430px,100%);
- max-height:90dvh;
- overflow:auto;
- background:white;
- border-radius:25px;
- padding:23px;
- box-shadow:0 30px 90px rgba(15,60,90,.25);
+.modalHeader{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom:18px;
 }
 
-.modal-head{
- display:flex;
- justify-content:space-between;
- align-items:center;
- margin-bottom:18px;
+.modalHeader h3{
+  font-size:18px;
 }
 
-.modal-title{font-size:17px;font-weight:800}
-
-.close{
- width:35px;
- height:35px;
- border-radius:10px;
- background:#f1f8fc;
- color:#6e8796;
+.closeBtn{
+  width:34px;
+  height:34px;
+  border-radius:10px;
+  background:#f3f7f9;
+  color:#607d8b;
 }
 
-.profile-center{
- display:flex;
- flex-direction:column;
- align-items:center;
- text-align:center;
+.profileBig{
+  text-align:center;
+  padding:8px 0 18px;
 }
 
-.profile-display{font-size:19px;font-weight:800;margin-top:11px}
-.profile-username{font-size:11px;color:var(--blue);margin-top:3px}
-
-.profile-bio{
- color:#78909e;
- font-size:12px;
- margin:10px 0 18px;
- max-width:330px;
+.profileBig .avatar{
+  width:85px;
+  height:85px;
+  margin:0 auto 12px;
+  font-size:25px;
 }
 
-.action-grid{
- display:grid;
- grid-template-columns:1fr 1fr;
- gap:8px;
+.profileBig h3{
+  font-size:19px;
 }
 
-.action{
- padding:11px;
- border-radius:12px;
- background:#eef8ff;
- color:var(--blue);
- font-weight:800;
- font-size:11px;
+.profileBig p{
+  color:#8aa0ad;
+  font-size:12px;
+  margin-top:5px;
 }
 
-.action.danger{
- background:#fff0f1;
- color:var(--danger);
+.profileBio{
+  margin:8px 0 18px;
+  padding:12px;
+  border-radius:13px;
+  background:#f6fbfe;
+  color:#607d8b;
+  font-size:12px;
+  line-height:1.5;
 }
 
-.notification-list{display:flex;flex-direction:column;gap:8px}
-
-.notification-item{
- display:flex;
- gap:9px;
- padding:10px;
- border:1px solid var(--border);
- border-radius:13px;
- cursor:pointer;
+.modalActions{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
 }
 
-.notification-item:hover{background:#f7fcff}
-
-.call-card{
- width:min(850px,100%);
- background:#07141d;
- border-radius:25px;
- padding:12px;
- position:relative;
- overflow:hidden;
+.actionBtn{
+  height:42px;
+  border-radius:12px;
+  background:#eaf8ff;
+  color:#0284c7;
+  font-weight:700;
 }
 
-.remote-video{
- width:100%;
- height:min(65vh,600px);
- object-fit:cover;
- background:#0d222e;
- border-radius:18px;
+.actionBtn.danger{
+  background:#fff1f2;
+  color:#e11d48;
 }
 
-.local-video{
- position:absolute;
- right:25px;
- bottom:85px;
- width:170px;
- height:120px;
- object-fit:cover;
- background:#152d39;
- border-radius:14px;
- border:2px solid white;
+.actionBtn.green{
+  background:#effdf5;
+  color:#16a34a;
 }
 
-.call-name{
- color:white;
- font-size:13px;
- font-weight:800;
- padding:9px;
+.inputGroup{
+  margin-bottom:13px;
 }
 
-.call-controls{
- display:flex;
- justify-content:center;
- gap:10px;
+.inputGroup label{
+  display:block;
+  font-size:11px;
+  color:#78909c;
+  margin-bottom:6px;
+  font-weight:700;
 }
 
-.call-btn{
- width:46px;
- height:46px;
- border-radius:50%;
- background:#173542;
- color:white;
- font-size:18px;
+.inputGroup input,
+.inputGroup textarea{
+  width:100%;
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:11px 12px;
+  outline:none;
+  background:#fbfdff;
 }
 
-.call-btn.end{background:#ef5b68}
-
-.mobile-nav{display:none}
-
-@media(max-width:900px){
- .layout{grid-template-columns:220px minmax(0,1fr)}
- .rightbar{display:none}
+.inputGroup textarea{
+  min-height:85px;
+  resize:vertical;
 }
 
-@media(max-width:700px){
+.primaryBtn{
+  width:100%;
+  height:44px;
+  border-radius:12px;
+  background:linear-gradient(135deg,#38bdf8,#0284c7);
+  color:white;
+  font-weight:800;
+}
 
- html,body,#app{
+/* ================= LOGIN ================= */
+
+.authScreen{
   width:100%;
   height:100dvh;
-  min-height:100dvh;
- }
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:
+    radial-gradient(circle at 20% 20%,rgba(125,211,252,.22),transparent 30%),
+    radial-gradient(circle at 80% 80%,rgba(14,165,233,.13),transparent 30%),
+    #f8fcff;
+  padding:18px;
+}
 
- .topbar{
-  height:62px;
-  padding:0 11px;
- }
+.authBox{
+  width:min(410px,100%);
+  background:white;
+  border:1px solid var(--border);
+  border-radius:27px;
+  padding:30px;
+  box-shadow:0 25px 70px rgba(14,165,233,.13);
+}
 
- .brand-name{font-size:14px}
- .brand-small{font-size:9px}
+.authLogo{
+  width:78px;
+  height:78px;
+  margin:0 auto 17px;
+  border-radius:26px;
+  background:linear-gradient(135deg,#7dd3fc,#0284c7);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
 
- .brand .logo{
-  width:39px;
-  height:39px;
- }
+.authLogo svg{
+  width:57px;
+  height:57px;
+}
 
- .top-actions .icon-btn{
-  width:37px;
+.authBox h1{
+  text-align:center;
+  font-size:24px;
+}
+
+.authBox .sub{
+  text-align:center;
+  color:#8aa0ad;
+  font-size:12px;
+  margin:7px 0 22px;
+}
+
+.authTabs{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:5px;
+  background:#f0f7fa;
+  border-radius:12px;
+  padding:4px;
+  margin-bottom:18px;
+}
+
+.authTab{
   height:37px;
- }
+  border-radius:9px;
+  background:transparent;
+  color:#78909c;
+  font-weight:700;
+  font-size:12px;
+}
 
- .layout{
-  display:block;
-  height:calc(100dvh - 62px - 62px);
- }
+.authTab.active{
+  background:white;
+  color:#0284c7;
+  box-shadow:0 2px 7px rgba(0,0,0,.05);
+}
 
- .sidebar{display:none}
+.authMessage{
+  text-align:center;
+  color:#ef4444;
+  font-size:11px;
+  margin-top:10px;
+}
 
- .center{
+.anonBtn{
+  width:100%;
+  height:43px;
+  border-radius:12px;
+  background:#f0f9ff;
+  color:#0284c7;
+  font-weight:800;
+  margin-top:8px;
+}
+
+/* ================= CALL UI ================= */
+
+.callOverlay{
+  position:fixed;
+  inset:0;
+  background:rgba(8,20,30,.94);
+  z-index:300;
+  display:none;
+  color:white;
+  align-items:center;
+  justify-content:center;
+}
+
+.callOverlay.show{
+  display:flex;
+}
+
+.callBox{
+  width:min(900px,95%);
+  height:min(650px,90%);
+  position:relative;
+  border-radius:25px;
+  overflow:hidden;
+  background:#0b1720;
+}
+
+.remoteVideo{
   width:100%;
   height:100%;
- }
+  object-fit:cover;
+  background:#111;
+}
 
- .chat-head{
-  height:62px;
-  padding:0 11px;
- }
+.localVideo{
+  position:absolute;
+  width:170px;
+  height:120px;
+  right:18px;
+  top:18px;
+  border-radius:15px;
+  object-fit:cover;
+  background:#222;
+  border:2px solid rgba(255,255,255,.25);
+}
 
- .messages{padding:13px 10px}
-
- .msg{max-width:90%}
-
- .bubble{font-size:12px}
-
- .composer{padding:8px}
-
- .mobile-nav{
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-  height:62px;
-  flex:none;
-  background:white;
-  border-top:1px solid var(--border);
-  padding-bottom:env(safe-area-inset-bottom);
-  z-index:30;
- }
-
- .mobile-nav button{
-  background:white;
-  color:#79919f;
-  font-size:10px;
+.callInfo{
+  position:absolute;
+  top:20px;
+  left:20px;
   font-weight:800;
- }
+}
 
- .mobile-nav button.active{color:var(--blue)}
+.callControls{
+  position:absolute;
+  bottom:20px;
+  left:50%;
+  transform:translateX(-50%);
+  display:flex;
+  gap:10px;
+}
 
- .mobile-nav-icon{
-  display:block;
-  font-size:19px;
-  margin-bottom:2px;
- }
+.callControl{
+  width:48px;
+  height:48px;
+  border-radius:50%;
+  background:rgba(255,255,255,.15);
+  color:white;
+  font-size:18px;
+}
 
- .rightbar.mobile-open{
-  display:block;
+.callControl.end{
+  background:#ef4444;
+}
+
+/* ================= TOAST ================= */
+
+.toastBox{
   position:fixed;
-  inset:62px 0 62px 0;
-  z-index:100;
-  border:0;
-  overflow:auto;
- }
+  top:18px;
+  right:18px;
+  z-index:500;
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  pointer-events:none;
+}
 
- .local-video{
-  width:110px;
-  height:80px;
-  right:20px;
-  bottom:90px;
- }
+.toast{
+  min-width:240px;
+  max-width:330px;
+  padding:12px 15px;
+  border-radius:14px;
+  background:#102a43;
+  color:white;
+  box-shadow:0 15px 35px rgba(0,0,0,.18);
+  animation:toastIn .25s ease;
+}
 
- .remote-video{height:55vh}
+.toast b{
+  display:block;
+  font-size:12px;
+}
 
- .modal{padding:10px}
+.toast span{
+  display:block;
+  font-size:11px;
+  color:#c7d6df;
+  margin-top:3px;
+}
 
- .modal-card{
-  border-radius:20px;
-  padding:18px;
- }
+@keyframes toastIn{
+  from{opacity:0;transform:translateY(-8px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
+/* ================= MOBILE ================= */
+
+.mobileNav{
+  display:none;
+}
+
+.mobilePanel{
+  display:none;
+}
+
+@media(max-width:800px){
+
+  .sidebar{
+    display:none;
+  }
+
+  .main{
+    height:calc(100dvh - 64px);
+  }
+
+  .chatHeader{
+    height:66px;
+    min-height:66px;
+    padding:8px 10px;
+    gap:7px;
+  }
+
+  .headerBack{
+    display:flex;
+    width:35px;
+    height:35px;
+    border-radius:10px;
+    background:#f1f8fb;
+    align-items:center;
+    justify-content:center;
+    color:#0284c7;
+    flex-shrink:0;
+  }
+
+  .headerUser{
+    gap:8px;
+  }
+
+  .headerUser .avatar{
+    width:37px;
+    height:37px;
+    min-width:37px;
+  }
+
+  .headerUserText b{
+    font-size:13px;
+  }
+
+  .headerUserText span{
+    font-size:9px;
+  }
+
+  .headerActions{
+    gap:4px;
+  }
+
+  .callBtn{
+    width:36px;
+    min-width:36px;
+    height:36px;
+    padding:0;
+    border-radius:10px;
+    font-size:16px;
+  }
+
+  .callBtn span{
+    display:none;
+  }
+
+  .moreBtn{
+    width:35px;
+    height:35px;
+  }
+
+  .messages{
+    padding:15px 10px 12px;
+    gap:8px;
+  }
+
+  .messageRow{
+    max-width:91%;
+  }
+
+  .msgAvatar{
+    width:28px;
+    height:28px;
+    min-width:28px;
+  }
+
+  .bubble{
+    font-size:12px;
+    padding:8px 10px;
+  }
+
+  .composer{
+    padding:8px 8px max(8px,env(safe-area-inset-bottom));
+  }
+
+  .messageInput{
+    min-height:42px;
+    padding:11px;
+    font-size:13px;
+  }
+
+  .sendBtn{
+    width:42px;
+    height:42px;
+  }
+
+  .mobileNav{
+    height:64px;
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    background:white;
+    border-top:1px solid var(--border);
+    position:fixed;
+    bottom:0;
+    left:0;
+    right:0;
+    z-index:50;
+    padding-bottom:env(safe-area-inset-bottom);
+  }
+
+  .mobileNav button{
+    background:white;
+    color:#78909c;
+    font-size:10px;
+    font-weight:700;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    gap:3px;
+  }
+
+  .mobileNav button.active{
+    color:#0284c7;
+    background:#f0faff;
+  }
+
+  .mobileNav i{
+    font-style:normal;
+    font-size:19px;
+  }
+
+  .mobilePanel{
+    position:fixed;
+    inset:0;
+    z-index:80;
+    background:#f8fcff;
+    display:none;
+    flex-direction:column;
+  }
+
+  .mobilePanel.show{
+    display:flex;
+  }
+
+  .mobilePanelHeader{
+    height:64px;
+    min-height:64px;
+    background:white;
+    border-bottom:1px solid var(--border);
+    display:flex;
+    align-items:center;
+    padding:10px 14px;
+    gap:10px;
+  }
+
+  .mobilePanelHeader h2{
+    font-size:17px;
+    flex:1;
+  }
+
+  .mobilePanelContent{
+    flex:1;
+    overflow:auto;
+    padding:12px;
+  }
+
+  .mobileFriend{
+    background:white;
+    border:1px solid var(--border);
+    border-radius:15px;
+    padding:10px;
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin-bottom:7px;
+  }
+
+  .mobileFriendText{
+    flex:1;
+    min-width:0;
+  }
+
+  .mobileFriendText b{
+    display:block;
+    font-size:13px;
+  }
+
+  .mobileFriendText span{
+    font-size:10px;
+    color:#94a3ad;
+  }
+
+  .mobileVoiceBox{
+    background:white;
+    border:1px solid var(--border);
+    border-radius:20px;
+    padding:16px;
+  }
+
+  .voicePanel{
+    padding:12px;
+  }
+
+  .voiceCard{
+    padding:18px;
+    border-radius:20px;
+  }
+
+  .voiceTitle h2{
+    font-size:18px;
+  }
+
+  .voiceUsers{
+    grid-template-columns:1fr 1fr;
+  }
+
+  .modalOverlay{
+    align-items:flex-end;
+    padding:0;
+  }
+
+  .modal{
+    width:100%;
+    max-height:88dvh;
+    border-radius:24px 24px 0 0;
+    padding:20px;
+  }
+
+  .callBox{
+    width:100%;
+    height:100%;
+    border-radius:0;
+  }
+
+  .localVideo{
+    width:120px;
+    height:90px;
+    right:10px;
+    top:55px;
+  }
+}
+
+@media(max-width:370px){
+  .callBtn{
+    width:33px;
+    min-width:33px;
+  }
+
+  .moreBtn{
+    width:33px;
+  }
+
+  .headerUserText{
+    max-width:90px;
+  }
+
+  .voiceUsers{
+    grid-template-columns:1fr;
+  }
 }
 </style>
 </head>
@@ -756,3417 +1297,3723 @@ button{cursor:pointer;border:0}
 
 <!-- ================= AUTH ================= -->
 
-<div id="authPage">
+<div id="authScreen" class="authScreen">
 
- <div class="auth-card">
+  <div class="authBox">
 
-  <div class="logo-wrap">
+    <div class="authLogo">
+      <svg viewBox="0 0 100 100">
+        <path d="M50 8C28 8 15 26 15 49c0 25 14 39 35 39s35-14 35-39C85 26 72 8 50 8z"
+              fill="#fff"/>
+        <circle cx="38" cy="46" r="6" fill="#0284c7"/>
+        <circle cx="62" cy="46" r="6" fill="#0284c7"/>
+        <path d="M30 62 Q50 78 70 62 Q65 84 50 84 Q35 84 30 62"
+              fill="#0284c7"/>
+      </svg>
+    </div>
 
-   <div class="logo">
-    <svg viewBox="0 0 100 100">
-     <path d="M20 46C20 25 35 12 50 12C67 12 80 26 80 46V78C80 83 75 86 71 82L63 75L55 83L47 75L39 83L31 75L23 82C19 85 20 77 20 78Z" fill="white"/>
-     <circle cx="39" cy="45" r="6" fill="#168ce8"/>
-     <circle cx="61" cy="45" r="6" fill="#168ce8"/>
-     <path d="M34 58C40 68 60 68 66 58C57 62 43 62 34 58Z" fill="#168ce8"/>
-     <path d="M38 58L43 61M62 58L57 61" stroke="#168ce8" stroke-width="3" stroke-linecap="round"/>
-    </svg>
-   </div>
+    <h1>Shadow Chat Daanians</h1>
+    <p class="sub">Private. Real-time. Connected.</p>
 
-   <div>
-    <div class="logo-title">Shadow Chat Daanians</div>
-    <div class="logo-sub">Private • Real-time • Social</div>
-   </div>
+    <div class="authTabs">
+      <button id="loginTab" class="authTab active" onclick="showAuth('login')">Login</button>
+      <button id="signupTab" class="authTab" onclick="showAuth('signup')">Create Account</button>
+    </div>
+
+    <div id="loginForm">
+
+      <div class="inputGroup">
+        <label>Email</label>
+        <input id="loginEmail" type="email" placeholder="your@email.com">
+      </div>
+
+      <div class="inputGroup">
+        <label>Password</label>
+        <input id="loginPassword" type="password" placeholder="Password">
+      </div>
+
+      <button class="primaryBtn" onclick="login()">Login</button>
+
+      <button class="anonBtn" onclick="anonymousLogin()">
+        👻 Continue as Anonymous
+      </button>
+
+    </div>
+
+    <div id="signupForm" style="display:none">
+
+      <div class="inputGroup">
+        <label>Username</label>
+        <input id="signupUsername" type="text" placeholder="Unique username">
+      </div>
+
+      <div class="inputGroup">
+        <label>Display Name</label>
+        <input id="signupDisplayName" type="text" placeholder="Your name">
+      </div>
+
+      <div class="inputGroup">
+        <label>Email</label>
+        <input id="signupEmail" type="email" placeholder="your@email.com">
+      </div>
+
+      <div class="inputGroup">
+        <label>Password</label>
+        <input id="signupPassword" type="password" placeholder="Minimum 6 characters">
+      </div>
+
+      <button class="primaryBtn" onclick="signup()">Create Account</button>
+
+    </div>
+
+    <div id="authMessage" class="authMessage"></div>
 
   </div>
-
-  <h1 class="auth-title" id="authTitle">Welcome Back</h1>
-
-  <div class="auth-sub" id="authSub">
-   Login to continue chatting.
-  </div>
-
-  <div class="field">
-   <label>Email / Gmail</label>
-   <input id="emailInput" type="email" placeholder="you@gmail.com">
-  </div>
-
-  <div class="field">
-   <label>Password</label>
-   <input id="passwordInput" type="password" placeholder="Your password">
-  </div>
-
-  <div id="signupFields" class="hidden">
-
-   <div class="field">
-    <label>Username</label>
-    <input id="usernameInput" type="text" placeholder="your_unique_username">
-   </div>
-
-   <div class="field">
-    <label>Display Name</label>
-    <input id="displayNameInput" type="text" placeholder="Your name">
-   </div>
-
-  </div>
-
-  <button class="primary" id="authButton" onclick="handleAuth()">
-   Login
-  </button>
-
-  <button class="secondary" style="margin-top:8px" onclick="anonymousLogin()">
-   Continue as Anonymous
-  </button>
-
-  <div class="auth-switch">
-   <span id="switchText">Don't have an account?</span>
-   <span onclick="toggleAuthMode()" id="switchButton">Create account</span>
-  </div>
-
- </div>
-
 </div>
 
 
 <!-- ================= APP ================= -->
 
-<div id="app" class="hidden">
+<div id="app" class="app" style="display:none">
 
- <header class="topbar">
-
-  <div class="brand">
-
-   <div class="logo">
-    <svg viewBox="0 0 100 100">
-     <path d="M20 46C20 25 35 12 50 12C67 12 80 26 80 46V78C80 83 75 86 71 82L63 75L55 83L47 75L39 83L31 75L23 82C19 85 20 77 20 78Z" fill="white"/>
-     <circle cx="39" cy="45" r="6" fill="#168ce8"/>
-     <circle cx="61" cy="45" r="6" fill="#168ce8"/>
-     <path d="M34 58C40 68 60 68 66 58C57 62 43 62 34 58Z" fill="#168ce8"/>
-     <path d="M38 58L43 61M62 58L57 61" stroke="#168ce8" stroke-width="3" stroke-linecap="round"/>
-    </svg>
-   </div>
-
-   <div>
-    <div class="brand-name">Shadow Chat Daanians</div>
-    <div class="brand-small">Real-time community</div>
-   </div>
-
-  </div>
-
-  <div class="top-actions">
-
-   <button class="icon-btn" onclick="openNotifications()">
-    🔔
-    <span id="notificationBadge" class="badge hidden">0</span>
-   </button>
-
-   <button class="icon-btn" onclick="showRightbar('profile')">
-    👤
-   </button>
-
-  </div>
-
- </header>
-
-
- <div class="layout">
-
-  <!-- LEFT -->
+  <!-- SIDEBAR -->
 
   <aside class="sidebar">
 
-   <div class="profile-mini" onclick="showRightbar('profile')">
+    <div class="brand">
 
-    <div id="miniAvatar" class="avatar small"></div>
+      <div class="logo">
+        <svg viewBox="0 0 100 100">
+          <path d="M50 8C28 8 15 26 15 49c0 25 14 39 35 39s35-14 35-39C85 26 72 8 50 8z"
+                fill="#fff"/>
+          <circle cx="38" cy="46" r="6" fill="#0284c7"/>
+          <circle cx="62" cy="46" r="6" fill="#0284c7"/>
+          <path d="M30 62 Q50 78 70 62 Q65 84 50 84 Q35 84 30 62"
+                fill="#0284c7"/>
+        </svg>
+      </div>
 
-    <div style="min-width:0">
-     <div id="miniName" class="mini-name">User</div>
-     <div id="miniUsername" class="mini-user">@user</div>
+      <div class="brandText">
+        <h1>Shadow Chat</h1>
+        <span>Daanians</span>
+      </div>
+
     </div>
 
-   </div>
+    <div class="sidebarTop">
 
-   <div class="section-title">Menu</div>
+      <div class="userCard">
 
-   <div class="nav-item active" onclick="openPublicChat()">
-    <span class="nav-icon">💬</span>
-    Public Chat
-   </div>
+        <div id="myAvatar" class="avatar">?</div>
 
-   <div class="nav-item" onclick="showRightbar('friends')">
-    <span class="nav-icon">👥</span>
-    Friends
-   </div>
+        <div class="userInfo">
+          <b id="myName">Loading...</b>
+          <span>● Active</span>
+        </div>
 
-   <div class="nav-item" onclick="showRightbar('search')">
-    <span class="nav-icon">🔎</span>
-    Find Users
-   </div>
+        <button class="iconBtn" onclick="openMyProfile()">⚙</button>
 
-   <div class="nav-item" onclick="showRightbar('profile')">
-    <span class="nav-icon">⚙️</span>
-    Profile
-   </div>
+      </div>
 
-   <div class="nav-item" onclick="logout()">
-    <span class="nav-icon">🚪</span>
-    Logout
-   </div>
+    </div>
 
-   <div style="margin-top:35px;text-align:center;color:#9db0bc;font-size:9px;line-height:1.5">
-    Developer Cherry<br>
-    From Danish School Mailsi
-   </div>
+    <div class="nav">
+
+      <button class="navBtn active" onclick="showPublicChat()">
+        <span class="navIcon">💬</span>
+        Public Chat
+      </button>
+
+      <button class="navBtn" onclick="openMobileFriends()">
+        <span class="navIcon">👥</span>
+        Friends
+      </button>
+
+      <button class="navBtn" onclick="openMobileVoice()">
+        <span class="navIcon">🎙️</span>
+        Voice Room
+      </button>
+
+    </div>
+
+    <div class="sectionTitle">Friends</div>
+
+    <div id="friendsList" class="friendsList">
+      <div class="emptyFriends">No friends yet</div>
+    </div>
+
+    <div class="sidebarFooter">
+      Developer Cherry — From Danish School Mailsi
+    </div>
 
   </aside>
 
 
-  <!-- CENTER -->
+  <!-- MAIN -->
 
-  <main class="center">
+  <main class="main">
 
-   <div class="chat-head">
+    <!-- CHAT HEADER -->
 
-    <div id="chatHeaderAvatar" class="avatar medium">
-     👻
+    <header class="chatHeader">
+
+      <button class="headerBack" onclick="showPublicChat()">‹</button>
+
+      <div id="headerUser" class="headerUser" onclick="handleHeaderUserClick()">
+
+        <div id="headerAvatar" class="avatar">👻</div>
+
+        <div class="headerUserText">
+          <b id="headerName">Public Chat</b>
+          <span id="headerStatus">Everyone</span>
+        </div>
+
+      </div>
+
+
+      <!-- PRIVATE CHAT ACTIONS -->
+
+      <div id="headerActions" class="headerActions" style="display:none">
+
+        <button class="callBtn"
+                onclick="startCall('audio')"
+                title="Voice Call">
+          📞
+          <span>Voice</span>
+        </button>
+
+        <button class="callBtn video"
+                onclick="startCall('video')"
+                title="Video Call">
+          📹
+          <span>Video</span>
+        </button>
+
+        <button class="moreBtn"
+                onclick="openFriendMenu()"
+                title="More">
+          ⋮
+        </button>
+
+      </div>
+
+    </header>
+
+
+    <!-- MESSAGES -->
+
+    <section id="messages" class="messages">
+
+      <div id="welcome" class="welcome">
+
+        <div class="welcomeLogo">
+          <svg viewBox="0 0 100 100">
+            <path d="M50 8C28 8 15 26 15 49c0 25 14 39 35 39s35-14 35-39C85 26 72 8 50 8z"
+                  fill="#fff"/>
+            <circle cx="38" cy="46" r="6" fill="#0284c7"/>
+            <circle cx="62" cy="46" r="6" fill="#0284c7"/>
+            <path d="M30 62 Q50 78 70 62 Q65 84 50 84 Q35 84 30 62"
+                  fill="#0284c7"/>
+          </svg>
+        </div>
+
+        <h2>Welcome to Shadow Chat</h2>
+        <p>
+          Chat with everyone publicly or open a private conversation
+          with your friends.
+        </p>
+
+      </div>
+
+    </section>
+
+
+    <!-- VOICE ROOM -->
+
+    <section id="voicePanel" class="voicePanel">
+
+      <div class="voiceCard">
+
+        <div class="voiceTitle">
+
+          <div>
+            <h2>🎙️ Voice Room</h2>
+            <p>Join the room and talk with everyone.</p>
+          </div>
+
+        </div>
+
+        <button id="joinVoiceBtn"
+                class="joinVoice"
+                onclick="joinVoiceRoom()">
+          🎙️ Join Voice Room
+        </button>
+
+        <div id="voiceControls" class="voiceControls" style="display:none">
+
+          <button class="voiceControlBtn"
+                  onclick="toggleVoiceMic()">
+            🎙️ <span id="voiceMicText">Mic ON</span>
+          </button>
+
+          <button class="voiceControlBtn"
+                  onclick="leaveVoiceRoom()">
+            🚪 Leave Room
+          </button>
+
+        </div>
+
+        <div id="voiceUsers" class="voiceUsers"></div>
+
+      </div>
+
+    </section>
+
+
+    <!-- COMPOSER -->
+
+    <div id="composer" class="composer">
+
+      <div class="composerInner">
+
+        <textarea
+          id="messageInput"
+          class="messageInput"
+          rows="1"
+          placeholder="Write a message..."
+          onkeydown="handleInputKey(event)"
+        ></textarea>
+
+        <button class="sendBtn" onclick="sendMessage()">➤</button>
+
+      </div>
+
     </div>
-
-    <div class="chat-head-info">
-
-     <div id="chatHeaderName" class="chat-head-name">
-      Public Chat
-     </div>
-
-     <div id="chatHeaderSub" class="chat-head-sub">
-      Everyone can chat here
-     </div>
-
-    </div>
-
-    <button id="callVoiceBtn" class="icon-btn hidden" onclick="startCurrentCall('voice')">
-     📞
-    </button>
-
-    <button id="callVideoBtn" class="icon-btn hidden" onclick="startCurrentCall('video')">
-     📹
-    </button>
-
-   </div>
-
-
-   <div id="messages" class="messages">
-
-    <div class="empty">
-     <div class="empty-icon">👻</div>
-     <strong>Welcome to Shadow Chat</strong>
-     <span style="font-size:11px;margin-top:5px">
-      Start a conversation.
-     </span>
-    </div>
-
-   </div>
-
-
-   <div class="composer">
-
-    <textarea
-     id="messageInput"
-     rows="1"
-     placeholder="Write a message..."
-     onkeydown="messageKey(event)"></textarea>
-
-    <button class="send-btn" onclick="sendMessage()">
-     ➤
-    </button>
-
-   </div>
 
   </main>
 
 
-  <!-- RIGHT -->
+  <!-- MOBILE NAV -->
 
-  <aside id="rightbar" class="rightbar">
-   <div id="rightbarContent"></div>
-  </aside>
+  <nav class="mobileNav">
 
- </div>
+    <button class="active" onclick="showPublicChat();setMobileNav(this)">
+      <i>💬</i>
+      Chat
+    </button>
 
+    <button onclick="openMobileFriends();setMobileNav(this)">
+      <i>👥</i>
+      Friends
+    </button>
 
- <!-- MOBILE -->
+    <button onclick="openMobileVoice();setMobileNav(this)">
+      <i>🎙️</i>
+      Voice
+    </button>
 
- <nav class="mobile-nav">
+    <button onclick="openMyProfile();setMobileNav(this)">
+      <i>👤</i>
+      Profile
+    </button>
 
-  <button class="active" onclick="mobilePublic(this)">
-   <span class="mobile-nav-icon">💬</span>
-   Chat
-  </button>
-
-  <button onclick="mobileFriends(this)">
-   <span class="mobile-nav-icon">👥</span>
-   Friends
-  </button>
-
-  <button onclick="mobileSearch(this)">
-   <span class="mobile-nav-icon">🔎</span>
-   Search
-  </button>
-
-  <button onclick="mobileProfile(this)">
-   <span class="mobile-nav-icon">👤</span>
-   Profile
-  </button>
-
- </nav>
+  </nav>
 
 </div>
 
 
-<!-- PROFILE MODAL -->
+<!-- ================= MOBILE FRIENDS ================= -->
 
-<div id="profileModal" class="modal hidden">
+<div id="mobileFriendsPanel" class="mobilePanel">
 
- <div class="modal-card">
+  <div class="mobilePanelHeader">
 
-  <div class="modal-head">
-   <div class="modal-title">Profile</div>
-   <button class="close" onclick="closeModal('profileModal')">✕</button>
+    <button class="iconBtn" onclick="closeMobilePanels()">‹</button>
+
+    <h2>Friends</h2>
+
   </div>
 
-  <div id="profileModalContent"></div>
-
- </div>
+  <div id="mobileFriendsList" class="mobilePanelContent"></div>
 
 </div>
 
 
-<!-- NOTIFICATIONS -->
+<!-- ================= MOBILE VOICE ================= -->
 
-<div id="notificationModal" class="modal hidden">
+<div id="mobileVoicePanel" class="mobilePanel">
 
- <div class="modal-card">
+  <div class="mobilePanelHeader">
 
-  <div class="modal-head">
-   <div class="modal-title">Notifications</div>
-   <button class="close" onclick="closeModal('notificationModal')">✕</button>
+    <button class="iconBtn" onclick="closeMobilePanels()">‹</button>
+
+    <h2>Voice Room</h2>
+
   </div>
 
-  <div id="notificationContent"></div>
+  <div class="mobilePanelContent">
 
- </div>
+    <div class="mobileVoiceBox">
+
+      <button id="mobileJoinVoiceBtn"
+              class="joinVoice"
+              onclick="joinVoiceRoom()">
+        🎙️ Join Voice Room
+      </button>
+
+      <div id="mobileVoiceControls"
+           class="voiceControls"
+           style="display:none">
+
+        <button class="voiceControlBtn"
+                onclick="toggleVoiceMic()">
+          🎙️ <span id="mobileVoiceMicText">Mic ON</span>
+        </button>
+
+        <button class="voiceControlBtn"
+                onclick="leaveVoiceRoom()">
+          🚪 Leave
+        </button>
+
+      </div>
+
+      <div id="mobileVoiceUsers" class="voiceUsers"></div>
+
+    </div>
+
+  </div>
 
 </div>
 
 
-<!-- CALL -->
+<!-- ================= PROFILE MODAL ================= -->
 
-<div id="callModal" class="modal hidden">
+<div id="profileModal" class="modalOverlay">
 
- <div class="call-card">
+  <div class="modal">
 
-  <video id="remoteVideo" class="remote-video" autoplay playsinline></video>
+    <div class="modalHeader">
+      <h3>Profile</h3>
+      <button class="closeBtn" onclick="closeModal('profileModal')">×</button>
+    </div>
 
-  <video id="localVideo" class="local-video" autoplay playsinline muted></video>
+    <div class="profileBig">
 
-  <div id="callName" class="call-name">
-   Calling...
+      <div id="profileAvatar" class="avatar">?</div>
+
+      <h3 id="profileName">User</h3>
+
+      <p id="profileUsername">@username</p>
+
+    </div>
+
+    <div id="profileBio" class="profileBio">
+      No bio added.
+    </div>
+
+    <div class="modalActions">
+
+      <button class="actionBtn"
+              onclick="editMyProfile()">
+        ✏️ Edit Profile
+      </button>
+
+      <button class="actionBtn danger"
+              onclick="logout()">
+        🚪 Logout
+      </button>
+
+    </div>
+
   </div>
-
-  <div class="call-controls">
-
-   <button class="call-btn" onclick="toggleMute()" id="muteBtn">
-    🎙️
-   </button>
-
-   <button class="call-btn" onclick="toggleCamera()" id="cameraBtn">
-    📷
-   </button>
-
-   <button class="call-btn end" onclick="endCall()">
-    ☎
-   </button>
-
-  </div>
-
- </div>
 
 </div>
 
 
-<div id="toastBox" class="toast-box"></div>
+<!-- ================= FRIEND PROFILE ================= -->
+
+<div id="friendModal" class="modalOverlay">
+
+  <div class="modal">
+
+    <div class="modalHeader">
+      <h3>User Profile</h3>
+      <button class="closeBtn" onclick="closeModal('friendModal')">×</button>
+    </div>
+
+    <div class="profileBig">
+
+      <div id="friendAvatar" class="avatar">?</div>
+
+      <h3 id="friendName">User</h3>
+
+      <p id="friendUsername">@username</p>
+
+    </div>
+
+    <div id="friendBio" class="profileBio">
+      No bio added.
+    </div>
+
+    <div id="friendActions" class="modalActions"></div>
+
+  </div>
+
+</div>
+
+
+<!-- ================= MORE MENU ================= -->
+
+<div id="moreModal" class="modalOverlay">
+
+  <div class="modal">
+
+    <div class="modalHeader">
+
+      <h3>Conversation</h3>
+
+      <button class="closeBtn"
+              onclick="closeModal('moreModal')">
+        ×
+      </button>
+
+    </div>
+
+    <div class="modalActions">
+
+      <button class="actionBtn"
+              onclick="openCurrentFriendProfile()">
+        👤 Profile
+      </button>
+
+      <button class="actionBtn danger"
+              onclick="blockCurrentFriend()">
+        🚫 Block
+      </button>
+
+      <button class="actionBtn danger"
+              onclick="unfriendCurrentFriend()">
+        💔 Unfriend
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<!-- ================= EDIT PROFILE ================= -->
+
+<div id="editModal" class="modalOverlay">
+
+  <div class="modal">
+
+    <div class="modalHeader">
+
+      <h3>Edit Profile</h3>
+
+      <button class="closeBtn"
+              onclick="closeModal('editModal')">
+        ×
+      </button>
+
+    </div>
+
+    <div class="inputGroup">
+
+      <label>Display Name</label>
+
+      <input id="editDisplayName"
+             type="text"
+             placeholder="Display name">
+
+    </div>
+
+    <div class="inputGroup">
+
+      <label>Bio</label>
+
+      <textarea id="editBio"
+                placeholder="Tell something about yourself"></textarea>
+
+    </div>
+
+    <div class="inputGroup">
+
+      <label>Profile Picture</label>
+
+      <input id="avatarFile"
+             type="file"
+             accept="image/*">
+
+    </div>
+
+    <button class="primaryBtn"
+            onclick="saveProfile()">
+      Save Changes
+    </button>
+
+  </div>
+
+</div>
+
+
+<!-- ================= CALL ================= -->
+
+<div id="callOverlay" class="callOverlay">
+
+  <div class="callBox">
+
+    <video id="remoteVideo"
+           class="remoteVideo"
+           autoplay
+           playsinline></video>
+
+    <video id="localVideo"
+           class="localVideo"
+           autoplay
+           muted
+           playsinline></video>
+
+    <div id="callInfo" class="callInfo">
+      Calling...
+    </div>
+
+    <div class="callControls">
+
+      <button class="callControl"
+              onclick="toggleCallMic()">
+        🎙️
+      </button>
+
+      <button id="callCameraBtn"
+              class="callControl"
+              onclick="toggleCallCamera()">
+        📹
+      </button>
+
+      <button class="callControl end"
+              onclick="endCall()">
+        ☎
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<!-- ================= INCOMING CALL ================= -->
+
+<div id="incomingModal" class="modalOverlay">
+
+  <div class="modal">
+
+    <div class="profileBig">
+
+      <div class="avatar" style="margin:auto">
+        📞
+      </div>
+
+      <h3 id="incomingName">
+        Incoming Call
+      </h3>
+
+      <p id="incomingType">
+        Voice Call
+      </p>
+
+    </div>
+
+    <div class="modalActions">
+
+      <button class="actionBtn green"
+              onclick="acceptIncomingCall()">
+        ✓ Accept
+      </button>
+
+      <button class="actionBtn danger"
+              onclick="declineIncomingCall()">
+        ✕ Decline
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<!-- ================= TOAST ================= -->
+
+<div id="toastBox" class="toastBox"></div>
 
 
 <script>
 
 /* =========================================================
-   SUPABASE — ALREADY CONFIGURED
-   ========================================================= */
+   SUPABASE
+========================================================= */
 
 const SUPABASE_URL =
 "https://vqpjdhbdmcxhkcpghsrp.supabase.co";
 
 const SUPABASE_KEY =
-"sb_publishable_4wZB1Cg1UJpOGpeegkDVWA_ddtCQ9FZ";
-
+"PASTE_YOUR_EXISTING_SUPABASE_PUBLISHABLE_KEY_HERE";
 
 const sb = supabase.createClient(
- SUPABASE_URL,
- SUPABASE_KEY,
- {
-  auth:{
-   persistSession:true,
-   autoRefreshToken:true,
-   detectSessionInUrl:true
-  }
- });
-
-
-/* =========================================================
-   GLOBAL
-   ========================================================= */
-
-let currentUser=null;
-let currentProfile=null;
-
-let currentRoom="public";
-let currentFriend=null;
-
-let profilesCache={};
-let friendIds=new Set();
-
-let isSignup=false;
-
-let notifications=[];
-
-let realtimeChannel=null;
-let privateCallChannel=null;
-
-let peer=null;
-let localStream=null;
-let remoteStream=null;
-
-let activeCall=null;
-let callType="voice";
-
-let callMuted=false;
-let cameraOff=false;
-
-const FIVE_MIN=5*60*1000;
-
-
-/* =========================================================
-   HELPERS
-   ========================================================= */
-
-function escapeHtml(value){
- return String(value??"")
-  .replaceAll("&","&amp;")
-  .replaceAll("<","&lt;")
-  .replaceAll(">","&gt;")
-  .replaceAll('"',"&quot;")
-  .replaceAll("'","&#039;");
-}
-
-
-function initials(profile){
-
- const name=
-  profile?.display_name||
-  profile?.username||
-  "U";
-
- return name
-  .trim()
-  .split(/\s+/)
-  .slice(0,2)
-  .map(x=>x[0])
-  .join("")
-  .toUpperCase();
-}
-
-
-function avatarHtml(profile,size="small"){
-
- const p=profile||{};
-
- if(p.avatar_url){
-
-  return `
-   <div class="avatar ${size}">
-    <img
-     src="${escapeHtml(p.avatar_url)}"
-     onerror="this.style.display='none';this.parentElement.innerHTML='${escapeHtml(initials(p))}'">
-   </div>
-  `;
-
- }
-
- return `
-  <div class="avatar ${size}">
-   ${escapeHtml(initials(p))}
-  </div>
- `;
-}
-
-
-function formatTime(date){
-
- return new Date(date).toLocaleTimeString(
-  [],
+  SUPABASE_URL,
+  SUPABASE_KEY,
   {
-   hour:"2-digit",
-   minute:"2-digit"
-  });
+    auth:{
+      persistSession:true,
+      autoRefreshToken:true,
+      detectSessionInUrl:true
+    }
+  }
+);
 
+
+/* =========================================================
+   GLOBAL STATE
+========================================================= */
+
+let currentUser = null;
+let currentProfile = null;
+
+let friends = [];
+let currentFriend = null;
+
+let publicChannel = null;
+let privateChannel = null;
+let friendsChannel = null;
+
+let voiceChannel = null;
+let voiceJoined = false;
+let voiceMuted = false;
+let voiceStream = null;
+
+let callChannel = null;
+let callPeer = null;
+let callStream = null;
+let currentCallType = null;
+let incomingCallData = null;
+
+
+/* =========================================================
+   AUTH UI
+========================================================= */
+
+function showAuth(type){
+
+  document.getElementById("loginForm").style.display =
+    type === "login" ? "block" : "none";
+
+  document.getElementById("signupForm").style.display =
+    type === "signup" ? "block" : "none";
+
+  document.getElementById("loginTab")
+    .classList.toggle("active",type==="login");
+
+  document.getElementById("signupTab")
+    .classList.toggle("active",type==="signup");
+
+  document.getElementById("authMessage").textContent="";
 }
 
 
-function roomFor(a,b){
+/* =========================================================
+   SIGNUP
+========================================================= */
 
- return "private_"+[a,b].sort().join("_");
+async function signup(){
 
-}
+  const username =
+    document.getElementById("signupUsername").value.trim();
 
+  const displayName =
+    document.getElementById("signupDisplayName").value.trim();
 
-function showToast(title,text){
+  const email =
+    document.getElementById("signupEmail").value.trim();
 
- const box=document.getElementById("toastBox");
+  const password =
+    document.getElementById("signupPassword").value;
 
- const el=document.createElement("div");
+  if(!username || !email || !password){
 
- el.className="toast";
+    setAuthMessage("Please fill all required fields.");
+    return;
+  }
 
- el.innerHTML=`
-  <div class="toast-title">${escapeHtml(title)}</div>
-  <div class="toast-text">${escapeHtml(text)}</div>
- `;
+  if(username.length < 3){
 
- box.appendChild(el);
+    setAuthMessage("Username must be at least 3 characters.");
+    return;
+  }
 
- setTimeout(()=>{
-  el.remove();
- },4500);
+  if(password.length < 6){
 
-}
+    setAuthMessage("Password must be at least 6 characters.");
+    return;
+  }
 
+  try{
 
-function closeModal(id){
+    const {data,error} =
+      await sb.auth.signUp({
+        email,
+        password,
+        options:{
+          data:{
+            username,
+            display_name:displayName || username
+          }
+        }
+      });
 
- document.getElementById(id).classList.add("hidden");
+    if(error) throw error;
+
+    if(data.user){
+
+      await sb
+        .from("profiles")
+        .update({
+          username,
+          display_name:displayName || username
+        })
+        .eq("id",data.user.id);
+
+    }
+
+    setAuthMessage(
+      "Account created. Check your email if verification is enabled.",
+      true
+    );
+
+    showAuth("login");
+
+  }catch(e){
+
+    setAuthMessage(e.message);
+
+  }
 
 }
 
 
 /* =========================================================
-   AUTH
-   ========================================================= */
+   LOGIN
+========================================================= */
 
-function toggleAuthMode(){
+async function login(){
 
- isSignup=!isSignup;
+  const email =
+    document.getElementById("loginEmail").value.trim();
 
- document.getElementById("authTitle").textContent=
-  isSignup?"Create Account":"Welcome Back";
+  const password =
+    document.getElementById("loginPassword").value;
 
- document.getElementById("authSub").textContent=
-  isSignup
-  ?"Create your permanent Shadow Chat account."
-  :"Login to continue chatting.";
+  if(!email || !password){
 
- document.getElementById("authButton").textContent=
-  isSignup?"Create Account":"Login";
-
- document.getElementById("signupFields")
-  .classList.toggle("hidden",!isSignup);
-
- document.getElementById("switchText").textContent=
-  isSignup
-  ?"Already have an account?"
-  :"Don't have an account?";
-
- document.getElementById("switchButton").textContent=
-  isSignup
-  ?"Login"
-  :"Create account";
-
-}
-
-
-async function handleAuth(){
-
- const email=
-  document.getElementById("emailInput")
-  .value.trim();
-
- const password=
-  document.getElementById("passwordInput").value;
-
-
- if(!email||!password){
-
-  showToast(
-   "Missing information",
-   "Email aur password enter karein."
-  );
-
-  return;
-
- }
-
-
- const button=
-  document.getElementById("authButton");
-
- button.disabled=true;
- button.textContent="Please wait...";
-
-
- try{
-
-  if(isSignup){
-
-   const username=
-    document.getElementById("usernameInput")
-    .value.trim()
-    .toLowerCase();
-
-   const displayName=
-    document.getElementById("displayNameInput")
-    .value.trim();
-
-
-   if(!username){
-
-    showToast(
-     "Username required",
-     "Unique username enter karein."
-    );
-
+    setAuthMessage("Enter email and password.");
     return;
+  }
 
-   }
+  try{
 
+    const {data,error} =
+      await sb.auth.signInWithPassword({
+        email,
+        password
+      });
 
-   if(!/^[a-z0-9_]{3,30}$/.test(username)){
+    if(error) throw error;
 
-    showToast(
-     "Invalid username",
-     "Username mein sirf letters, numbers aur _ use karein."
-    );
+    await startApp(data.user);
 
-    return;
+  }catch(e){
 
-   }
-
-
-   const usernameCheck=
-    await sb
-     .from("profiles")
-     .select("id")
-     .eq("username",username)
-     .maybeSingle();
-
-
-   if(usernameCheck.data){
-
-    showToast(
-     "Username already used",
-     "Koi doosra username choose karein."
-    );
-
-    return;
-
-   }
-
-
-   const {data,error}=
-    await sb.auth.signUp({
-     email,
-     password
-    });
-
-
-   if(error)throw error;
-
-
-   if(data.user){
-
-    await sb
-     .from("profiles")
-     .update({
-      username,
-      display_name:
-       displayName||username
-     })
-     .eq("id",data.user.id);
-
-   }
-
-
-   if(!data.session){
-
-    showToast(
-     "Check your email",
-     "Email verification complete karein, phir login karein."
-    );
-
-   }else{
-
-    await startApp(data.session.user);
-
-   }
-
-  }else{
-
-   const {data,error}=
-    await sb.auth.signInWithPassword({
-     email,
-     password
-    });
-
-   if(error)throw error;
-
-   await startApp(data.user);
+    setAuthMessage(e.message);
 
   }
 
- }catch(error){
-
-  console.error(error);
-
-  showToast(
-   "Authentication error",
-   error.message
-  );
-
- }finally{
-
-  button.disabled=false;
-
-  button.textContent=
-   isSignup
-   ?"Create Account"
-   :"Login";
-
- }
-
 }
 
+
+/* =========================================================
+   ANONYMOUS
+========================================================= */
 
 async function anonymousLogin(){
 
- const nickname=
-  "Anonymous_"+Math.floor(
-   1000+Math.random()*9000
-  );
+  const anon =
+    "Anonymous_" +
+    Math.floor(1000 + Math.random()*9000);
 
- currentUser={
-  id:crypto.randomUUID(),
-  is_anonymous:true,
-  email:null
- };
+  currentUser = {
+    id:"anon_"+Date.now(),
+    isAnonymous:true
+  };
 
- currentProfile={
-  id:currentUser.id,
-  username:nickname,
-  display_name:nickname,
-  avatar_url:null,
-  bio:"Anonymous user"
- };
+  currentProfile = {
+    id:currentUser.id,
+    username:anon,
+    display_name:anon,
+    avatar_url:null,
+    bio:""
+  };
 
- profilesCache[currentUser.id]=currentProfile;
-
- await enterApp();
+  await startAnonymousApp();
 
 }
 
 
-async function logout(){
+async function startAnonymousApp(){
 
- if(!currentUser)return;
+  document.getElementById("authScreen").style.display="none";
+  document.getElementById("app").style.display="flex";
 
- if(!currentUser.is_anonymous){
+  renderMyProfile();
 
-  await sb.auth.signOut();
+  await loadPublicMessages();
 
- }
+  subscribePublic();
 
- location.reload();
+  showPublicChat();
 
 }
 
 
 /* =========================================================
-   APP START
-   ========================================================= */
+   START APP
+========================================================= */
 
 async function startApp(user){
 
- currentUser=user;
+  currentUser = user;
 
- await loadMyProfile();
+  document.getElementById("authScreen").style.display="none";
+  document.getElementById("app").style.display="flex";
 
- await enterApp();
+  await loadProfile();
 
-}
+  renderMyProfile();
 
+  await loadFriends();
 
-async function loadMyProfile(){
+  await loadPublicMessages();
 
- if(currentUser.is_anonymous)return;
+  subscribePublic();
 
+  subscribeFriends();
 
- const {data,error}=
-  await sb
-   .from("profiles")
-   .select("*")
-   .eq("id",currentUser.id)
-   .maybeSingle();
+  setupCallChannel();
 
-
- if(error){
-
-  console.error(error);
-  return;
-
- }
-
-
- if(data){
-
-  currentProfile=data;
-  profilesCache[data.id]=data;
-
- }
-
-}
-
-
-async function enterApp(){
-
- document.getElementById("authPage")
-  .classList.add("hidden");
-
- document.getElementById("app")
-  .classList.remove("hidden");
-
-
- updateMyMiniProfile();
-
- await loadProfiles();
-
- await loadFriends();
-
- await loadPublicMessages();
-
- subscribeRealtime();
-
- requestNotificationPermission();
-
-}
-
-
-function updateMyMiniProfile(){
-
- const p=currentProfile||{
-  display_name:"Anonymous",
-  username:"Anonymous"
- };
-
-
- document.getElementById("miniAvatar").innerHTML=
-  p.avatar_url
-  ?`<img src="${escapeHtml(p.avatar_url)}">`
-  :escapeHtml(initials(p));
-
-
- document.getElementById("miniName").textContent=
-  p.display_name||p.username;
-
-
- document.getElementById("miniUsername").textContent=
-  "@"+(p.username||"user");
+  showPublicChat();
 
 }
 
 
 /* =========================================================
-   PROFILES
-   ========================================================= */
+   LOAD PROFILE
+========================================================= */
 
-async function loadProfiles(){
+async function loadProfile(){
 
- const {data,error}=
-  await sb
-   .from("profiles")
-   .select("*")
-   .limit(1000);
+  const {data,error} =
+    await sb
+      .from("profiles")
+      .select("*")
+      .eq("id",currentUser.id)
+      .single();
 
+  if(error){
 
- if(error){
+    console.error(error);
 
-  console.error(error);
-  return;
+    currentProfile = {
+      id:currentUser.id,
+      username:"User_"+currentUser.id.slice(0,6),
+      display_name:"User",
+      avatar_url:null,
+      bio:""
+    };
 
- }
+    return;
+  }
 
-
- profilesCache={};
-
- (data||[]).forEach(p=>{
-  profilesCache[p.id]=p;
- });
-
-
- if(currentProfile){
-  profilesCache[currentProfile.id]=currentProfile;
- }
-
-}
-
-
-async function getProfile(userId){
-
- if(profilesCache[userId]){
-  return profilesCache[userId];
- }
-
-
- const {data}=
-  await sb
-   .from("profiles")
-   .select("*")
-   .eq("id",userId)
-   .maybeSingle();
-
-
- if(data){
-  profilesCache[userId]=data;
- }
-
-
- return data;
+  currentProfile = data;
 
 }
 
 
 /* =========================================================
-   FRIENDS
-   ========================================================= */
+   RENDER AVATAR
+========================================================= */
 
-async function loadFriends(){
+function avatarHTML(profile,sizeClass=""){
 
- friendIds=new Set();
+  if(profile && profile.avatar_url){
 
- if(currentUser.is_anonymous)return;
+    return `
+      <img src="${escapeAttr(profile.avatar_url)}"
+           alt=""
+           class="${sizeClass}">
+    `;
 
+  }
 
- const {data,error}=
-  await sb
-   .from("friendships")
-   .select("*")
-   .or(
-    `user_id.eq.${currentUser.id},friend_id.eq.${currentUser.id}`
-   );
+  const name =
+    profile?.display_name ||
+    profile?.username ||
+    "U";
 
-
- if(error){
-
-  console.error(error);
-  return;
-
- }
-
-
- (data||[]).forEach(row=>{
-
-  const id=
-   row.user_id===currentUser.id
-   ?row.friend_id
-   :row.user_id;
-
-  friendIds.add(id);
-
- });
+  return escapeHTML(
+    name.charAt(0).toUpperCase()
+  );
 
 }
 
 
-async function sendFriendRequest(userId){
+function setAvatarElement(el,profile){
 
- if(!currentUser||currentUser.is_anonymous){
+  if(!el)return;
 
-  showToast(
-   "Login required",
-   "Friend system use karne ke liye account login karein."
-  );
+  if(profile?.avatar_url){
 
-  return;
+    el.innerHTML =
+      `<img src="${escapeAttr(profile.avatar_url)}" alt="">`;
 
- }
+  }else{
 
+    const name =
+      profile?.display_name ||
+      profile?.username ||
+      "U";
 
- if(userId===currentUser.id)return;
+    el.textContent =
+      name.charAt(0).toUpperCase();
 
-
- if(friendIds.has(userId)){
-
-  showToast(
-   "Already friends",
-   "Ye user already aapka friend hai."
-  );
-
-  return;
-
- }
-
-
- const {data:existing}=
-  await sb
-   .from("friend_requests")
-   .select("*")
-   .or(
-    `and(sender_id.eq.${currentUser.id},receiver_id.eq.${userId}),and(sender_id.eq.${userId},receiver_id.eq.${currentUser.id})`
-   )
-   .limit(1);
-
-
- if(existing&&existing.length){
-
-  showToast(
-   "Request exists",
-   "Friend request already pending hai."
-  );
-
-  return;
-
- }
-
-
- const {error}=
-  await sb
-   .from("friend_requests")
-   .insert({
-    sender_id:currentUser.id,
-    receiver_id:userId,
-    status:"pending"
-   });
-
-
- if(error){
-
-  showToast(
-   "Request failed",
-   error.message
-  );
-
-  return;
-
- }
-
-
- showToast(
-  "Request sent",
-  "Friend request send ho gayi."
- );
-
-}
-
-
-async function acceptFriendRequest(requestId,senderId){
-
- const {error}=
-  await sb
-   .from("friend_requests")
-   .update({
-    status:"accepted"
-   })
-   .eq("id",requestId)
-   .eq("receiver_id",currentUser.id);
-
-
- if(error){
-
-  showToast(
-   "Error",
-   error.message
-  );
-
-  return;
-
- }
-
-
- await sb
-  .from("friendships")
-  .insert([
-   {
-    user_id:currentUser.id,
-    friend_id:senderId
-   },
-   {
-    user_id:senderId,
-    friend_id:currentUser.id
-   }
-  ]);
-
-
- await loadFriends();
-
- showToast(
-  "Friend added",
-  "Ab aap private chat kar sakte hain."
- );
-
- showRightbar("friends");
-
-}
-
-
-async function rejectFriendRequest(requestId){
-
- const {error}=
-  await sb
-   .from("friend_requests")
-   .update({
-    status:"rejected"
-   })
-   .eq("id",requestId)
-   .eq("receiver_id",currentUser.id);
-
-
- if(error){
-
-  showToast(
-   "Error",
-   error.message
-  );
-
-  return;
-
- }
-
-
- showToast(
-  "Request rejected",
-  "Friend request reject ho gayi."
- );
-
- showRightbar("friends");
-
-}
-
-
-async function unfriend(userId){
-
- if(!confirm("Is user ko unfriend karna hai?"))return;
-
-
- await sb
-  .from("friendships")
-  .delete()
-  .or(
-   `and(user_id.eq.${currentUser.id},friend_id.eq.${userId}),and(user_id.eq.${userId},friend_id.eq.${currentUser.id})`
-  );
-
-
- await loadFriends();
-
- showToast(
-  "Unfriended",
-  "Friend remove ho gaya."
- );
-
- showRightbar("friends");
+  }
 
 }
 
 
 /* =========================================================
-   BLOCK
-   ========================================================= */
+   MY PROFILE
+========================================================= */
 
-async function blockUser(userId){
+function renderMyProfile(){
 
- if(!confirm("Is user ko block karna hai?"))return;
+  if(!currentProfile)return;
 
+  document.getElementById("myName").textContent =
+    currentProfile.display_name ||
+    currentProfile.username;
 
- const {error}=
-  await sb
-   .from("blocks")
-   .insert({
-    blocker_id:currentUser.id,
-    blocked_id:userId
-   });
-
-
- if(error){
-
-  showToast(
-   "Block failed",
-   error.message
+  setAvatarElement(
+    document.getElementById("myAvatar"),
+    currentProfile
   );
-
-  return;
-
- }
-
-
- showToast(
-  "Blocked",
-  "User block kar diya gaya."
- );
-
- closeModal("profileModal");
-
-}
-
-
-async function unblockUser(userId){
-
- const {error}=
-  await sb
-   .from("blocks")
-   .delete()
-   .eq("blocker_id",currentUser.id)
-   .eq("blocked_id",userId);
-
-
- if(error){
-
-  showToast(
-   "Error",
-   error.message
-  );
-
-  return;
-
- }
-
-
- showToast(
-  "Unblocked",
-  "User unblock ho gaya."
- );
 
 }
 
 
 /* =========================================================
    PUBLIC CHAT
-   ========================================================= */
+========================================================= */
 
-async function openPublicChat(){
+function showPublicChat(){
 
- currentRoom="public";
- currentFriend=null;
+  currentFriend=null;
 
+  document.getElementById("voicePanel")
+    .classList.remove("show");
 
- document.getElementById("chatHeaderName")
-  .textContent="Public Chat";
+  document.getElementById("messages")
+    .style.display="flex";
 
+  document.getElementById("composer")
+    .style.display="block";
 
- document.getElementById("chatHeaderSub")
-  .textContent="Everyone can chat here";
+  document.getElementById("headerName")
+    .textContent="Public Chat";
 
+  document.getElementById("headerStatus")
+    .textContent="Everyone";
 
- document.getElementById("chatHeaderAvatar")
-  .innerHTML="👻";
+  setAvatarElement(
+    document.getElementById("headerAvatar"),
+    {
+      display_name:"👻"
+    }
+  );
 
+  document.getElementById("headerActions")
+    .style.display="none";
 
- document.getElementById("callVoiceBtn")
-  .classList.add("hidden");
-
- document.getElementById("callVideoBtn")
-  .classList.add("hidden");
-
-
- await loadPublicMessages();
+  loadPublicMessages();
 
 }
 
+
+/* =========================================================
+   LOAD PUBLIC MESSAGES
+========================================================= */
 
 async function loadPublicMessages(){
 
- const {data,error}=
-  await sb
-   .from("messages")
-   .select("*")
-   .eq("room","public")
-   .eq("message_type","chat")
-   .order("created_at",{ascending:true})
-   .limit(500);
+  if(!currentUser)return;
 
+  const fiveMinutesAgo =
+    new Date(Date.now()-5*60*1000).toISOString();
 
- if(error){
+  const {data,error} =
+    await sb
+      .from("messages")
+      .select("*")
+      .eq("room","public")
+      .gte("created_at",fiveMinutesAgo)
+      .order("created_at",{ascending:true});
 
-  console.error(error);
-  return;
+  if(error){
 
- }
+    console.error(error);
+    return;
 
+  }
 
- const now=Date.now();
+  const messages =
+    data || [];
 
- const valid=(data||[]).filter(m=>
-  now-new Date(m.created_at).getTime()<FIVE_MIN
- );
-
-
- renderMessages(valid);
+  renderMessages(messages,false);
 
 }
 
 
-function renderMessages(messages){
+/* =========================================================
+   PUBLIC REALTIME
+========================================================= */
 
- const box=document.getElementById("messages");
+function subscribePublic(){
 
+  if(publicChannel){
 
- if(!messages.length){
+    sb.removeChannel(publicChannel);
 
-  box.innerHTML=`
-   <div class="empty">
-    <div class="empty-icon">👻</div>
-    <strong>No messages yet</strong>
-    <span style="font-size:11px;margin-top:5px">
-     Be the first one to say hello.
-    </span>
-   </div>
-  `;
+  }
 
-  return;
+  publicChannel =
+    sb.channel("shadow-public-chat")
 
- }
+    .on(
+      "postgres_changes",
+      {
+        event:"INSERT",
+        schema:"public",
+        table:"messages",
+        filter:"room=eq.public"
+      },
+      payload=>{
 
+        const row=payload.new;
 
- box.innerHTML=
-  messages.map(messageHtml).join("");
+        if(
+          new Date(row.created_at).getTime() <
+          Date.now()-5*60*1000
+        )return;
 
+        addRealtimeMessage(row);
 
- box.scrollTop=box.scrollHeight;
+      }
+    )
 
-}
-
-
-function messageHtml(m){
-
- const mine=m.sender_id===currentUser.id;
-
-
- const p=
-  profilesCache[m.sender_id]||{
-   display_name:m.nickname||"User",
-   username:m.nickname||"User"
-  };
-
-
- const name=
-  p.display_name||
-  p.username||
-  m.nickname||
-  "User";
-
-
- if(m.is_unsent&&m.room!=="public"){
-
-  return `
-   <div
-    class="msg ${mine?"mine":""}"
-    data-message-id="${m.id}">
-
-    <div>
-     ${avatarHtml(p,"small")}
-    </div>
-
-    <div class="msg-content">
-
-     <div class="unsent-message">
-      <strong>${escapeHtml(name)}</strong>
-      <span>Unsent a message</span>
-     </div>
-
-     <div class="msg-time">
-      ${formatTime(m.created_at)}
-     </div>
-
-    </div>
-
-   </div>
-  `;
-
- }
-
-
- return `
-  <div
-   class="msg ${mine?"mine":""}"
-   data-message-id="${m.id}">
-
-   <div
-    onclick="handleUserClick('${m.sender_id}')"
-    style="cursor:pointer">
-
-    ${avatarHtml(p,"small")}
-
-   </div>
-
-   <div class="msg-content">
-
-    <div
-     class="msg-name"
-     onclick="handleUserClick('${m.sender_id}')">
-
-     ${escapeHtml(name)}
-
-    </div>
-
-    <div class="bubble">
-
-     ${escapeHtml(m.message)}
-
-     ${
-      mine&&currentRoom==="private"
-      ?
-      `
-       <button
-        class="unsend-btn"
-        onclick="unsendMessage('${m.id}')">
-        Unsend
-       </button>
-      `
-      :""
-     }
-
-    </div>
-
-    <div class="msg-time">
-     ${formatTime(m.created_at)}
-    </div>
-
-   </div>
-
-  </div>
- `;
+    .subscribe();
 
 }
 
 
-function handleUserClick(userId){
+/* =========================================================
+   ADD REALTIME MESSAGE
+========================================================= */
 
- if(userId===currentUser.id){
+function addRealtimeMessage(row){
 
-  showRightbar("profile");
-  return;
+  if(currentFriend)return;
 
- }
+  const container =
+    document.getElementById("messages");
 
+  document.getElementById("welcome")
+    ?.remove();
 
- if(friendIds.has(userId)){
+  container.insertAdjacentHTML(
+    "beforeend",
+    messageHTML(row,false)
+  );
 
-  openPrivateChat(userId);
-
- }else{
-
-  openUserProfile(userId);
-
- }
+  scrollMessages();
 
 }
 
 
 /* =========================================================
    PRIVATE CHAT
-   ========================================================= */
+========================================================= */
 
 async function openPrivateChat(friendId){
 
- if(!friendIds.has(friendId)){
+  const friend =
+    friends.find(f=>f.id===friendId);
 
-  openUserProfile(friendId);
-  return;
+  if(!friend)return;
 
- }
+  currentFriend=friend;
 
+  document.getElementById("voicePanel")
+    .classList.remove("show");
 
- const p=await getProfile(friendId);
+  document.getElementById("messages")
+    .style.display="flex";
 
+  document.getElementById("composer")
+    .style.display="block";
 
- if(!p){
+  document.getElementById("headerActions")
+    .style.display="flex";
 
-  showToast(
-   "Profile unavailable",
-   "User profile load nahi ho saka."
+  document.getElementById("headerName")
+    .textContent =
+      friend.display_name ||
+      friend.username;
+
+  document.getElementById("headerStatus")
+    .textContent="@"+friend.username;
+
+  setAvatarElement(
+    document.getElementById("headerAvatar"),
+    friend
   );
 
-  return;
+  await loadPrivateMessages(friend.id);
 
- }
+  subscribePrivate(friend.id);
 
+  closeMobilePanels();
 
- currentRoom="private";
- currentFriend=p;
-
-
- document.getElementById("chatHeaderName")
-  .textContent=
-   p.display_name||
-   p.username||
-   "Friend";
+}
 
 
- document.getElementById("chatHeaderSub")
-  .textContent=
-   "@"+(p.username||"user");
+/* =========================================================
+   PRIVATE MESSAGES
+========================================================= */
 
+function privateRoomId(a,b){
 
- const headerAvatar=
-  document.getElementById("chatHeaderAvatar");
-
-
- headerAvatar.innerHTML=
-  avatarHtml(p,"medium");
-
-
- headerAvatar.style.cursor="pointer";
-
-
- headerAvatar.onclick=()=>{
-  openUserProfile(friendId);
- };
-
-
- document.getElementById("callVoiceBtn")
-  .classList.remove("hidden");
-
- document.getElementById("callVideoBtn")
-  .classList.remove("hidden");
-
-
- await loadPrivateMessages(friendId);
+  return [a,b]
+    .sort()
+    .join("_");
 
 }
 
 
 async function loadPrivateMessages(friendId){
 
- const room=
-  roomFor(
-   currentUser.id,
-   friendId
+  const room =
+    privateRoomId(
+      currentUser.id,
+      friendId
+    );
+
+  const {data,error} =
+    await sb
+      .from("messages")
+      .select("*")
+      .eq("room",room)
+      .order("created_at",{ascending:true});
+
+  if(error){
+
+    console.error(error);
+    return;
+
+  }
+
+  renderMessages(
+    data || [],
+    true
   );
-
-
- const {data,error}=
-  await sb
-   .from("messages")
-   .select("*")
-   .eq("room",room)
-   .eq("message_type","chat")
-   .order("created_at",{ascending:true})
-   .limit(500);
-
-
- if(error){
-
-  console.error(error);
-  return;
-
- }
-
-
- renderMessages(data||[]);
 
 }
 
 
 /* =========================================================
-   SEND
-   ========================================================= */
+   PRIVATE REALTIME
+========================================================= */
 
-function messageKey(event){
+function subscribePrivate(friendId){
 
- if(
-  event.key==="Enter" &&
-  !event.shiftKey
- ){
+  if(privateChannel){
 
-  event.preventDefault();
-  sendMessage();
+    sb.removeChannel(privateChannel);
 
- }
+  }
+
+  const room =
+    privateRoomId(
+      currentUser.id,
+      friendId
+    );
+
+  privateChannel =
+    sb.channel(
+      "shadow-private-"+room
+    )
+
+    .on(
+      "postgres_changes",
+      {
+        event:"INSERT",
+        schema:"public",
+        table:"messages",
+        filter:"room=eq."+room
+      },
+      payload=>{
+
+        if(!currentFriend)return;
+
+        addPrivateRealtime(payload.new);
+
+      }
+    )
+
+    .on(
+      "postgres_changes",
+      {
+        event:"UPDATE",
+        schema:"public",
+        table:"messages",
+        filter:"room=eq."+room
+      },
+      payload=>{
+
+        updateMessageElement(payload.new);
+
+      }
+    )
+
+    .subscribe();
 
 }
 
 
+function addPrivateRealtime(row){
+
+  const container =
+    document.getElementById("messages");
+
+  document.getElementById("welcome")
+    ?.remove();
+
+  const exists =
+    document.querySelector(
+      `[data-message-id="${row.id}"]`
+    );
+
+  if(exists)return;
+
+  container.insertAdjacentHTML(
+    "beforeend",
+    messageHTML(row,true)
+  );
+
+  scrollMessages();
+
+  if(
+    row.sender_id !== currentUser.id
+  ){
+
+    notifyPrivateMessage(row);
+
+  }
+
+}
+
+
+/* =========================================================
+   SEND MESSAGE
+========================================================= */
+
 async function sendMessage(){
 
- if(!currentUser)return;
+  const input =
+    document.getElementById("messageInput");
+
+  const text =
+    input.value.trim();
+
+  if(!text)return;
+
+  if(currentUser.isAnonymous){
+
+    await sendAnonymousMessage(text);
+
+    input.value="";
+    return;
+
+  }
+
+  const isPrivate =
+    !!currentFriend;
+
+  const room =
+    isPrivate
+      ? privateRoomId(
+          currentUser.id,
+          currentFriend.id
+        )
+      : "public";
+
+  const receiver =
+    isPrivate
+      ? currentFriend.id
+      : null;
+
+  const {data,error} =
+    await sb
+      .from("messages")
+      .insert({
+        room,
+        sender_id:currentUser.id,
+        receiver_id:receiver,
+        nickname:
+          currentProfile.display_name ||
+          currentProfile.username,
+        message:text,
+        message_type:"chat",
+        is_unsent:false
+      })
+      .select()
+      .single();
+
+  if(error){
+
+    console.error(error);
+
+    showToast(
+      "Message failed",
+      error.message
+    );
+
+    return;
+
+  }
+
+  input.value="";
+
+  if(isPrivate){
+
+    if(!document.querySelector(
+      `[data-message-id="${data.id}"]`
+    )){
+
+      document
+        .getElementById("messages")
+        .insertAdjacentHTML(
+          "beforeend",
+          messageHTML(data,true)
+        );
+
+    }
+
+  }else{
+
+    if(!document.querySelector(
+      `[data-message-id="${data.id}"]`
+    )){
+
+      document
+        .getElementById("messages")
+        .insertAdjacentHTML(
+          "beforeend",
+          messageHTML(data,false)
+        );
+
+    }
+
+  }
+
+  scrollMessages();
+
+}
 
 
- const input=
-  document.getElementById("messageInput");
+/* =========================================================
+   ANONYMOUS MESSAGE
+========================================================= */
+
+async function sendAnonymousMessage(text){
+
+  const room =
+    currentFriend
+      ? privateRoomId(
+          currentUser.id,
+          currentFriend.id
+        )
+      : "public";
+
+  const {data,error} =
+    await sb
+      .from("messages")
+      .insert({
+        room,
+        sender_id:currentUser.id,
+        receiver_id:
+          currentFriend?.id || null,
+        nickname:currentProfile.display_name,
+        message:text,
+        message_type:"chat",
+        is_unsent:false
+      })
+      .select()
+      .single();
+
+  if(error){
+
+    showToast("Message failed",error.message);
+    return;
+
+  }
+
+  document
+    .getElementById("messages")
+    .insertAdjacentHTML(
+      "beforeend",
+      messageHTML(data,!!currentFriend)
+    );
+
+  scrollMessages();
+
+}
 
 
- const text=input.value.trim();
+/* =========================================================
+   MESSAGE HTML
+========================================================= */
+
+function messageHTML(row,isPrivate){
+
+  const mine =
+    row.sender_id === currentUser.id;
+
+  const unsent =
+    row.is_unsent === true;
+
+  const senderProfile =
+    mine
+      ? currentProfile
+      : findProfileForMessage(row.sender_id);
+
+  const senderName =
+    row.nickname ||
+    senderProfile?.display_name ||
+    senderProfile?.username ||
+    "User";
+
+  const time =
+    formatTime(row.created_at);
+
+  let body;
+
+  if(unsent){
+
+    body = `
+      <div class="bubble unsent">
+        ${escapeHTML(senderName)} — Unsent a message
+      </div>
+    `;
+
+  }else{
+
+    body = `
+      <div class="bubble">
+        ${escapeHTML(row.message)}
+      </div>
+    `;
+
+  }
+
+  return `
+    <div class="messageRow ${mine?"mine":""}"
+         data-message-id="${row.id}">
+
+      <div class="msgAvatar"
+           onclick="handleUserClick('${escapeAttr(row.sender_id)}')">
+
+        ${avatarHTML(senderProfile)}
+
+      </div>
+
+      <div class="bubbleWrap">
+
+        <div class="senderName">
+          ${escapeHTML(senderName)}
+        </div>
+
+        ${body}
+
+        <div class="msgTime">
+          ${time}
+        </div>
+
+        ${
+          isPrivate && mine && !unsent
+          ? `
+            <button class="unsendBtn"
+                    onclick="unsendMessage(${row.id})">
+              Unsend
+            </button>
+          `
+          :""
+        }
+
+      </div>
+
+    </div>
+  `;
+
+}
 
 
- if(!text)return;
+/* =========================================================
+   FIND PROFILE
+========================================================= */
 
+function findProfileForMessage(id){
 
- let room="public";
- let receiver=null;
+  if(id===currentUser?.id)
+    return currentProfile;
 
+  const friend =
+    friends.find(f=>f.id===id);
 
- if(currentRoom==="private"){
+  if(friend)return friend;
 
-  if(!currentFriend)return;
-
-
-  room=
-   roomFor(
-    currentUser.id,
-    currentFriend.id
-   );
-
-  receiver=currentFriend.id;
-
- }
-
-
- const {error}=
-  await sb
-   .from("messages")
-   .insert({
-    room,
-    sender_id:currentUser.id,
-    receiver_id:receiver,
-    nickname:
-     currentProfile?.username||
-     "Anonymous",
-    message:text,
-    message_type:"chat",
-    is_unsent:false
-   });
-
-
- if(error){
-
-  console.error(error);
-
-  showToast(
-   "Message failed",
-   error.message
-  );
-
-  return;
-
- }
-
-
- input.value="";
-
-
- if(currentRoom==="public"){
-
-  await loadPublicMessages();
-
- }else if(currentFriend){
-
-  await loadPrivateMessages(
-   currentFriend.id
-  );
-
- }
+  return {
+    id,
+    username:"User",
+    display_name:"User",
+    avatar_url:null
+  };
 
 }
 
 
 /* =========================================================
    UNSEND
-   ========================================================= */
+========================================================= */
 
-async function unsendMessage(messageId){
+async function unsendMessage(id){
 
- if(!currentUser)return;
+  if(!currentUser)return;
 
+  const {error} =
+    await sb
+      .from("messages")
+      .update({
+        is_unsent:true
+      })
+      .eq("id",id)
+      .eq("sender_id",currentUser.id);
 
- if(!confirm("Is message ko unsend karna hai?"))return;
+  if(error){
 
+    showToast(
+      "Cannot unsend",
+      error.message
+    );
 
- const {error}=
-  await sb
-   .from("messages")
-   .update({
-    is_unsent:true,
-    message:""
-   })
-   .eq("id",messageId)
-   .eq("sender_id",currentUser.id);
+    return;
 
+  }
 
- if(error){
+  const el =
+    document.querySelector(
+      `[data-message-id="${id}"]`
+    );
 
-  console.error(error);
+  if(el){
 
-  showToast(
-   "Unsend failed",
-   error.message
-  );
+    const bubble =
+      el.querySelector(".bubble");
 
-  return;
+    if(bubble){
 
- }
+      bubble.classList.add("unsent");
 
-
- const el=
-  document.querySelector(
-   `[data-message-id="${messageId}"]`
-  );
-
-
- if(el){
-
-  const p=
-   profilesCache[currentUser.id]||
-   currentProfile;
-
-
-  const name=
-   p?.display_name||
-   p?.username||
-   "User";
-
-
-  el.outerHTML=`
-
-   <div
-    class="msg mine"
-    data-message-id="${messageId}">
-
-    <div>
-     ${avatarHtml(p,"small")}
-    </div>
-
-    <div class="msg-content">
-
-     <div class="unsent-message">
-      <strong>${escapeHtml(name)}</strong>
-      <span>Unsent a message</span>
-     </div>
-
-     <div class="msg-time">
-      Just now
-     </div>
-
-    </div>
-
-   </div>
-  `;
-
- }
-
-}
-
-
-/* =========================================================
-   REALTIME
-   ========================================================= */
-
-function subscribeRealtime(){
-
- if(realtimeChannel){
-
-  sb.removeChannel(
-   realtimeChannel
-  );
-
- }
-
-
- realtimeChannel=
-  sb
-   .channel("shadow-chat-realtime")
-
-
-   .on(
-    "postgres_changes",
-    {
-     event:"INSERT",
-     schema:"public",
-     table:"messages"
-    },
-    async payload=>{
-
-     await handleRealtimeMessage(
-      payload.new
-     );
+      bubble.textContent =
+        `${currentProfile.display_name ||
+          currentProfile.username} — Unsent a message`;
 
     }
-   )
+
+    el.querySelector(".unsendBtn")
+      ?.remove();
+
+  }
+
+}
 
 
-   .on(
-    "postgres_changes",
-    {
-     event:"UPDATE",
-     schema:"public",
-     table:"messages"
-    },
-    async payload=>{
+/* =========================================================
+   UPDATE MESSAGE
+========================================================= */
 
-     const m=payload.new;
+function updateMessageElement(row){
 
+  if(!row.is_unsent)return;
 
-     if(m.message_type!=="chat")return;
+  const el =
+    document.querySelector(
+      `[data-message-id="${row.id}"]`
+    );
 
+  if(!el)return;
 
-     if(m.room==="public"){
+  const bubble =
+    el.querySelector(".bubble");
 
-      if(currentRoom==="public"){
+  if(bubble){
 
-       await loadPublicMessages();
+    bubble.classList.add("unsent");
 
-      }
+    bubble.textContent =
+      `${row.nickname || "User"} — Unsent a message`;
 
-      return;
+  }
 
-     }
+  el.querySelector(".unsendBtn")
+    ?.remove();
 
-
-     if(
-      currentRoom==="private" &&
-      currentFriend &&
-      m.room===
-       roomFor(
-        currentUser.id,
-        currentFriend.id
-       )
-     ){
-
-      const el=
-       document.querySelector(
-        `[data-message-id="${m.id}"]`
-       );
+}
 
 
-      if(el){
+/* =========================================================
+   FRIENDS
+========================================================= */
 
-       el.outerHTML=
-        messageHtml(m);
+async function loadFriends(){
 
-      }else{
+  if(!currentUser || currentUser.isAnonymous){
+    friends=[];
+    renderFriends();
+    return;
+  }
 
-       await loadPrivateMessages(
-        currentFriend.id
-       );
+  const {data,error} =
+    await sb
+      .from("friendships")
+      .select("*")
+      .or(
+        `user_id.eq.${currentUser.id},friend_id.eq.${currentUser.id}`
+      );
 
-      }
+  if(error){
 
-     }
+    console.error(error);
+    friends=[];
+    renderFriends();
+    return;
+
+  }
+
+  const ids =
+    (data || [])
+      .map(x =>
+        x.user_id===currentUser.id
+          ? x.friend_id
+          : x.user_id
+      );
+
+  if(!ids.length){
+
+    friends=[];
+    renderFriends();
+    return;
+
+  }
+
+  const {data:profiles,error:profileError} =
+    await sb
+      .from("profiles")
+      .select("*")
+      .in("id",ids);
+
+  if(profileError){
+
+    console.error(profileError);
+    return;
+
+  }
+
+  friends=profiles || [];
+
+  renderFriends();
+
+}
+
+
+/* =========================================================
+   RENDER FRIENDS
+========================================================= */
+
+function renderFriends(){
+
+  const list =
+    document.getElementById("friendsList");
+
+  const mobile =
+    document.getElementById("mobileFriendsList");
+
+  if(!friends.length){
+
+    list.innerHTML =
+      `<div class="emptyFriends">
+        No friends yet
+      </div>`;
+
+    if(mobile){
+
+      mobile.innerHTML =
+        `<div class="emptyFriends">
+          No friends yet
+        </div>`;
 
     }
-   )
 
-
-   .subscribe();
-
-}
-
-
-async function handleRealtimeMessage(m){
-
- if(!m||m.message_type!=="chat")return;
-
-
- const p=
-  await getProfile(m.sender_id);
-
-
- if(p){
-
-  profilesCache[m.sender_id]=p;
-
- }
-
-
- if(m.room==="public"){
-
-  if(currentRoom==="public"){
-
-   const age=
-    Date.now()-
-    new Date(m.created_at).getTime();
-
-
-   if(age<FIVE_MIN){
-
-    await loadPublicMessages();
-
-   }
+    return;
 
   }
 
-  return;
+  list.innerHTML =
+    friends.map(f=>`
 
- }
+      <button class="friendItem"
+              onclick="openPrivateChatByFriend('${f.id}')">
 
-
- const isForMe=
-  m.receiver_id===currentUser.id;
-
-
- if(isForMe){
-
-  const sameChat=
-   currentRoom==="private" &&
-   currentFriend &&
-   m.room===
-    roomFor(
-     currentUser.id,
-     currentFriend.id
-    );
-
-
-  if(!sameChat){
-
-   addNotification(m);
-
-  }
-
-
-  if(sameChat&&currentFriend){
-
-   await loadPrivateMessages(
-    currentFriend.id
-   );
-
-  }
-
- }
-
-}
-
-
-/* =========================================================
-   NOTIFICATIONS
-   ========================================================= */
-
-function requestNotificationPermission(){
-
- if(
-  "Notification" in window &&
-  Notification.permission==="default"
- ){
-
-  Notification.requestPermission();
-
- }
-
-}
-
-
-function addNotification(m){
-
- notifications.unshift(m);
-
-
- if(notifications.length>50){
-  notifications.pop();
- }
-
-
- updateNotificationBadge();
-
-
- const p=
-  profilesCache[m.sender_id]||{
-   display_name:m.nickname||"User"
-  };
-
-
- showToast(
-  p.display_name||"New message",
-  m.message||"New private message"
- );
-
-
- if(
-  document.hidden &&
-  "Notification" in window &&
-  Notification.permission==="granted"
- ){
-
-  new Notification(
-   p.display_name||"New message",
-   {
-    body:m.message||"New private message"
-   }
-  );
-
- }
-
-}
-
-
-function updateNotificationBadge(){
-
- const badge=
-  document.getElementById(
-   "notificationBadge"
-  );
-
-
- if(!notifications.length){
-
-  badge.classList.add("hidden");
-  return;
-
- }
-
-
- badge.classList.remove("hidden");
-
-
- badge.textContent=
-  notifications.length>99
-  ?"99+"
-  :notifications.length;
-
-}
-
-
-async function openNotifications(){
-
- const box=
-  document.getElementById(
-   "notificationContent"
-  );
-
-
- document.getElementById(
-  "notificationModal"
- ).classList.remove("hidden");
-
-
- if(!notifications.length){
-
-  box.innerHTML=`
-   <div class="empty" style="height:180px">
-    <div class="empty-icon">🔔</div>
-    <strong>No new notifications</strong>
-   </div>
-  `;
-
-  return;
-
- }
-
-
- box.innerHTML=`
-  <div class="notification-list">
-
-   ${
-    notifications.map(n=>{
-
-     const p=
-      profilesCache[n.sender_id]||{
-       display_name:n.nickname||"User"
-      };
-
-
-     return `
-      <div
-       class="notification-item"
-       onclick="notificationChat('${n.sender_id}')">
-
-       ${avatarHtml(p,"small")}
-
-       <div>
-
-        <div style="font-size:11px;font-weight:800">
-         ${escapeHtml(
-          p.display_name||
-          p.username||
-          "User"
-         )}
+        <div class="avatar">
+          ${avatarHTML(f)}
         </div>
 
-        <div style="font-size:11px;color:#78909e;margin-top:3px">
-         ${escapeHtml(n.message)}
+        <div class="friendText">
+
+          <b>
+            ${escapeHTML(
+              f.display_name || f.username
+            )}
+          </b>
+
+          <span>
+            @${escapeHTML(f.username)}
+          </span>
+
         </div>
 
-       </div>
+      </button>
 
-      </div>
-     `;
+    `).join("");
 
-    }).join("")
-   }
 
-  </div>
- `;
+  if(mobile){
 
-}
+    mobile.innerHTML =
+      friends.map(f=>`
 
+        <div class="mobileFriend"
+             onclick="openPrivateChatByFriend('${f.id}')">
 
-async function notificationChat(userId){
+          <div class="avatar">
+            ${avatarHTML(f)}
+          </div>
 
- closeModal("notificationModal");
+          <div class="mobileFriendText">
 
+            <b>
+              ${escapeHTML(
+                f.display_name || f.username
+              )}
+            </b>
 
- notifications=
-  notifications.filter(
-   n=>n.sender_id!==userId
-  );
+            <span>
+              @${escapeHTML(f.username)}
+            </span>
 
+          </div>
 
- updateNotificationBadge();
+        </div>
 
-
- if(friendIds.has(userId)){
-
-  await openPrivateChat(userId);
-
- }else{
-
-  openUserProfile(userId);
-
- }
-
-}
-
-
-/* =========================================================
-   RIGHT BAR
-   ========================================================= */
-
-async function showRightbar(type){
-
- const bar=
-  document.getElementById("rightbar");
-
-
- bar.classList.add("mobile-open");
-
-
- const content=
-  document.getElementById(
-   "rightbarContent"
-  );
-
-
- if(type==="profile"){
-
-  renderMyProfilePanel(content);
-
- }
-
-
- if(type==="friends"){
-
-  await renderFriendsPanel(content);
-
- }
-
-
- if(type==="search"){
-
-  renderSearchPanel(content);
-
- }
-
-}
-
-
-function renderMyProfilePanel(content){
-
- const p=
-  currentProfile||{
-   display_name:"Anonymous",
-   username:"Anonymous"
-  };
-
-
- content.innerHTML=`
-
-  <div class="section-title">
-   My Profile
-  </div>
-
-  <div
-   style="
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    padding:15px 0 20px;
-   ">
-
-   ${avatarHtml(p,"large")}
-
-   <div style="font-weight:800;font-size:17px;margin-top:10px">
-    ${escapeHtml(p.display_name||p.username)}
-   </div>
-
-   <div style="font-size:11px;color:#168ce8;margin-top:3px">
-    @${escapeHtml(p.username||"user")}
-   </div>
-
-   <div style="font-size:11px;color:#8097a5;text-align:center;margin-top:10px">
-    ${escapeHtml(p.bio||"No bio added yet.")}
-   </div>
-
-  </div>
-
-  <button
-   class="action"
-   style="width:100%;margin-bottom:8px"
-   onclick="editMyProfile()">
-   ✏️ Edit Profile
-  </button>
-
-  <button
-   class="action danger"
-   style="width:100%"
-   onclick="logout()">
-   🚪 Logout
-  </button>
-
- `;
-
-}
-
-
-async function editMyProfile(){
-
- const p=currentProfile||{};
-
-
- const display=
-  prompt(
-   "Display name:",
-   p.display_name||""
-  );
-
-
- if(display===null)return;
-
-
- const bio=
-  prompt(
-   "Bio:",
-   p.bio||""
-  );
-
-
- if(bio===null)return;
-
-
- const {data,error}=
-  await sb
-   .from("profiles")
-   .update({
-    display_name:display.trim(),
-    bio:bio.trim()
-   })
-   .eq("id",currentUser.id)
-   .select()
-   .single();
-
-
- if(error){
-
-  showToast(
-   "Update failed",
-   error.message
-  );
-
-  return;
-
- }
-
-
- currentProfile=data;
- profilesCache[data.id]=data;
-
- updateMyMiniProfile();
-
-
- renderMyProfilePanel(
-  document.getElementById(
-   "rightbarContent"
-  )
- );
-
-
- showToast(
-  "Profile updated",
-  "Your profile has been updated."
- );
-
-}
-
-
-async function renderFriendsPanel(content){
-
- if(currentUser.is_anonymous){
-
-  content.innerHTML=`
-   <div class="section-title">Friends</div>
-
-   <div class="empty" style="height:220px">
-    <div class="empty-icon">🔐</div>
-    <strong>Login required</strong>
-    <span style="font-size:11px;margin-top:5px">
-     Friends use karne ke liye account banayein.
-    </span>
-   </div>
-  `;
-
-  return;
-
- }
-
-
- await loadFriends();
-
-
- const ids=[...friendIds];
-
-
- const requests=
-  await sb
-   .from("friend_requests")
-   .select("*")
-   .eq("receiver_id",currentUser.id)
-   .eq("status","pending");
-
-
- let html=`
-  <div class="section-title">
-   Friends
-  </div>
- `;
-
-
- if(requests.data?.length){
-
-  html+=`
-   <div class="section-title">
-    Friend Requests
-   </div>
-  `;
-
-
-  for(const r of requests.data){
-
-   const p=await getProfile(r.sender_id);
-
-
-   html+=`
-    <div class="user-row">
-
-     ${avatarHtml(p,"small")}
-
-     <div class="user-info">
-
-      <div class="user-name">
-       ${escapeHtml(
-        p?.display_name||
-        p?.username||
-        "User"
-       )}
-      </div>
-
-      <div class="user-handle">
-       @${escapeHtml(
-        p?.username||"user"
-       )}
-      </div>
-
-     </div>
-
-     <button
-      class="action"
-      style="padding:7px"
-      onclick="acceptFriendRequest('${r.id}','${r.sender_id}')">
-      ✓
-     </button>
-
-     <button
-      class="action danger"
-      style="padding:7px"
-      onclick="rejectFriendRequest('${r.id}')">
-      ✕
-     </button>
-
-    </div>
-   `;
+      `).join("");
 
   }
 
- }
-
-
- html+=`
-  <div class="section-title" style="margin-top:18px">
-   Your Friends
-  </div>
- `;
-
-
- if(!ids.length){
-
-  html+=`
-   <div style="padding:10px;color:#91a6b4;font-size:11px">
-    Abhi koi friend nahi hai.
-   </div>
-  `;
-
- }
-
-
- for(const id of ids){
-
-  const p=await getProfile(id);
-
-
-  html+=`
-   <div
-    class="user-row"
-    onclick="openPrivateChat('${id}')">
-
-    ${avatarHtml(p,"small")}
-
-    <div class="user-info">
-
-     <div class="user-name">
-      ${escapeHtml(
-       p?.display_name||
-       p?.username||
-       "User"
-      )}
-     </div>
-
-     <div class="user-handle">
-      @${escapeHtml(
-       p?.username||"user"
-      )}
-     </div>
-
-    </div>
-
-   </div>
-  `;
-
- }
-
-
- content.innerHTML=html;
-
 }
 
 
-function renderSearchPanel(content){
+function openPrivateChatByFriend(id){
 
- content.innerHTML=`
+  const friend =
+    friends.find(f=>f.id===id);
 
-  <div class="section-title">
-   Find Users
-  </div>
+  if(!friend)return;
 
-  <div class="search-box">
-
-   <span>🔎</span>
-
-   <input
-    id="userSearchInput"
-    placeholder="Search username..."
-    oninput="searchUsers()">
-
-  </div>
-
-  <div id="searchResults" class="list">
-
-   <div style="padding:10px;color:#91a6b4;font-size:11px">
-    Username search karein.
-   </div>
-
-  </div>
-
- `;
-
-}
-
-
-async function searchUsers(){
-
- const input=
-  document.getElementById(
-   "userSearchInput"
-  );
-
-
- const q=
-  input.value.trim().toLowerCase();
-
-
- const box=
-  document.getElementById(
-   "searchResults"
-  );
-
-
- if(!q){
-
-  box.innerHTML=`
-   <div style="padding:10px;color:#91a6b4;font-size:11px">
-    Username search karein.
-   </div>
-  `;
-
-  return;
-
- }
-
-
- const {data,error}=
-  await sb
-   .from("profiles")
-   .select("*")
-   .ilike("username",`%${q}%`)
-   .neq("id",currentUser.id)
-   .limit(30);
-
-
- if(error){
-
-  box.innerHTML=`
-   <div style="padding:10px;color:#ef5b68;font-size:11px">
-    Search failed.
-   </div>
-  `;
-
-  return;
-
- }
-
-
- if(!data?.length){
-
-  box.innerHTML=`
-   <div style="padding:10px;color:#91a6b4;font-size:11px">
-    No users found.
-   </div>
-  `;
-
-  return;
-
- }
-
-
- data.forEach(p=>{
-  profilesCache[p.id]=p;
- });
-
-
- box.innerHTML=
-  data.map(p=>{
-
-   const friend=friendIds.has(p.id);
-
-
-   return `
-    <div
-     class="user-row"
-     onclick="openUserProfile('${p.id}')">
-
-     ${avatarHtml(p,"small")}
-
-     <div class="user-info">
-
-      <div class="user-name">
-       ${escapeHtml(
-        p.display_name||
-        p.username
-       )}
-      </div>
-
-      <div class="user-handle">
-       @${escapeHtml(p.username)}
-      </div>
-
-     </div>
-
-     <span style="font-size:11px;color:#168ce8">
-      ${friend?"👥":"＋"}
-     </span>
-
-    </div>
-   `;
-
-  }).join("");
+  openPrivateChat(id);
 
 }
 
 
 /* =========================================================
-   USER PROFILE
-   ========================================================= */
+   PROFILE CLICK
+========================================================= */
 
-async function openUserProfile(userId){
+function handleUserClick(id){
 
- if(userId===currentUser.id){
+  if(id===currentUser?.id){
 
-  showRightbar("profile");
-  return;
+    openMyProfile();
+    return;
 
- }
+  }
 
+  const friend =
+    friends.find(f=>f.id===id);
 
- const p=await getProfile(userId);
+  if(friend){
 
-
- if(!p){
-
-  showToast(
-   "Profile unavailable",
-   "Profile load nahi ho saka."
-  );
-
-  return;
-
- }
-
-
- const friend=friendIds.has(userId);
-
-
- const modal=
-  document.getElementById(
-   "profileModal"
-  );
-
-
- const box=
-  document.getElementById(
-   "profileModalContent"
-  );
-
-
- modal.classList.remove("hidden");
-
-
- let buttons="";
-
-
- if(friend){
-
-  buttons=`
-
-   <button
-    class="action"
-    onclick="openPrivateChat('${userId}');closeModal('profileModal')">
-    💬 Chat
-   </button>
-
-   <button
-    class="action"
-    onclick="startPrivateCall('${userId}','voice')">
-    📞 Voice
-   </button>
-
-   <button
-    class="action"
-    onclick="startPrivateCall('${userId}','video')">
-    📹 Video
-   </button>
-
-   <button
-    class="action"
-    onclick="unfriend('${userId}');closeModal('profileModal')">
-    👥 Unfriend
-   </button>
-
-   <button
-    class="action danger"
-    onclick="blockUser('${userId}')">
-    🚫 Block
-   </button>
-
-  `;
-
- }else{
-
-  buttons=`
-
-   <button
-    class="action"
-    onclick="sendFriendRequest('${userId}');closeModal('profileModal')">
-    ➕ Add Friend
-   </button>
-
-   <button
-    class="action danger"
-    onclick="blockUser('${userId}')">
-    🚫 Block
-   </button>
-
-  `;
-
- }
-
-
- box.innerHTML=`
-
-  <div class="profile-center">
-
-   ${avatarHtml(p,"large")}
-
-   <div class="profile-display">
-    ${escapeHtml(
-     p.display_name||
-     p.username
-    )}
-   </div>
-
-   <div class="profile-username">
-    @${escapeHtml(p.username)}
-   </div>
-
-   <div class="profile-bio">
-    ${escapeHtml(
-     p.bio||
-     "No bio added."
-    )}
-   </div>
-
-  </div>
-
-  <div class="action-grid">
-   ${buttons}
-  </div>
-
- `;
-
-}
-
-
-/* =========================================================
-   VOICE / VIDEO CALL
-   ========================================================= */
-
-async function startCurrentCall(type){
-
- if(
-  currentRoom!=="private"||
-  !currentFriend
- ){
-
-  return;
-
- }
-
-
- await startPrivateCall(
-  currentFriend.id,
-  type
- );
-
-}
-
-
-async function startPrivateCall(remoteId,type){
-
- if(!friendIds.has(remoteId)){
-
-  showToast(
-   "Friends only",
-   "Private calls sirf friends ke liye hain."
-  );
-
-  return;
-
- }
-
-
- callType=type;
- activeCall=remoteId;
-
-
- try{
-
-  localStream=
-   await navigator.mediaDevices.getUserMedia({
-    audio:true,
-    video:type==="video"
-   });
-
-
-  peer=
-   new RTCPeerConnection({
-    iceServers:[
-     {
-      urls:"stun:stun.l.google.com:19302"
-     }
-    ]
-   });
-
-
-  localStream
-   .getTracks()
-   .forEach(track=>{
-    peer.addTrack(
-     track,
-     localStream
-    );
-   });
-
-
-  remoteStream=
-   new MediaStream();
-
-
-  document.getElementById(
-   "remoteVideo"
-  ).srcObject=remoteStream;
-
-
-  peer.ontrack=event=>{
-
-   event.streams[0]
-    .getTracks()
-    .forEach(track=>{
-     remoteStream.addTrack(track);
-    });
-
-  };
-
-
-  peer.onicecandidate=event=>{
-
-   if(event.candidate){
-
-    sendCallSignal(
-     remoteId,
-     {
-      type:"ice",
-      candidate:event.candidate
-     }
-    );
-
-   }
-
-  };
-
-
-  document.getElementById(
-   "localVideo"
-  ).srcObject=localStream;
-
-
-  const p=
-   await getProfile(remoteId);
-
-
-  document.getElementById(
-   "callName"
-  ).textContent=
-   p?.display_name||
-   p?.username||
-   "Friend";
-
-
-  document.getElementById(
-   "callModal"
-  ).classList.remove("hidden");
-
-
-  if(type==="voice"){
-
-   document.getElementById(
-    "remoteVideo"
-   ).style.display="none";
-
-   document.getElementById(
-    "localVideo"
-   ).style.display="none";
+    openPrivateChat(id);
 
   }else{
 
-   document.getElementById(
-    "remoteVideo"
-   ).style.display="block";
-
-   document.getElementById(
-    "localVideo"
-   ).style.display="block";
+    openUserProfile(id);
 
   }
-
-
-  await createCallChannel();
-
-
-  const offer=
-   await peer.createOffer();
-
-
-  await peer.setLocalDescription(
-   offer
-  );
-
-
-  await sendCallSignal(
-   remoteId,
-   {
-    type:"offer",
-    sdp:offer,
-    callType:type
-   }
-  );
-
-
- }catch(error){
-
-  console.error(error);
-
-  showToast(
-   "Call error",
-   error.message||
-   "Camera/microphone permission required."
-  );
-
-  cleanupCall();
-
- }
 
 }
 
 
-async function createCallChannel(){
+async function openUserProfile(id){
 
- if(privateCallChannel){
+  if(!id)return;
 
-  await sb.removeChannel(
-   privateCallChannel
-  );
+  let profile =
+    friends.find(f=>f.id===id);
 
- }
+  if(!profile){
 
+    const {data,error} =
+      await sb
+        .from("profiles")
+        .select("*")
+        .eq("id",id)
+        .single();
 
- privateCallChannel=
-  sb
-   .channel(
-    "private-call-"+currentUser.id
-   )
+    if(error || !data){
 
-
-   .on(
-    "broadcast",
-    {
-     event:"call"
-    },
-    async payload=>{
-
-     const data=
-      payload.payload;
-
-
-     if(
-      !data||
-      data.to!==currentUser.id
-     ){
+      showToast(
+        "Profile unavailable",
+        "Could not load this profile."
+      );
 
       return;
 
-     }
+    }
+
+    profile=data;
+
+  }
+
+  document.getElementById("friendName")
+    .textContent =
+      profile.display_name ||
+      profile.username;
+
+  document.getElementById("friendUsername")
+    .textContent =
+      "@"+profile.username;
+
+  setAvatarElement(
+    document.getElementById("friendAvatar"),
+    profile
+  );
+
+  document.getElementById("friendBio")
+    .textContent =
+      profile.bio ||
+      "No bio added.";
+
+  const isFriend =
+    friends.some(f=>f.id===id);
+
+  const actions =
+    document.getElementById("friendActions");
+
+  if(isFriend){
+
+    actions.innerHTML = `
+
+      <button class="actionBtn"
+              onclick="openPrivateChat('${id}');closeModal('friendModal')">
+        💬 Chat
+      </button>
+
+      <button class="actionBtn green"
+              onclick="startCallFromProfile('audio','${id}')">
+        📞 Voice
+      </button>
+
+      <button class="actionBtn green"
+              onclick="startCallFromProfile('video','${id}')">
+        📹 Video
+      </button>
+
+      <button class="actionBtn danger"
+              onclick="unfriendUser('${id}')">
+        💔 Unfriend
+      </button>
+
+      <button class="actionBtn danger"
+              onclick="blockUser('${id}')">
+        🚫 Block
+      </button>
+
+    `;
+
+  }else{
+
+    actions.innerHTML = `
+
+      <button class="actionBtn"
+              onclick="sendFriendRequest('${id}')">
+        🤝 Add Friend
+      </button>
+
+      <button class="actionBtn danger"
+              onclick="blockUser('${id}')">
+        🚫 Block
+      </button>
+
+    `;
+
+  }
+
+  document
+    .getElementById("friendModal")
+    .classList.add("show");
+
+}
 
 
-     await handleCallSignal(
-      data
-     );
+/* =========================================================
+   FRIEND REQUEST
+========================================================= */
+
+async function sendFriendRequest(receiverId){
+
+  if(currentUser.isAnonymous){
+
+    showToast(
+      "Login required",
+      "Create an account to add friends."
+    );
+
+    return;
+
+  }
+
+  const {error} =
+    await sb
+      .from("friend_requests")
+      .insert({
+        sender_id:currentUser.id,
+        receiver_id:receiverId,
+        status:"pending"
+      });
+
+  if(error){
+
+    if(
+      error.code==="23505"
+    ){
+
+      showToast(
+        "Request exists",
+        "Friend request already sent."
+      );
+
+    }else{
+
+      showToast(
+        "Request failed",
+        error.message
+      );
 
     }
-   )
 
+    return;
 
-   .subscribe();
-
-}
-
-
-async function sendCallSignal(to,payload){
-
- if(!privateCallChannel)return;
-
-
- await privateCallChannel.send({
-  type:"broadcast",
-  event:"call",
-  payload:{
-   ...payload,
-   from:currentUser.id,
-   to
   }
- });
+
+  showToast(
+    "Friend Request",
+    "Friend request sent."
+  );
+
+  closeModal("friendModal");
 
 }
 
 
-async function handleCallSignal(data){
+/* =========================================================
+   FRIEND REALTIME
+========================================================= */
 
- if(data.type==="offer"){
+function subscribeFriends(){
 
-  await acceptIncomingOffer(data);
+  if(currentUser?.isAnonymous)return;
 
- }
+  if(friendsChannel){
 
+    sb.removeChannel(friendsChannel);
 
- if(data.type==="answer"){
+  }
 
-  if(peer){
-
-   await peer.setRemoteDescription(
-    new RTCSessionDescription(
-     data.sdp
+  friendsChannel =
+    sb.channel(
+      "shadow-friendships-"+currentUser.id
     )
-   );
 
-  }
+    .on(
+      "postgres_changes",
+      {
+        event:"*",
+        schema:"public",
+        table:"friendships"
+      },
+      ()=>{
 
- }
+        loadFriends();
 
+      }
+    )
 
- if(data.type==="ice"){
+    .on(
+      "postgres_changes",
+      {
+        event:"INSERT",
+        schema:"public",
+        table:"friend_requests",
+        filter:
+          `receiver_id=eq.${currentUser.id}`
+      },
+      payload=>{
 
-  if(peer&&data.candidate){
+        showToast(
+          "New Friend Request",
+          "Someone sent you a friend request."
+        );
 
-   try{
+      }
+    )
 
-    await peer.addIceCandidate(
-     new RTCIceCandidate(
-      data.candidate
-     )
-    );
-
-   }catch(e){
-
-    console.error(e);
-
-   }
-
-  }
-
- }
+    .subscribe();
 
 }
 
 
-async function acceptIncomingOffer(data){
+/* =========================================================
+   UNFRIEND
+========================================================= */
 
- activeCall=data.from;
+async function unfriendCurrentFriend(){
 
- callType=data.callType||"voice";
+  if(!currentFriend)return;
 
+  await unfriendUser(currentFriend.id);
 
- try{
-
-  const wantsVideo=
-   data.callType==="video";
-
-
-  localStream=
-   await navigator.mediaDevices.getUserMedia({
-    audio:true,
-    video:wantsVideo
-   });
+}
 
 
-  peer=
-   new RTCPeerConnection({
-    iceServers:[
-     {
-      urls:"stun:stun.l.google.com:19302"
-     }
-    ]
-   });
+async function unfriendUser(id){
 
+  if(!currentUser)return;
 
-  localStream
-   .getTracks()
-   .forEach(track=>{
-    peer.addTrack(
-     track,
-     localStream
-    );
-   });
+  const {error} =
+    await sb
+      .from("friendships")
+      .delete()
+      .or(
+        `and(user_id.eq.${currentUser.id},friend_id.eq.${id}),and(user_id.eq.${id},friend_id.eq.${currentUser.id})`
+      );
 
+  if(error){
 
-  remoteStream=
-   new MediaStream();
-
-
-  document.getElementById(
-   "remoteVideo"
-  ).srcObject=remoteStream;
-
-
-  peer.ontrack=event=>{
-
-   event.streams[0]
-    .getTracks()
-    .forEach(track=>{
-     remoteStream.addTrack(track);
-    });
-
-  };
-
-
-  peer.onicecandidate=event=>{
-
-   if(event.candidate){
-
-    sendCallSignal(
-     data.from,
-     {
-      type:"ice",
-      candidate:event.candidate
-     }
+    showToast(
+      "Unfriend failed",
+      error.message
     );
 
-   }
-
-  };
-
-
-  document.getElementById(
-   "localVideo"
-  ).srcObject=localStream;
-
-
-  await createCallChannel();
-
-
-  await peer.setRemoteDescription(
-   new RTCSessionDescription(
-    data.sdp
-   )
-  );
-
-
-  const answer=
-   await peer.createAnswer();
-
-
-  await peer.setLocalDescription(
-   answer
-  );
-
-
-  await sendCallSignal(
-   data.from,
-   {
-    type:"answer",
-    sdp:answer
-   }
-  );
-
-
-  const p=
-   await getProfile(data.from);
-
-
-  document.getElementById(
-   "callName"
-  ).textContent=
-   p?.display_name||
-   p?.username||
-   "Friend";
-
-
-  document.getElementById(
-   "callModal"
-  ).classList.remove("hidden");
-
-
-  if(!wantsVideo){
-
-   document.getElementById(
-    "remoteVideo"
-   ).style.display="none";
-
-   document.getElementById(
-    "localVideo"
-   ).style.display="none";
-
-  }else{
-
-   document.getElementById(
-    "remoteVideo"
-   ).style.display="block";
-
-   document.getElementById(
-    "localVideo"
-   ).style.display="block";
+    return;
 
   }
 
+  friends =
+    friends.filter(f=>f.id!==id);
 
- }catch(error){
+  renderFriends();
 
-  console.error(error);
+  if(currentFriend?.id===id){
+
+    currentFriend=null;
+    showPublicChat();
+
+  }
+
+  closeModal("moreModal");
+  closeModal("friendModal");
 
   showToast(
-   "Incoming call failed",
-   error.message
+    "Friend removed",
+    "Friendship removed."
   );
 
- }
+}
+
+
+/* =========================================================
+   BLOCK
+========================================================= */
+
+async function blockCurrentFriend(){
+
+  if(!currentFriend)return;
+
+  await blockUser(currentFriend.id);
 
 }
 
 
-function toggleMute(){
+async function blockUser(id){
 
- if(!localStream)return;
+  if(!currentUser || currentUser.isAnonymous){
 
+    showToast(
+      "Login required",
+      "Create an account to block users."
+    );
 
- const track=
-  localStream.getAudioTracks()[0];
+    return;
 
+  }
 
- if(!track)return;
+  const {error} =
+    await sb
+      .from("blocks")
+      .insert({
+        blocker_id:currentUser.id,
+        blocked_id:id
+      });
 
+  if(error){
 
- callMuted=!callMuted;
+    if(error.code==="23505"){
 
- track.enabled=!callMuted;
+      showToast(
+        "Already blocked",
+        "This user is already blocked."
+      );
 
+    }else{
 
- document.getElementById(
-  "muteBtn"
- ).textContent=
-  callMuted
-  ?"🔇"
-  :"🎙️";
+      showToast(
+        "Block failed",
+        error.message
+      );
+
+    }
+
+    return;
+
+  }
+
+  friends =
+    friends.filter(f=>f.id!==id);
+
+  renderFriends();
+
+  if(currentFriend?.id===id){
+
+    currentFriend=null;
+    showPublicChat();
+
+  }
+
+  closeModal("moreModal");
+  closeModal("friendModal");
+
+  showToast(
+    "User blocked",
+    "This user has been blocked."
+  );
 
 }
 
 
-function toggleCamera(){
+/* =========================================================
+   HEADER PROFILE
+========================================================= */
 
- if(!localStream)return;
+function handleHeaderUserClick(){
 
+  if(currentFriend){
 
- const track=
-  localStream.getVideoTracks()[0];
+    openUserProfile(currentFriend.id);
 
+  }
 
- if(!track)return;
-
-
- cameraOff=!cameraOff;
-
- track.enabled=!cameraOff;
+}
 
 
- document.getElementById(
-  "cameraBtn"
- ).textContent=
-  cameraOff
-  ?"🚫"
-  :"📷";
+function openFriendMenu(){
+
+  if(!currentFriend)return;
+
+  document
+    .getElementById("moreModal")
+    .classList.add("show");
+
+}
+
+
+function openCurrentFriendProfile(){
+
+  if(!currentFriend)return;
+
+  closeModal("moreModal");
+
+  openUserProfile(currentFriend.id);
+
+}
+
+
+/* =========================================================
+   MY PROFILE MODAL
+========================================================= */
+
+function openMyProfile(){
+
+  if(!currentProfile)return;
+
+  setAvatarElement(
+    document.getElementById("profileAvatar"),
+    currentProfile
+  );
+
+  document.getElementById("profileName")
+    .textContent =
+      currentProfile.display_name ||
+      currentProfile.username;
+
+  document.getElementById("profileUsername")
+    .textContent =
+      "@"+currentProfile.username;
+
+  document.getElementById("profileBio")
+    .textContent =
+      currentProfile.bio ||
+      "No bio added.";
+
+  document
+    .getElementById("profileModal")
+    .classList.add("show");
+
+}
+
+
+function editMyProfile(){
+
+  closeModal("profileModal");
+
+  document.getElementById("editDisplayName")
+    .value =
+      currentProfile.display_name || "";
+
+  document.getElementById("editBio")
+    .value =
+      currentProfile.bio || "";
+
+  document
+    .getElementById("editModal")
+    .classList.add("show");
+
+}
+
+
+/* =========================================================
+   SAVE PROFILE
+========================================================= */
+
+async function saveProfile(){
+
+  if(!currentUser)return;
+
+  const displayName =
+    document
+      .getElementById("editDisplayName")
+      .value
+      .trim();
+
+  const bio =
+    document
+      .getElementById("editBio")
+      .value
+      .trim();
+
+  let avatarUrl =
+    currentProfile.avatar_url || null;
+
+
+  const file =
+    document
+      .getElementById("avatarFile")
+      .files[0];
+
+  if(file){
+
+    if(file.size > 200*1024){
+
+      showToast(
+        "Image too large",
+        "Maximum avatar size is 200 KB."
+      );
+
+      return;
+
+    }
+
+    const path =
+      `${currentUser.id}.avatar`;
+
+    const {error:uploadError} =
+      await sb.storage
+        .from("avatars")
+        .upload(
+          path,
+          file,
+          {
+            upsert:true,
+            contentType:file.type
+          }
+        );
+
+    if(uploadError){
+
+      showToast(
+        "Upload failed",
+        uploadError.message
+      );
+
+      return;
+
+    }
+
+    const {data} =
+      sb.storage
+        .from("avatars")
+        .getPublicUrl(path);
+
+    avatarUrl =
+      data.publicUrl +
+      "?v="+Date.now();
+
+  }
+
+
+  const {data,error} =
+    await sb
+      .from("profiles")
+      .update({
+        display_name:
+          displayName ||
+          currentProfile.username,
+        bio,
+        avatar_url:avatarUrl
+      })
+      .eq("id",currentUser.id)
+      .select()
+      .single();
+
+  if(error){
+
+    showToast(
+      "Save failed",
+      error.message
+    );
+
+    return;
+
+  }
+
+  currentProfile=data;
+
+  renderMyProfile();
+
+  closeModal("editModal");
+
+  showToast(
+    "Profile updated",
+    "Your profile was updated."
+  );
+
+}
+
+
+/* =========================================================
+   VOICE ROOM
+========================================================= */
+
+async function joinVoiceRoom(){
+
+  if(voiceJoined)return;
+
+  if(!navigator.mediaDevices?.getUserMedia){
+
+    showToast(
+      "Microphone unavailable",
+      "Your browser does not support microphone access."
+    );
+
+    return;
+
+  }
+
+  try{
+
+    voiceStream =
+      await navigator.mediaDevices.getUserMedia({
+        audio:true,
+        video:false
+      });
+
+  }catch(e){
+
+    showToast(
+      "Microphone blocked",
+      "Please allow microphone permission."
+    );
+
+    return;
+
+  }
+
+  voiceJoined=true;
+  voiceMuted=false;
+
+  voiceChannel =
+    sb.channel(
+      "shadow-voice-room",
+      {
+        config:{
+          presence:{
+            key:currentUser.id
+          },
+          broadcast:{
+            self:false
+          }
+        }
+      }
+    )
+
+    .on(
+      "presence",
+      {
+        event:"sync"
+      },
+      ()=>{
+        renderVoiceUsers();
+      }
+    )
+
+    .on(
+      "presence",
+      {
+        event:"join"
+      },
+      ()=>{
+        renderVoiceUsers();
+      }
+    )
+
+    .on(
+      "presence",
+      {
+        event:"leave"
+      },
+      ()=>{
+        renderVoiceUsers();
+      }
+    );
+
+
+  await voiceChannel.subscribe(
+    async status=>{
+
+      if(status==="SUBSCRIBED"){
+
+        await voiceChannel.track({
+          id:currentUser.id,
+          name:
+            currentProfile.display_name ||
+            currentProfile.username,
+          muted:false
+        });
+
+        renderVoiceUsers();
+
+        updateVoiceButtons();
+
+        showToast(
+          "Voice Room",
+          "You joined the voice room."
+        );
+
+      }
+
+    }
+  );
+
+}
+
+
+async function toggleVoiceMic(){
+
+  if(!voiceStream || !voiceJoined)return;
+
+  const track =
+    voiceStream.getAudioTracks()[0];
+
+  if(!track)return;
+
+  voiceMuted=!voiceMuted;
+
+  track.enabled=!voiceMuted;
+
+  if(voiceChannel){
+
+    await voiceChannel.track({
+      id:currentUser.id,
+      name:
+        currentProfile.display_name ||
+        currentProfile.username,
+      muted:voiceMuted
+    });
+
+  }
+
+  updateVoiceButtons();
+  renderVoiceUsers();
+
+}
+
+
+async function leaveVoiceRoom(){
+
+  if(!voiceJoined)return;
+
+  voiceJoined=false;
+
+  if(voiceStream){
+
+    voiceStream
+      .getTracks()
+      .forEach(t=>t.stop());
+
+    voiceStream=null;
+
+  }
+
+  if(voiceChannel){
+
+    await voiceChannel.untrack();
+    await sb.removeChannel(voiceChannel);
+    voiceChannel=null;
+
+  }
+
+  voiceMuted=false;
+
+  updateVoiceButtons();
+  renderVoiceUsers();
+
+  showToast(
+    "Voice Room",
+    "You left the voice room."
+  );
+
+}
+
+
+function updateVoiceButtons(){
+
+  const join =
+    document.getElementById("joinVoiceBtn");
+
+  const mobileJoin =
+    document.getElementById("mobileJoinVoiceBtn");
+
+  const controls =
+    document.getElementById("voiceControls");
+
+  const mobileControls =
+    document.getElementById("mobileVoiceControls");
+
+  if(join){
+
+    join.style.display =
+      voiceJoined ? "none" : "block";
+
+  }
+
+  if(mobileJoin){
+
+    mobileJoin.style.display =
+      voiceJoined ? "none" : "block";
+
+  }
+
+  if(controls){
+
+    controls.style.display =
+      voiceJoined ? "flex" : "none";
+
+  }
+
+  if(mobileControls){
+
+    mobileControls.style.display =
+      voiceJoined ? "flex" : "none";
+
+  }
+
+  const text =
+    voiceMuted ? "Mic OFF" : "Mic ON";
+
+  document.getElementById("voiceMicText")
+    .textContent=text;
+
+  document.getElementById("mobileVoiceMicText")
+    .textContent=text;
+
+}
+
+
+function renderVoiceUsers(){
+
+  let users=[];
+
+  if(voiceChannel){
+
+    const state =
+      voiceChannel.presenceState();
+
+    Object.keys(state)
+      .forEach(key=>{
+
+        const arr=state[key] || [];
+
+        arr.forEach(u=>{
+
+          if(u.id){
+
+            users.push(u);
+
+          }
+
+        });
+
+      });
+
+  }
+
+  const html =
+    users.length
+      ? users.map(u=>`
+
+        <div class="voiceUser">
+
+          <div class="avatar">
+            ${escapeHTML(
+              (u.name || "U")
+                .charAt(0)
+                .toUpperCase()
+            )}
+          </div>
+
+          <div class="voiceUserName">
+
+            <b>
+              ${escapeHTML(u.name || "User")}
+            </b>
+
+            <span>
+              ${u.muted ? "🔇 Mic OFF" : "🎙️ Mic ON"}
+            </span>
+
+          </div>
+
+        </div>
+
+      `).join("")
+      : `
+        <div style="
+          grid-column:1/-1;
+          text-align:center;
+          color:#94a3ad;
+          padding:20px;
+          font-size:12px;">
+          No one is in the voice room.
+        </div>
+      `;
+
+  document.getElementById("voiceUsers")
+    .innerHTML=html;
+
+  document.getElementById("mobileVoiceUsers")
+    .innerHTML=html;
+
+}
+
+
+/* =========================================================
+   MOBILE PANELS
+========================================================= */
+
+function openMobileFriends(){
+
+  renderFriends();
+
+  document
+    .getElementById("mobileFriendsPanel")
+    .classList.add("show");
+
+}
+
+
+function openMobileVoice(){
+
+  document
+    .getElementById("mobileVoicePanel")
+    .classList.add("show");
+
+  renderVoiceUsers();
+  updateVoiceButtons();
+
+}
+
+
+function closeMobilePanels(){
+
+  document
+    .getElementById("mobileFriendsPanel")
+    .classList.remove("show");
+
+  document
+    .getElementById("mobileVoicePanel")
+    .classList.remove("show");
+
+}
+
+
+function setMobileNav(btn){
+
+  document
+    .querySelectorAll(".mobileNav button")
+    .forEach(b=>b.classList.remove("active"));
+
+  btn.classList.add("active");
+
+}
+
+
+/* =========================================================
+   CALL SYSTEM
+========================================================= */
+
+async function setupCallChannel(){
+
+  if(currentUser?.isAnonymous)return;
+
+  if(callChannel){
+
+    sb.removeChannel(callChannel);
+
+  }
+
+  callChannel =
+    sb.channel(
+      "private-call-"+currentUser.id,
+      {
+        config:{
+          broadcast:{
+            self:false
+          }
+        }
+      }
+    )
+
+    .on(
+      "broadcast",
+      {
+        event:"call-signal"
+      },
+      async ({payload})=>{
+
+        if(payload.to!==currentUser.id)return;
+
+        await handleCallSignal(payload);
+
+      }
+    )
+
+    .subscribe();
+
+}
+
+
+/* =========================================================
+   START CALL
+========================================================= */
+
+async function startCall(type){
+
+  if(!currentFriend)return;
+
+  await startCallTo(
+    type,
+    currentFriend.id
+  );
+
+}
+
+
+async function startCallFromProfile(type,id){
+
+  closeModal("friendModal");
+
+  const friend =
+    friends.find(f=>f.id===id);
+
+  if(!friend)return;
+
+  currentFriend=friend;
+
+  await startCallTo(
+    type,
+    id
+  );
+
+}
+
+
+async function startCallTo(type,friendId){
+
+  if(currentUser.isAnonymous){
+
+    showToast(
+      "Login required",
+      "Create an account for calling."
+    );
+
+    return;
+
+  }
+
+  currentCallType=type;
+
+  try{
+
+    callStream =
+      await navigator.mediaDevices.getUserMedia({
+        audio:true,
+        video:type==="video"
+      });
+
+  }catch(e){
+
+    showToast(
+      "Call permission",
+      "Allow microphone/camera permission."
+    );
+
+    return;
+
+  }
+
+  callPeer =
+    new RTCPeerConnection({
+      iceServers:[
+        {
+          urls:"stun:stun.l.google.com:19302"
+        },
+        {
+          urls:"stun:stun1.l.google.com:19302"
+        }
+      ]
+    });
+
+  callStream
+    .getTracks()
+    .forEach(track =>
+      callPeer.addTrack(
+        track,
+        callStream
+      )
+    );
+
+  callPeer.ontrack =
+    event=>{
+
+      const remote =
+        document.getElementById("remoteVideo");
+
+      remote.srcObject =
+        event.streams[0];
+
+    };
+
+  callPeer.onicecandidate =
+    event=>{
+
+      if(event.candidate){
+
+        sendCallSignal(
+          friendId,
+          {
+            type:"candidate",
+            candidate:event.candidate
+          }
+        );
+
+      }
+
+    };
+
+
+  const offer =
+    await callPeer.createOffer();
+
+  await callPeer.setLocalDescription(
+    offer
+  );
+
+  await sendCallSignal(
+    friendId,
+    {
+      type:"offer",
+      offer,
+      callType:type,
+      fromName:
+        currentProfile.display_name ||
+        currentProfile.username
+    }
+  );
+
+  showCallUI(
+    "Calling "+
+    (
+      currentFriend?.display_name ||
+      currentFriend?.username ||
+      "User"
+    )
+  );
+
+}
+
+
+/* =========================================================
+   SIGNAL
+========================================================= */
+
+async function sendCallSignal(to,data){
+
+  if(!callChannel){
+
+    await setupCallChannel();
+
+  }
+
+  if(!callChannel)return;
+
+  await callChannel.send({
+    type:"broadcast",
+    event:"call-signal",
+    payload:{
+      ...data,
+      to,
+      from:currentUser.id
+    }
+  });
+
+}
+
+
+/* =========================================================
+   HANDLE SIGNAL
+========================================================= */
+
+async function handleCallSignal(payload){
+
+  if(payload.type==="offer"){
+
+    incomingCallData=payload;
+
+    document.getElementById("incomingName")
+      .textContent =
+        payload.fromName ||
+        "Incoming Call";
+
+    document.getElementById("incomingType")
+      .textContent =
+        payload.callType==="video"
+          ? "📹 Video Call"
+          : "📞 Voice Call";
+
+    document
+      .getElementById("incomingModal")
+      .classList.add("show");
+
+    return;
+
+  }
+
+
+  if(!callPeer)return;
+
+
+  if(payload.type==="answer"){
+
+    await callPeer.setRemoteDescription(
+      new RTCSessionDescription(
+        payload.answer
+      )
+    );
+
+  }
+
+
+  if(payload.type==="candidate"){
+
+    try{
+
+      await callPeer.addIceCandidate(
+        new RTCIceCandidate(
+          payload.candidate
+        )
+      );
+
+    }catch(e){
+
+      console.log(e);
+
+    }
+
+  }
+
+}
+
+
+/* =========================================================
+   ACCEPT CALL
+========================================================= */
+
+async function acceptIncomingCall(){
+
+  if(!incomingCallData)return;
+
+  closeModal("incomingModal");
+
+  currentCallType =
+    incomingCallData.callType;
+
+  try{
+
+    callStream =
+      await navigator.mediaDevices.getUserMedia({
+        audio:true,
+        video:currentCallType==="video"
+      });
+
+  }catch(e){
+
+    showToast(
+      "Call permission",
+      "Allow microphone/camera permission."
+    );
+
+    return;
+
+  }
+
+  callPeer =
+    new RTCPeerConnection({
+      iceServers:[
+        {
+          urls:"stun:stun.l.google.com:19302"
+        },
+        {
+          urls:"stun:stun1.l.google.com:19302"
+        }
+      ]
+    });
+
+  callStream
+    .getTracks()
+    .forEach(track =>
+      callPeer.addTrack(
+        track,
+        callStream
+      )
+    );
+
+  callPeer.ontrack =
+    event=>{
+
+      document
+        .getElementById("remoteVideo")
+        .srcObject =
+          event.streams[0];
+
+    };
+
+  callPeer.onicecandidate =
+    event=>{
+
+      if(event.candidate){
+
+        sendCallSignal(
+          incomingCallData.from,
+          {
+            type:"candidate",
+            candidate:event.candidate
+          }
+        );
+
+      }
+
+    };
+
+
+  await callPeer.setRemoteDescription(
+    new RTCSessionDescription(
+      incomingCallData.offer
+    )
+  );
+
+  const answer =
+    await callPeer.createAnswer();
+
+  await callPeer.setLocalDescription(
+    answer
+  );
+
+  await sendCallSignal(
+    incomingCallData.from,
+    {
+      type:"answer",
+      answer
+    }
+  );
+
+  showCallUI(
+    incomingCallData.fromName ||
+    "Connected"
+  );
+
+  incomingCallData=null;
+
+}
+
+
+/* =========================================================
+   DECLINE
+========================================================= */
+
+async function declineIncomingCall(){
+
+  if(incomingCallData){
+
+    await sendCallSignal(
+      incomingCallData.from,
+      {
+        type:"declined"
+      }
+    );
+
+  }
+
+  incomingCallData=null;
+
+  closeModal("incomingModal");
+
+}
+
+
+/* =========================================================
+   CALL UI
+========================================================= */
+
+function showCallUI(name){
+
+  document.getElementById("callInfo")
+    .textContent=name;
+
+  document
+    .getElementById("callOverlay")
+    .classList.add("show");
+
+  const local =
+    document.getElementById("localVideo");
+
+  if(callStream){
+
+    local.srcObject=callStream;
+
+  }
+
+  document.getElementById("callCameraBtn")
+    .style.display =
+      currentCallType==="video"
+        ? "flex"
+        : "none";
+
+}
+
+
+function toggleCallMic(){
+
+  if(!callStream)return;
+
+  const track =
+    callStream.getAudioTracks()[0];
+
+  if(track){
+
+    track.enabled =
+      !track.enabled;
+
+  }
+
+}
+
+
+function toggleCallCamera(){
+
+  if(!callStream)return;
+
+  const track =
+    callStream.getVideoTracks()[0];
+
+  if(track){
+
+    track.enabled =
+      !track.enabled;
+
+  }
 
 }
 
 
 function endCall(){
 
- cleanupCall();
+  if(callPeer){
 
-}
+    callPeer.close();
+    callPeer=null;
 
+  }
 
-function cleanupCall(){
+  if(callStream){
 
- if(localStream){
+    callStream
+      .getTracks()
+      .forEach(t=>t.stop());
 
-  localStream
-   .getTracks()
-   .forEach(track=>{
-    track.stop();
-   });
+    callStream=null;
 
- }
+  }
 
+  document
+    .getElementById("remoteVideo")
+    .srcObject=null;
 
- if(peer){
+  document
+    .getElementById("localVideo")
+    .srcObject=null;
 
-  peer.close();
+  document
+    .getElementById("callOverlay")
+    .classList.remove("show");
 
- }
-
-
- localStream=null;
- remoteStream=null;
- peer=null;
- activeCall=null;
-
-
- document.getElementById(
-  "remoteVideo"
- ).srcObject=null;
-
- document.getElementById(
-  "localVideo"
- ).srcObject=null;
-
-
- document.getElementById(
-  "callModal"
- ).classList.add("hidden");
+  currentCallType=null;
 
 }
 
 
 /* =========================================================
-   MOBILE
-   ========================================================= */
+   PRIVATE NOTIFICATION
+========================================================= */
 
-function closeMobileBar(){
+async function notifyPrivateMessage(row){
 
- document
-  .getElementById("rightbar")
-  .classList.remove("mobile-open");
+  if(
+    "Notification" in window &&
+    Notification.permission==="granted"
+  ){
 
-}
+    new Notification(
+      row.nickname || "New Message",
+      {
+        body:row.message || "Sent you a message.",
+        icon:""
+      }
+    );
 
+  }else if(
+    "Notification" in window &&
+    Notification.permission==="default"
+  ){
 
-function mobilePublic(btn){
+    try{
+      await Notification.requestPermission();
+    }catch(e){}
 
- setMobileActive(btn);
+  }
 
- closeMobileBar();
-
- openPublicChat();
-
-}
-
-
-function mobileFriends(btn){
-
- setMobileActive(btn);
-
- showRightbar("friends");
-
-}
-
-
-function mobileSearch(btn){
-
- setMobileActive(btn);
-
- showRightbar("search");
-
-}
-
-
-function mobileProfile(btn){
-
- setMobileActive(btn);
-
- showRightbar("profile");
-
-}
-
-
-function setMobileActive(btn){
-
- document
-  .querySelectorAll(".mobile-nav button")
-  .forEach(x=>{
-   x.classList.remove("active");
-  });
-
- btn.classList.add("active");
+  showToast(
+    row.nickname || "New Message",
+    row.message || "Sent you a message."
+  );
 
 }
 
 
 /* =========================================================
-   AUTO LOGIN / SESSION
-   ========================================================= */
+   TOAST
+========================================================= */
 
-async function init(){
+function showToast(title,text){
 
- try{
+  const box =
+    document.getElementById("toastBox");
+
+  const div =
+    document.createElement("div");
+
+  div.className="toast";
+
+  div.innerHTML=`
+    <b>${escapeHTML(title)}</b>
+    <span>${escapeHTML(text)}</span>
+  `;
+
+  box.appendChild(div);
+
+  setTimeout(()=>{
+    div.remove();
+  },3500);
+
+}
+
+
+/* =========================================================
+   MODAL
+========================================================= */
+
+function closeModal(id){
+
+  document
+    .getElementById(id)
+    .classList.remove("show");
+
+}
+
+
+/* =========================================================
+   INPUT
+========================================================= */
+
+function handleInputKey(event){
+
+  if(
+    event.key==="Enter" &&
+    !event.shiftKey
+  ){
+
+    event.preventDefault();
+    sendMessage();
+
+  }
+
+}
+
+
+/* =========================================================
+   SCROLL
+========================================================= */
+
+function scrollMessages(){
+
+  const el =
+    document.getElementById("messages");
+
+  setTimeout(()=>{
+    el.scrollTop=el.scrollHeight;
+  },20);
+
+}
+
+
+/* =========================================================
+   RENDER MESSAGES
+========================================================= */
+
+function renderMessages(data,isPrivate){
+
+  const container =
+    document.getElementById("messages");
+
+  container.innerHTML="";
+
+  if(!data.length){
+
+    container.innerHTML=`
+
+      <div id="welcome" class="welcome">
+
+        <div class="welcomeLogo">
+          👻
+        </div>
+
+        <h2>
+          ${
+            isPrivate
+              ? "Start Private Chat"
+              : "Welcome to Shadow Chat"
+          }
+        </h2>
+
+        <p>
+          ${
+            isPrivate
+              ? "Send a private message to your friend."
+              : "Your public conversation starts here."
+          }
+        </p>
+
+      </div>
+
+    `;
+
+    return;
+
+  }
+
+  container.innerHTML =
+    data.map(row=>
+      messageHTML(row,isPrivate)
+    ).join("");
+
+  scrollMessages();
+
+}
+
+
+/* =========================================================
+   TIME
+========================================================= */
+
+function formatTime(value){
+
+  try{
+
+    return new Date(value)
+      .toLocaleTimeString(
+        [],
+        {
+          hour:"2-digit",
+          minute:"2-digit"
+        }
+      );
+
+  }catch(e){
+
+    return "";
+
+  }
+
+}
+
+
+/* =========================================================
+   ESCAPE
+========================================================= */
+
+function escapeHTML(value){
+
+  return String(value ?? "")
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#039;");
+
+}
+
+
+function escapeAttr(value){
+
+  return escapeHTML(value);
+
+}
+
+
+/* =========================================================
+   AUTH MESSAGE
+========================================================= */
+
+function setAuthMessage(message,success=false){
+
+  const el =
+    document.getElementById("authMessage");
+
+  el.textContent=message;
+
+  el.style.color =
+    success
+      ? "#16a34a"
+      : "#ef4444";
+
+}
+
+
+/* =========================================================
+   LOGOUT
+========================================================= */
+
+async function logout(){
+
+  if(!currentUser)return;
+
+  if(!currentUser.isAnonymous){
+
+    await sb.auth.signOut();
+
+  }
+
+  location.reload();
+
+}
+
+
+/* =========================================================
+   SESSION CHECK
+========================================================= */
+
+async function checkSession(){
 
   const {
-   data:{
-    session
-   }
-  }=
-   await sb.auth.getSession();
-
+    data:{
+      session
+    }
+  } =
+    await sb.auth.getSession();
 
   if(session?.user){
 
-   await startApp(
-    session.user
-   );
+    await startApp(
+      session.user
+    );
 
   }
-
- }catch(error){
-
-  console.error(error);
-
- }
 
 }
 
 
+/* =========================================================
+   AUTO SESSION
+========================================================= */
+
 sb.auth.onAuthStateChange(
- async(event,session)=>{
+  async(event,session)=>{
 
-  if(
-   event==="SIGNED_IN"&&
-   session?.user&&
-   !currentUser
-  ){
+    if(
+      event==="SIGNED_IN" &&
+      session?.user &&
+      !currentUser
+    ){
 
-   await startApp(
-    session.user
-   );
+      await startApp(
+        session.user
+      );
+
+    }
 
   }
-
- }
 );
-
-
-init();
 
 
 /* =========================================================
-   REFRESH PUBLIC CHAT
-   ========================================================= */
+   INITIALIZE
+========================================================= */
 
-document.addEventListener(
- "visibilitychange",
- async()=>{
+checkSession();
+
+
+/* =========================================================
+   CLEAN PUBLIC MESSAGES
+========================================================= */
+
+setInterval(()=>{
 
   if(
-   !document.hidden&&
-   currentRoom==="public"
+    !currentFriend &&
+    document.getElementById("app")
+      .style.display!=="none"
   ){
 
-   await loadPublicMessages();
+    const five =
+      Date.now()-5*60*1000;
+
+    document
+      .querySelectorAll(
+        "#messages .messageRow"
+      )
+      .forEach(el=>{
+
+        const timeEl =
+          el.querySelector(".msgTime");
+
+        if(!timeEl)return;
+
+        // Reload public list periodically.
+        // Private messages are never removed here.
+
+      });
 
   }
 
- }
-);
+},60000);
 
 </script>
 
