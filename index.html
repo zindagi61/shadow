@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
 
 <title>Shadow Chat Daanians</title>
 
@@ -22,100 +22,105 @@ html,body{
 }
 
 body{
-  font-family:Arial,Segoe UI,sans-serif;
-  background:#f3faff;
+  font-family:Inter,Segoe UI,Arial,sans-serif;
+  background:#f4fbff;
   color:#17324d;
 }
 
 button,input,textarea{
-  font-family:inherit;
+  font:inherit;
 }
 
 button{
-  border:0;
   cursor:pointer;
+  border:0;
 }
 
 .hidden{
   display:none!important;
 }
 
-/* ================= AUTH ================= */
+/* =========================================================
+   AUTH
+========================================================= */
 
 #authScreen{
   position:fixed;
   inset:0;
+  z-index:99999;
   width:100%;
-  height:100%;
+  height:100dvh;
   display:flex;
   align-items:center;
   justify-content:center;
-  padding:20px;
-  background:linear-gradient(135deg,#e8f8ff,#ffffff);
-  z-index:9999;
+  padding:18px;
+  background:
+    radial-gradient(circle at 10% 10%,#d8f5ff 0,transparent 35%),
+    linear-gradient(135deg,#effaff,#fff);
 }
 
 .authCard{
-  width:min(420px,100%);
+  width:min(430px,100%);
   background:#fff;
-  border:1px solid #d7ebf5;
-  border-radius:25px;
-  padding:30px;
-  box-shadow:0 20px 60px rgba(0,100,160,.12);
+  border:1px solid #d8edf6;
+  border-radius:28px;
+  padding:28px;
+  box-shadow:0 25px 80px rgba(2,132,199,.15);
 }
 
 .logo{
   text-align:center;
-  margin-bottom:24px;
+  margin-bottom:23px;
 }
 
 .logoIcon{
-  width:65px;
-  height:65px;
+  width:72px;
+  height:72px;
   margin:auto;
-  border-radius:20px;
   display:flex;
   align-items:center;
   justify-content:center;
-  font-size:30px;
+  border-radius:23px;
+  color:#fff;
+  font-size:34px;
   background:linear-gradient(135deg,#38bdf8,#0284c7);
-  color:white;
-  box-shadow:0 10px 25px rgba(2,132,199,.25);
+  box-shadow:0 12px 30px rgba(2,132,199,.28);
+  animation:float 3s ease-in-out infinite;
 }
 
 .logo h1{
-  margin-top:12px;
-  font-size:24px;
   color:#075985;
+  font-size:23px;
+  margin-top:13px;
 }
 
 .logo p{
-  margin-top:6px;
-  color:#7890a3;
-  font-size:13px;
+  color:#8197a7;
+  font-size:12px;
+  margin-top:5px;
 }
 
 .tabs{
   display:flex;
-  background:#eef8fd;
-  border-radius:12px;
   padding:4px;
+  background:#eff9fd;
+  border-radius:13px;
   margin-bottom:18px;
 }
 
 .tabs button{
   flex:1;
   padding:11px;
-  border-radius:9px;
+  border-radius:10px;
   background:transparent;
-  color:#668095;
-  font-weight:bold;
+  color:#6d8495;
+  font-weight:700;
 }
 
 .tabs button.active{
-  background:white;
+  background:#fff;
   color:#0284c7;
-  box-shadow:0 3px 10px rgba(0,0,0,.06);
+  box-shadow:0 3px 12px rgba(0,80,120,.08);
 }
 
 .field{
@@ -125,25 +130,25 @@ button{
 .field label{
   display:block;
   font-size:12px;
-  font-weight:bold;
+  font-weight:700;
+  color:#577187;
   margin-bottom:6px;
-  color:#557086;
 }
 
 .field input,
 .field textarea{
   width:100%;
-  border:1px solid #d6e7f0;
+  border:1px solid #d5e7ef;
   background:#fbfeff;
-  border-radius:11px;
+  color:#17324d;
+  border-radius:12px;
   padding:12px;
   outline:none;
-  color:#17324d;
 }
 
 .field textarea{
   resize:none;
-  height:80px;
+  min-height:80px;
 }
 
 .field input:focus,
@@ -152,40 +157,42 @@ button{
   box-shadow:0 0 0 3px rgba(56,189,248,.12);
 }
 
-.primaryBtn{
+.primaryBtn,
+.secondaryBtn{
   width:100%;
   padding:13px;
-  border-radius:11px;
+  border-radius:12px;
+  font-weight:700;
+}
+
+.primaryBtn{
   color:white;
-  font-weight:bold;
   background:linear-gradient(135deg,#38bdf8,#0284c7);
 }
 
 .secondaryBtn{
-  width:100%;
-  padding:12px;
-  border-radius:11px;
-  background:#eaf7fd;
+  margin-top:9px;
   color:#0369a1;
-  font-weight:bold;
-  margin-top:10px;
+  background:#e8f7fd;
 }
 
 .authMsg{
   min-height:20px;
   text-align:center;
   margin-top:12px;
-  font-size:13px;
+  font-size:12px;
 }
 
 .dev{
   text-align:center;
-  color:#8aa0b1;
-  font-size:11px;
-  margin-top:20px;
+  color:#91a4b2;
+  font-size:10px;
+  margin-top:19px;
 }
 
-/* ================= APP ================= */
+/* =========================================================
+   APP
+========================================================= */
 
 #app{
   width:100%;
@@ -197,179 +204,197 @@ button{
 }
 
 .topbar{
-  height:64px;
-  min-height:64px;
-  background:white;
-  border-bottom:1px solid #dcebf3;
+  height:62px;
+  min-height:62px;
+  background:#fff;
+  border-bottom:1px solid #dcecf4;
   display:flex;
   align-items:center;
   justify-content:space-between;
-  padding:0 18px;
-  z-index:20;
+  padding:0 16px;
+  z-index:50;
 }
 
 .brand{
   display:flex;
   align-items:center;
-  gap:10px;
-  font-weight:bold;
-  color:#075985;
+  gap:9px;
+  min-width:0;
 }
 
 .brandIcon{
-  width:38px;
-  height:38px;
-  border-radius:12px;
+  width:39px;
+  height:39px;
+  min-width:39px;
+  border-radius:13px;
   display:flex;
   align-items:center;
   justify-content:center;
-  color:white;
+  color:#fff;
+  font-size:19px;
   background:linear-gradient(135deg,#38bdf8,#0284c7);
+  box-shadow:0 6px 15px rgba(2,132,199,.18);
+}
+
+.brandText{
+  font-weight:800;
+  color:#075985;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
 }
 
 .topActions{
   display:flex;
-  gap:7px;
+  gap:6px;
 }
 
 .iconBtn{
-  width:39px;
-  height:39px;
-  border-radius:10px;
-  background:#eef8fd;
+  width:38px;
+  height:38px;
+  border-radius:11px;
+  background:#edf8fd;
   color:#0369a1;
+  display:flex;
+  align-items:center;
+  justify-content:center;
   font-size:17px;
-}
-
-.iconBtn:hover{
-  background:#dff3fc;
 }
 
 .layout{
   flex:1;
   min-height:0;
   display:grid;
-  grid-template-columns:250px minmax(0,1fr) 280px;
+  grid-template-columns:245px minmax(0,1fr) 270px;
   overflow:hidden;
 }
 
-/* ================= SIDEBAR ================= */
+/* =========================================================
+   SIDEBAR
+========================================================= */
 
-.sidebar{
+.sidebar,
+.rightbar{
   min-height:0;
   overflow-y:auto;
   background:#fff;
-  border-right:1px solid #dcebf3;
-  padding:15px;
+}
+
+.sidebar{
+  border-right:1px solid #dcecf4;
+  padding:14px;
+}
+
+.rightbar{
+  border-left:1px solid #dcecf4;
+  padding:14px;
 }
 
 .userMini{
   display:flex;
   align-items:center;
-  gap:10px;
-  padding:11px;
-  background:#f0faff;
+  gap:9px;
+  padding:10px;
   border-radius:14px;
+  background:#effaff;
   margin-bottom:15px;
-}
-
-.avatar{
-  width:40px;
-  height:40px;
-  border-radius:50%;
-  object-fit:cover;
-  background:#dff5ff;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-weight:bold;
-  color:#0284c7;
-  flex-shrink:0;
-}
-
-.avatar.big{
-  width:58px;
-  height:58px;
-}
-
-.avatar.small{
-  width:32px;
-  height:32px;
 }
 
 .userMiniText{
   min-width:0;
 }
 
-.userMiniText strong{
+.userMiniText strong,
+.userMiniText span{
   display:block;
   overflow:hidden;
-  text-overflow:ellipsis;
   white-space:nowrap;
+  text-overflow:ellipsis;
+}
+
+.userMiniText strong{
+  font-size:13px;
 }
 
 .userMiniText span{
-  display:block;
-  font-size:11px;
-  color:#8195a5;
+  font-size:10px;
+  color:#8296a5;
   margin-top:2px;
 }
 
 .sectionTitle{
-  font-size:11px;
+  color:#91a4b1;
+  font-size:10px;
+  font-weight:800;
   text-transform:uppercase;
-  letter-spacing:.7px;
-  color:#8aa0b1;
+  letter-spacing:.8px;
   margin:17px 5px 8px;
 }
 
 .sideBtn{
   width:100%;
-  padding:11px;
-  margin-bottom:6px;
   text-align:left;
+  padding:11px;
   border-radius:10px;
   background:transparent;
-  color:#36556b;
+  color:#3d5a6e;
+  margin-bottom:4px;
 }
 
 .sideBtn:hover{
-  background:#eff9fd;
+  background:#effaff;
   color:#0284c7;
 }
 
-.friendItem{
+.friendItem,
+.onlineItem,
+.result{
   display:flex;
   align-items:center;
   gap:9px;
+}
+
+.friendItem{
   padding:8px;
   border-radius:10px;
   cursor:pointer;
 }
 
 .friendItem:hover{
-  background:#f0faff;
+  background:#effaff;
 }
 
-.friendInfo{
+.friendInfo,
+.resultInfo{
   min-width:0;
   flex:1;
 }
 
-.friendInfo strong{
+.friendInfo strong,
+.friendInfo span,
+.resultInfo strong,
+.resultInfo small{
   display:block;
-  font-size:13px;
-  white-space:nowrap;
   overflow:hidden;
+  white-space:nowrap;
   text-overflow:ellipsis;
 }
 
-.friendInfo span{
-  font-size:10px;
-  color:#8ba0af;
+.friendInfo strong,
+.resultInfo strong{
+  font-size:12px;
 }
 
-/* ================= CHAT ================= */
+.friendInfo span,
+.resultInfo small{
+  font-size:10px;
+  color:#8da0ad;
+  margin-top:2px;
+}
+
+/* =========================================================
+   CHAT
+========================================================= */
 
 .chat{
   min-width:0;
@@ -377,40 +402,63 @@ button{
   height:100%;
   display:flex;
   flex-direction:column;
-  background:#f7fbfd;
+  overflow:hidden;
+  background:#f7fcfe;
 }
 
 .chatHeader{
-  min-height:62px;
-  padding:10px 15px;
+  min-height:59px;
+  height:59px;
+  flex-shrink:0;
   display:flex;
   align-items:center;
   justify-content:space-between;
-  background:white;
-  border-bottom:1px solid #dcebf3;
+  padding:8px 14px;
+  background:#fff;
+  border-bottom:1px solid #dcecf4;
 }
 
 .chatTitle{
   display:flex;
   align-items:center;
-  gap:10px;
+  gap:9px;
+  min-width:0;
 }
 
-.chatTitle strong{
+.chatTitleText{
+  min-width:0;
+}
+
+.chatTitleText strong,
+.chatTitleText span{
   display:block;
+  overflow:hidden;
+  white-space:nowrap;
+  text-overflow:ellipsis;
 }
 
-.chatTitle span{
-  font-size:11px;
-  color:#8aa0b1;
+.chatTitleText strong{
+  font-size:14px;
+}
+
+.chatTitleText span{
+  color:#8a9eac;
+  font-size:10px;
+  margin-top:2px;
+}
+
+#privateActions{
+  display:flex;
+  gap:5px;
 }
 
 .messages{
   flex:1;
   min-height:0;
   overflow-y:auto;
-  padding:18px;
-  scroll-behavior:smooth;
+  overflow-x:hidden;
+  padding:16px;
+  -webkit-overflow-scrolling:touch;
 }
 
 .empty{
@@ -419,15 +467,15 @@ button{
   align-items:center;
   justify-content:center;
   text-align:center;
-  color:#91a5b4;
-  font-size:13px;
+  color:#94a8b5;
+  font-size:12px;
 }
 
 .msg{
   display:flex;
-  gap:9px;
-  margin-bottom:13px;
-  animation:messageIn .2s ease;
+  gap:8px;
+  margin-bottom:12px;
+  animation:messageIn .18s ease;
 }
 
 .msg.mine{
@@ -435,12 +483,13 @@ button{
 }
 
 .msgContent{
-  max-width:min(72%,620px);
+  max-width:min(72%,600px);
+  min-width:0;
 }
 
 .msgName{
-  font-size:10px;
-  color:#7c92a3;
+  font-size:9px;
+  color:#8195a4;
   margin-bottom:3px;
 }
 
@@ -449,23 +498,25 @@ button{
 }
 
 .bubble{
-  background:white;
-  border:1px solid #e0edf3;
+  padding:9px 11px;
   border-radius:14px 14px 14px 4px;
-  padding:10px 12px;
-  box-shadow:0 3px 12px rgba(0,80,120,.04);
+  background:#fff;
+  border:1px solid #dfedf3;
+  box-shadow:0 3px 12px rgba(0,80,120,.035);
+  font-size:13px;
+  line-height:1.4;
   word-break:break-word;
 }
 
 .msg.mine .bubble{
-  background:#dff5ff;
-  border-color:#c5eafa;
+  background:#ddf5ff;
+  border-color:#c5ebf9;
   border-radius:14px 14px 4px 14px;
 }
 
 .msgTime{
-  font-size:9px;
-  color:#91a2ae;
+  color:#9aabb6;
+  font-size:8px;
   margin-top:3px;
 }
 
@@ -473,27 +524,31 @@ button{
   text-align:right;
 }
 
-/* ================= COMPOSER ================= */
+/* =========================================================
+   COMPOSER
+========================================================= */
 
 .composer{
   flex-shrink:0;
+  width:100%;
   display:flex;
-  gap:8px;
-  padding:10px;
-  padding-bottom:calc(10px + env(safe-area-inset-bottom));
-  background:white;
-  border-top:1px solid #dcebf3;
-  z-index:15;
+  gap:7px;
+  padding:9px;
+  padding-bottom:calc(9px + env(safe-area-inset-bottom));
+  background:#fff;
+  border-top:1px solid #dcecf4;
+  z-index:40;
 }
 
 .composer input{
-  min-width:0;
   flex:1;
-  border:1px solid #d6e7f0;
-  background:#f8fcfe;
-  border-radius:12px;
-  padding:12px;
+  min-width:0;
+  height:44px;
+  border:1px solid #d5e7ef;
+  border-radius:13px;
+  padding:0 12px;
   outline:none;
+  background:#f9fdff;
 }
 
 .composer input:focus{
@@ -501,85 +556,99 @@ button{
 }
 
 .sendBtn{
-  width:46px;
-  min-width:46px;
-  border-radius:12px;
+  width:44px;
+  min-width:44px;
+  height:44px;
+  border-radius:13px;
   color:white;
+  font-size:17px;
   background:linear-gradient(135deg,#38bdf8,#0284c7);
-  font-size:18px;
 }
 
-/* ================= RIGHT BAR ================= */
-
-.rightbar{
-  min-height:0;
-  overflow-y:auto;
-  background:white;
-  border-left:1px solid #dcebf3;
-  padding:15px;
-}
-
-.searchBox{
-  display:flex;
-  gap:6px;
-  margin-bottom:15px;
-}
-
-.searchBox input{
-  width:100%;
-  min-width:0;
-  border:1px solid #d6e7f0;
-  border-radius:10px;
-  padding:10px;
-  outline:none;
-}
-
-.searchBtn{
-  width:42px;
-  border-radius:10px;
-  background:#e6f7fd;
-  color:#0284c7;
-}
+/* =========================================================
+   ONLINE
+========================================================= */
 
 .onlineItem{
-  display:flex;
-  align-items:center;
-  gap:9px;
   padding:8px;
   border-radius:10px;
 }
 
 .onlineItem:hover{
-  background:#f0faff;
+  background:#effaff;
 }
 
 .onlineDot{
   width:8px;
   height:8px;
+  min-width:8px;
   border-radius:50%;
   background:#10b981;
-  box-shadow:0 0 0 3px #d8f9ed;
+  box-shadow:0 0 0 3px #d9faed;
 }
 
 .onlineName{
   min-width:0;
   flex:1;
-  font-size:13px;
-  white-space:nowrap;
+  font-size:12px;
   overflow:hidden;
   text-overflow:ellipsis;
+  white-space:nowrap;
 }
 
-/* ================= MODALS ================= */
+/* =========================================================
+   AVATAR
+========================================================= */
+
+.avatar{
+  width:39px;
+  height:39px;
+  min-width:39px;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  object-fit:cover;
+  background:#dff5ff;
+  color:#0284c7;
+  font-weight:800;
+  overflow:hidden;
+}
+
+.avatar.small{
+  width:31px;
+  height:31px;
+  min-width:31px;
+  font-size:11px;
+}
+
+.avatar.big{
+  width:65px;
+  height:65px;
+  min-width:65px;
+  margin:auto;
+}
+
+/* =========================================================
+   MOBILE NAV
+========================================================= */
+
+.mobileNav{
+  display:none;
+}
+
+/* =========================================================
+   MODALS
+========================================================= */
 
 .modal{
   position:fixed;
   inset:0;
-  z-index:5000;
+  z-index:8000;
   display:flex;
   align-items:center;
   justify-content:center;
-  padding:15px;
+  padding:14px;
   background:rgba(8,40,60,.38);
   backdrop-filter:blur(5px);
 }
@@ -588,57 +657,62 @@ button{
   width:min(500px,100%);
   max-height:90dvh;
   overflow-y:auto;
-  background:white;
-  border-radius:20px;
-  padding:20px;
-  box-shadow:0 25px 80px rgba(0,0,0,.2);
+  background:#fff;
+  border-radius:21px;
+  padding:19px;
+  box-shadow:0 25px 80px rgba(0,50,80,.22);
 }
 
 .modalHead{
   display:flex;
   align-items:center;
   justify-content:space-between;
-  margin-bottom:16px;
+  margin-bottom:15px;
 }
 
 .closeBtn{
   width:34px;
   height:34px;
-  border-radius:9px;
-  background:#eef7fb;
-  color:#477084;
+  border-radius:10px;
+  background:#edf7fb;
+  color:#537083;
+}
+
+.searchBox{
+  display:flex;
+  gap:6px;
+}
+
+.searchBox input{
+  flex:1;
+  min-width:0;
+  border:1px solid #d5e7ef;
+  border-radius:11px;
+  padding:11px;
+  outline:none;
+}
+
+.searchBtn{
+  width:43px;
+  border-radius:11px;
+  background:#e4f6fd;
+  color:#0284c7;
 }
 
 .result{
-  display:flex;
-  align-items:center;
-  gap:10px;
   padding:10px;
-  border:1px solid #e2edf2;
+  border:1px solid #e1edf2;
   border-radius:12px;
-  margin-bottom:8px;
-}
-
-.resultInfo{
-  min-width:0;
-  flex:1;
-}
-
-.resultInfo strong{
-  display:block;
-}
-
-.resultInfo small{
-  color:#8aa0af;
+  margin-top:8px;
 }
 
 .smallBtn{
   padding:8px 10px;
   border-radius:9px;
-  background:#e6f7fd;
   color:#0369a1;
-  font-size:12px;
-  font-weight:bold;
+  background:#e6f7fd;
+  font-size:11px;
+  font-weight:700;
 }
 
 .dangerBtn{
@@ -646,149 +720,139 @@ button{
   color:#dc2626;
 }
 
-/* ================= VOICE ================= */
+/* =========================================================
+   VOICE / CALL
+========================================================= */
 
 .voicePanel{
   position:fixed;
-  right:20px;
-  bottom:20px;
-  width:min(370px,calc(100% - 30px));
-  background:white;
-  border:1px solid #d5eaf3;
-  border-radius:20px;
-  padding:18px;
-  box-shadow:0 20px 60px rgba(0,70,100,.2);
-  z-index:4000;
+  right:18px;
+  bottom:18px;
+  width:min(370px,calc(100% - 28px));
+  z-index:7000;
+  background:#fff;
+  border:1px solid #d8edf5;
+  border-radius:21px;
+  padding:17px;
+  box-shadow:0 20px 70px rgba(0,70,100,.2);
 }
 
 .voiceHead{
   display:flex;
   align-items:center;
   gap:10px;
-  margin-bottom:15px;
+  margin-bottom:13px;
+}
+
+.voiceIcon,
+.callModalIcon{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:#dcf8eb;
+  color:#059669;
 }
 
 .voiceIcon{
   width:45px;
   height:45px;
+  min-width:45px;
   border-radius:14px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  background:#e0f7ef;
-  color:#059669;
   font-size:20px;
 }
 
-.voiceUsers{
-  max-height:180px;
-  overflow-y:auto;
+.callModalIcon{
+  width:67px;
+  height:67px;
+  border-radius:50%;
+  margin:5px auto 12px;
+  font-size:28px;
 }
 
 .voiceUser{
   display:flex;
   align-items:center;
   gap:8px;
-  padding:8px;
+  padding:7px;
 }
 
-.voiceButtons{
-  display:flex;
-  gap:8px;
-  margin-top:14px;
-}
-
-.voiceButtons button{
-  flex:1;
-  padding:11px;
-  border-radius:10px;
-}
-
-.endBtn{
-  background:#fee2e2;
-  color:#dc2626;
-}
-
-.callBtn{
-  background:#dcfce7;
-  color:#047857;
-}
-
-.callModalIcon{
-  width:65px;
-  height:65px;
-  margin:5px auto 12px;
-  border-radius:50%;
-  background:#dff7ea;
-  color:#059669;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size:28px;
-}
-
-.callText{
-  text-align:center;
-  margin-bottom:18px;
-}
-
+.voiceButtons,
 .callActions{
   display:flex;
-  gap:10px;
+  gap:8px;
+  margin-top:13px;
 }
 
+.voiceButtons button,
 .callActions button{
   flex:1;
-  padding:12px;
+  padding:11px;
   border-radius:11px;
-  font-weight:bold;
+  font-weight:700;
 }
 
-.acceptBtn{
-  background:#10b981;
-  color:white;
-}
-
+.endBtn,
 .rejectBtn{
   background:#fee2e2;
   color:#dc2626;
 }
 
-/* ================= TOAST ================= */
+.callBtn,
+.acceptBtn{
+  background:#dcfce7;
+  color:#047857;
+}
+
+.callText{
+  text-align:center;
+}
+
+.callText p{
+  color:#8297a5;
+  font-size:12px;
+  margin-top:5px;
+}
+
+/* =========================================================
+   TOAST
+========================================================= */
 
 #toastContainer{
   position:fixed;
-  top:75px;
-  right:15px;
-  z-index:10000;
+  top:72px;
+  right:14px;
+  z-index:20000;
   display:flex;
   flex-direction:column;
-  gap:8px;
+  gap:7px;
 }
 
 .toast{
-  background:white;
-  border:1px solid #d9ebf3;
-  border-left:4px solid #38bdf8;
-  padding:11px 14px;
-  border-radius:10px;
-  box-shadow:0 10px 30px rgba(0,70,100,.13);
-  animation:toastIn .25s ease;
-  font-size:13px;
   max-width:300px;
+  padding:11px 13px;
+  border-radius:11px;
+  background:#fff;
+  border:1px solid #d9ebf2;
+  border-left:4px solid #38bdf8;
+  box-shadow:0 10px 30px rgba(0,70,100,.14);
+  font-size:12px;
+  animation:toastIn .2s ease;
 }
 
-.joinToast{
+.toast.success{
   border-left-color:#10b981;
 }
 
-/* ================= MOBILE ================= */
-
-.mobileNav{
-  display:none;
+.toast.error{
+  border-left-color:#ef4444;
 }
 
+/* =========================================================
+   MOBILE
+========================================================= */
+
 @media(max-width:1050px){
+
   .layout{
     grid-template-columns:220px minmax(0,1fr);
   }
@@ -800,9 +864,12 @@ button{
 
 @media(max-width:700px){
 
-  html,body{
+  html,
+  body{
+    width:100%;
     height:100%;
     min-height:100%;
+    overflow:hidden;
   }
 
   #app{
@@ -811,13 +878,20 @@ button{
   }
 
   .topbar{
-    height:58px;
-    min-height:58px;
-    padding:0 10px;
+    height:57px;
+    min-height:57px;
+    padding:0 9px;
+  }
+
+  .brandIcon{
+    width:36px;
+    height:36px;
+    min-width:36px;
   }
 
   .brandText{
-    font-size:14px;
+    max-width:180px;
+    font-size:13px;
   }
 
   .topActions .iconBtn{
@@ -825,14 +899,19 @@ button{
     height:35px;
   }
 
+  .topActions .desktopOnly{
+    display:none;
+  }
+
   .layout{
     display:block;
-    height:calc(100dvh - 58px);
+    height:calc(100dvh - 57px - 65px);
     min-height:0;
     overflow:hidden;
   }
 
-  .sidebar{
+  .sidebar,
+  .rightbar{
     display:none;
   }
 
@@ -843,13 +922,17 @@ button{
   }
 
   .chatHeader{
-    min-height:54px;
     height:54px;
-    padding:8px 10px;
+    min-height:54px;
+    padding:7px 9px;
+  }
+
+  .chatTitleText strong{
+    max-width:190px;
   }
 
   .messages{
-    padding:12px 10px;
+    padding:11px 8px;
     min-height:0;
   }
 
@@ -857,78 +940,134 @@ button{
     max-width:82%;
   }
 
+  .bubble{
+    font-size:13px;
+    padding:9px 10px;
+  }
+
   .composer{
     min-height:62px;
+    height:auto;
     padding:8px;
     padding-bottom:calc(8px + env(safe-area-inset-bottom));
   }
 
   .composer input{
-    padding:11px;
+    height:44px;
   }
 
   .sendBtn{
+    height:44px;
     width:44px;
     min-width:44px;
   }
 
+  /* Dedicated mobile navigation */
+
   .mobileNav{
+    height:65px;
+    min-height:65px;
+    width:100%;
     display:flex;
-    position:fixed;
-    left:10px;
-    right:10px;
-    bottom:calc(8px + env(safe-area-inset-bottom));
+    align-items:center;
+    justify-content:space-around;
+    padding:5px 5px calc(5px + env(safe-area-inset-bottom));
+    background:#fff;
+    border-top:1px solid #dcecf4;
     z-index:100;
-    pointer-events:none;
   }
 
   .mobileNav button{
-    pointer-events:auto;
+    flex:1;
+    height:53px;
+    background:transparent;
+    color:#7d93a2;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    gap:3px;
+    border-radius:11px;
+    font-size:10px;
+  }
+
+  .mobileNav button .navIcon{
+    font-size:20px;
+    line-height:20px;
+  }
+
+  .mobileNav button.active{
+    color:#0284c7;
+    background:#eaf8fd;
   }
 
   .voicePanel{
+    left:10px;
     right:10px;
-    bottom:10px;
+    bottom:74px;
+    width:auto;
   }
 
   #toastContainer{
-    top:65px;
-    left:10px;
-    right:10px;
+    top:64px;
+    left:9px;
+    right:9px;
   }
 
   .toast{
     max-width:none;
   }
-}
 
-@media(max-width:380px){
-  .brandText{
-    display:none;
+  .modal{
+    align-items:flex-end;
+    padding:0;
+  }
+
+  .modalCard{
+    width:100%;
+    max-height:88dvh;
+    border-radius:22px 22px 0 0;
+    padding:17px;
   }
 
   .authCard{
-    padding:22px;
+    padding:23px 19px;
+  }
+
+  .logoIcon{
+    width:63px;
+    height:63px;
+  }
+
+  .logo h1{
+    font-size:20px;
   }
 }
 
-/* ================= ANIMATIONS ================= */
+@media(max-width:370px){
 
-@keyframes pop{
-  from{
-    opacity:0;
-    transform:scale(.95) translateY(10px);
+  .brandText{
+    max-width:125px;
   }
-  to{
-    opacity:1;
-    transform:scale(1) translateY(0);
+
+  .topActions .iconBtn{
+    width:32px;
+    height:32px;
+  }
+
+  .msgContent{
+    max-width:78%;
   }
 }
+
+/* =========================================================
+   ANIMATIONS
+========================================================= */
 
 @keyframes messageIn{
   from{
     opacity:0;
-    transform:translateY(6px);
+    transform:translateY(5px);
   }
   to{
     opacity:1;
@@ -939,24 +1078,33 @@ button{
 @keyframes toastIn{
   from{
     opacity:0;
-    transform:translateX(20px);
+    transform:translateY(-5px);
   }
   to{
     opacity:1;
-    transform:translateX(0);
+    transform:translateY(0);
+  }
+}
+
+@keyframes float{
+  0%,100%{
+    transform:translateY(0);
+  }
+  50%{
+    transform:translateY(-5px);
   }
 }
 
 .pulse{
-  animation:pulse 1.5s infinite;
+  animation:pulse 1.4s infinite;
 }
 
 @keyframes pulse{
   0%,100%{
-    box-shadow:0 0 0 0 rgba(16,185,129,.35);
+    box-shadow:0 0 0 0 rgba(16,185,129,.3);
   }
   50%{
-    box-shadow:0 0 0 10px rgba(16,185,129,0);
+    box-shadow:0 0 0 9px rgba(16,185,129,0);
   }
 }
 </style>
@@ -964,45 +1112,68 @@ button{
 
 <body>
 
-<!-- ================= AUTH ================= -->
+<!-- =======================================================
+     AUTH
+======================================================= -->
 
 <section id="authScreen">
 
   <div class="authCard">
 
     <div class="logo">
-      <div class="logoIcon">💬</div>
+
+      <div class="logoIcon">
+        💬
+      </div>
+
       <h1>Shadow Chat Daanians</h1>
-      <p>Real-time private & public chatting</p>
+
+      <p>
+        Private • Public • Voice • Real-time
+      </p>
+
     </div>
 
     <div class="tabs">
-      <button id="loginTab" class="active" onclick="showAuth('login')">
+
+      <button id="loginTab"
+              class="active"
+              onclick="showAuth('login')">
         Login
       </button>
 
-      <button id="signupTab" onclick="showAuth('signup')">
+      <button id="signupTab"
+              onclick="showAuth('signup')">
         Sign Up
       </button>
+
     </div>
 
     <div id="loginForm">
 
       <div class="field">
         <label>Email</label>
-        <input id="loginEmail" type="email" placeholder="Enter email">
+        <input id="loginEmail"
+               type="email"
+               autocomplete="email"
+               placeholder="Enter your email">
       </div>
 
       <div class="field">
         <label>Password</label>
-        <input id="loginPassword" type="password" placeholder="Enter password">
+        <input id="loginPassword"
+               type="password"
+               autocomplete="current-password"
+               placeholder="Enter password">
       </div>
 
-      <button class="primaryBtn" onclick="login()">
+      <button class="primaryBtn"
+              onclick="login()">
         Login
       </button>
 
-      <button class="secondaryBtn" onclick="continueAnonymous()">
+      <button class="secondaryBtn"
+              onclick="continueAnonymous()">
         👤 Continue as Anonymous
       </button>
 
@@ -1012,19 +1183,27 @@ button{
 
       <div class="field">
         <label>Email</label>
-        <input id="signupEmail" type="email" placeholder="Enter email">
+        <input id="signupEmail"
+               type="email"
+               autocomplete="email"
+               placeholder="Enter your email">
       </div>
 
       <div class="field">
         <label>Password</label>
-        <input id="signupPassword" type="password" placeholder="Minimum 6 characters">
+        <input id="signupPassword"
+               type="password"
+               autocomplete="new-password"
+               placeholder="Minimum 6 characters">
       </div>
 
-      <button class="primaryBtn" onclick="signup()">
+      <button class="primaryBtn"
+              onclick="signup()">
         Create Account
       </button>
 
-      <button class="secondaryBtn" onclick="continueAnonymous()">
+      <button class="secondaryBtn"
+              onclick="continueAnonymous()">
         👤 Continue as Anonymous
       </button>
 
@@ -1041,28 +1220,43 @@ button{
 </section>
 
 
-<!-- ================= APP ================= -->
+<!-- =======================================================
+     APP
+======================================================= -->
 
 <section id="app" class="hidden">
 
   <header class="topbar">
 
     <div class="brand">
-      <div class="brandIcon">💬</div>
-      <span class="brandText">Shadow Chat Daanians</span>
+
+      <div class="brandIcon">
+        💬
+      </div>
+
+      <span class="brandText">
+        Shadow Chat Daanians
+      </span>
+
     </div>
 
     <div class="topActions">
 
-      <button class="iconBtn" onclick="openSearch()" title="Search">
+      <button class="iconBtn"
+              onclick="openSearch()"
+              title="Search">
         🔎
       </button>
 
-      <button class="iconBtn" onclick="openProfile()" title="Profile">
+      <button class="iconBtn"
+              onclick="openProfile()"
+              title="Profile">
         👤
       </button>
 
-      <button class="iconBtn" onclick="logout()" title="Logout">
+      <button class="iconBtn desktopOnly"
+              onclick="logout()"
+              title="Logout">
         ↪
       </button>
 
@@ -1073,20 +1267,31 @@ button{
 
   <div class="layout">
 
-    <!-- SIDEBAR -->
+    <!-- DESKTOP LEFT -->
 
     <aside class="sidebar">
 
-      <div id="miniProfile" class="userMini"></div>
+      <div id="miniProfile"
+           class="userMini">
+      </div>
 
-      <div class="sectionTitle">Chat</div>
+      <div class="sectionTitle">
+        Chat
+      </div>
 
-      <button class="sideBtn" onclick="openPublicChat()">
+      <button class="sideBtn"
+              onclick="openPublicChat()">
         🌐 Public Chat
       </button>
 
-      <button class="sideBtn" onclick="openVoiceRoom()">
+      <button class="sideBtn"
+              onclick="openVoiceRoom()">
         🎙 Voice Room
+      </button>
+
+      <button class="sideBtn"
+              onclick="openSearch()">
+        🔎 Search Users
       </button>
 
       <div class="sectionTitle">
@@ -1094,7 +1299,7 @@ button{
       </div>
 
       <div id="friendsList">
-        <div style="font-size:12px;color:#91a5b4;padding:8px">
+        <div style="font-size:11px;color:#91a5b4;padding:7px">
           No friends yet
         </div>
       </div>
@@ -1104,7 +1309,7 @@ button{
       </div>
 
       <div id="requestsList">
-        <div style="font-size:12px;color:#91a5b4;padding:8px">
+        <div style="font-size:11px;color:#91a5b4;padding:7px">
           No requests
         </div>
       </div>
@@ -1112,7 +1317,7 @@ button{
     </aside>
 
 
-    <!-- MAIN CHAT -->
+    <!-- CHAT -->
 
     <main class="chat">
 
@@ -1120,11 +1325,13 @@ button{
 
         <div class="chatTitle">
 
-          <div id="chatHeaderAvatar" class="avatar">
+          <div id="chatHeaderAvatar"
+               class="avatar">
             🌐
           </div>
 
-          <div>
+          <div class="chatTitleText">
+
             <strong id="chatTitleText">
               Public Chat
             </strong>
@@ -1132,6 +1339,7 @@ button{
             <span id="chatSubtitle">
               Everyone online can see this
             </span>
+
           </div>
 
         </div>
@@ -1141,10 +1349,11 @@ button{
       </div>
 
 
-      <div id="messages" class="messages">
+      <div id="messages"
+           class="messages">
 
         <div class="empty">
-          Loading messages...
+          Loading...
         </div>
 
       </div>
@@ -1152,15 +1361,14 @@ button{
 
       <div class="composer">
 
-        <input
-          id="messageInput"
-          type="text"
-          autocomplete="off"
-          placeholder="Write a message..."
-          onkeydown="handleMessageKey(event)"
-        >
+        <input id="messageInput"
+               type="text"
+               autocomplete="off"
+               placeholder="Write a message..."
+               onkeydown="handleMessageKey(event)">
 
-        <button class="sendBtn" onclick="sendMessage()">
+        <button class="sendBtn"
+                onclick="sendMessage()">
           ➤
         </button>
 
@@ -1169,7 +1377,7 @@ button{
     </main>
 
 
-    <!-- RIGHT BAR -->
+    <!-- DESKTOP RIGHT -->
 
     <aside class="rightbar">
 
@@ -1179,13 +1387,12 @@ button{
 
       <div class="searchBox">
 
-        <input
-          id="sideSearchInput"
-          placeholder="Username..."
-          onkeydown="if(event.key==='Enter')searchUsers()"
-        >
+        <input id="sideSearchInput"
+               placeholder="Username..."
+               onkeydown="if(event.key==='Enter')searchUsers()">
 
-        <button class="searchBtn" onclick="searchUsers()">
+        <button class="searchBtn"
+                onclick="searchUsers()">
           🔎
         </button>
 
@@ -1201,103 +1408,188 @@ button{
 
   </div>
 
+
+  <!-- MOBILE BOTTOM NAV -->
+
+  <nav class="mobileNav">
+
+    <button id="navPublic"
+            class="active"
+            onclick="mobilePublic()">
+
+      <span class="navIcon">💬</span>
+      <span>Chat</span>
+
+    </button>
+
+    <button id="navFriends"
+            onclick="mobileFriends()">
+
+      <span class="navIcon">👥</span>
+      <span>Friends</span>
+
+    </button>
+
+    <button id="navSearch"
+            onclick="openSearch()">
+
+      <span class="navIcon">🔎</span>
+      <span>Search</span>
+
+    </button>
+
+    <button id="navVoice"
+            onclick="openVoiceRoom()">
+
+      <span class="navIcon">🎙</span>
+      <span>Voice</span>
+
+    </button>
+
+    <button id="navProfile"
+            onclick="openProfile()">
+
+      <span class="navIcon">👤</span>
+      <span>Profile</span>
+
+    </button>
+
+  </nav>
+
 </section>
 
 
-<!-- ================= SEARCH MODAL ================= -->
+<!-- =======================================================
+     SEARCH MODAL
+======================================================= -->
 
-<div id="searchModal" class="modal hidden">
+<div id="searchModal"
+     class="modal hidden">
 
   <div class="modalCard">
 
     <div class="modalHead">
-      <h3>Search Users</h3>
 
-      <button class="closeBtn" onclick="closeSearch()">
+      <h3>
+        🔎 Search Users
+      </h3>
+
+      <button class="closeBtn"
+              onclick="closeSearch()">
         ✕
       </button>
+
     </div>
 
     <div class="searchBox">
 
-      <input
-        id="modalSearchInput"
-        placeholder="Search username..."
-        onkeydown="if(event.key==='Enter')searchUsers()"
-      >
+      <input id="modalSearchInput"
+             placeholder="Search username..."
+             onkeydown="if(event.key==='Enter')searchUsers()">
 
-      <button class="searchBtn" onclick="searchUsers()">
+      <button class="searchBtn"
+              onclick="searchUsers()">
         🔎
       </button>
 
     </div>
 
-    <div id="searchResults"></div>
+    <div id="searchResults"
+         style="margin-top:8px">
+    </div>
 
   </div>
 
 </div>
 
 
-<!-- ================= PROFILE MODAL ================= -->
+<!-- =======================================================
+     PROFILE MODAL
+======================================================= -->
 
-<div id="profileModal" class="modal hidden">
+<div id="profileModal"
+     class="modal hidden">
 
   <div class="modalCard">
 
     <div class="modalHead">
-      <h3>My Profile</h3>
 
-      <button class="closeBtn" onclick="closeProfile()">
+      <h3>
+        👤 My Profile
+      </h3>
+
+      <button class="closeBtn"
+              onclick="closeProfile()">
         ✕
       </button>
+
     </div>
 
-    <div style="text-align:center;margin-bottom:18px">
+    <div style="text-align:center;margin-bottom:16px">
 
-      <div
-        id="profileAvatarPreview"
-        class="avatar big"
-        style="margin:auto"
-      >
+      <div id="profileAvatarPreview"
+           class="avatar big">
         👤
       </div>
 
-      <div style="margin-top:10px;font-size:12px;color:#7c92a3">
-        Maximum profile image size: 200 KB
+      <div style="font-size:10px;color:#8ba0ae;margin-top:8px">
+        Maximum image size: 200 KB
       </div>
 
     </div>
 
     <div class="field">
-      <label>Profile Picture</label>
-      <input id="avatarFile" type="file" accept="image/*">
+
+      <label>
+        Profile Picture
+      </label>
+
+      <input id="avatarFile"
+             type="file"
+             accept="image/*">
+
     </div>
 
     <div class="field">
-      <label>Username</label>
-      <input id="profileUsername" disabled>
+
+      <label>
+        Username
+      </label>
+
+      <input id="profileUsername"
+             disabled>
+
     </div>
 
     <div class="field">
-      <label>Display Name</label>
+
+      <label>
+        Display Name
+      </label>
+
       <input id="profileDisplayName">
+
     </div>
 
     <div class="field">
-      <label>Bio</label>
-      <textarea id="profileBio" placeholder="Write something about yourself..."></textarea>
+
+      <label>
+        Bio
+      </label>
+
+      <textarea id="profileBio"
+                placeholder="Write something about yourself..."></textarea>
+
     </div>
 
-    <button class="primaryBtn" onclick="saveProfile()">
+    <button class="primaryBtn"
+            onclick="saveProfile()">
       Save Profile
     </button>
 
-    <button
-      class="secondaryBtn"
-      onclick="logout()"
-      style="color:#dc2626;background:#fee2e2"
-    >
+    <button class="secondaryBtn"
+            onclick="logout()"
+            style="background:#fee2e2;color:#dc2626">
       Logout
     </button>
 
@@ -1306,38 +1598,43 @@ button{
 </div>
 
 
-<!-- ================= VOICE ROOM ================= -->
+<!-- =======================================================
+     VOICE ROOM
+======================================================= -->
 
-<div id="voicePanel" class="voicePanel hidden">
+<div id="voicePanel"
+     class="voicePanel hidden">
 
   <div class="voiceHead">
 
-    <div id="voiceIcon" class="voiceIcon pulse">
+    <div class="voiceIcon pulse">
       🎙
     </div>
 
     <div>
-      <strong>Voice Room</strong>
-      <div style="font-size:11px;color:#8aa0b1">
-        Live voice room
+      <strong>
+        Voice Room
+      </strong>
+
+      <div style="font-size:10px;color:#8ba0ae">
+        Live voice chat
       </div>
     </div>
 
   </div>
 
-  <div id="voiceUsers" class="voiceUsers"></div>
+  <div id="voiceUsers"></div>
 
   <div class="voiceButtons">
 
-    <button class="endBtn" onclick="closeVoiceRoom()">
+    <button class="endBtn"
+            onclick="closeVoiceRoom()">
       Leave
     </button>
 
-    <button
-      id="muteVoiceBtn"
-      class="callBtn"
-      onclick="toggleMute()"
-    >
+    <button id="muteVoiceBtn"
+            class="callBtn"
+            onclick="toggleMute()">
       🎙 Mute
     </button>
 
@@ -1346,11 +1643,15 @@ button{
 </div>
 
 
-<!-- ================= INCOMING CALL ================= -->
+<!-- =======================================================
+     INCOMING CALL
+======================================================= -->
 
-<div id="incomingCallModal" class="modal hidden">
+<div id="incomingCallModal"
+     class="modal hidden">
 
-  <div class="modalCard" style="max-width:360px">
+  <div class="modalCard"
+       style="max-width:360px">
 
     <div class="callModalIcon pulse">
       📞
@@ -1362,7 +1663,7 @@ button{
         Incoming Call
       </h3>
 
-      <p style="font-size:13px;color:#8195a5;margin-top:5px">
+      <p>
         wants to start a voice call with you
       </p>
 
@@ -1370,11 +1671,13 @@ button{
 
     <div class="callActions">
 
-      <button class="rejectBtn" onclick="rejectCall()">
+      <button class="rejectBtn"
+              onclick="rejectCall()">
         Decline
       </button>
 
-      <button class="acceptBtn" onclick="acceptCall()">
+      <button class="acceptBtn"
+              onclick="acceptCall()">
         Accept
       </button>
 
@@ -1385,9 +1688,12 @@ button{
 </div>
 
 
-<!-- ================= ACTIVE CALL ================= -->
+<!-- =======================================================
+     ACTIVE CALL
+======================================================= -->
 
-<div id="activeCallPanel" class="voicePanel hidden">
+<div id="activeCallPanel"
+     class="voicePanel hidden">
 
   <div class="voiceHead">
 
@@ -1396,31 +1702,29 @@ button{
     </div>
 
     <div>
+
       <strong id="activeCallName">
         Voice Call
       </strong>
 
       <div id="callStatus"
-           style="font-size:11px;color:#10b981">
+           style="font-size:10px;color:#10b981">
         Connecting...
       </div>
+
     </div>
 
   </div>
 
   <div class="voiceButtons">
 
-    <button
-      class="endBtn"
-      onclick="hangupCall()"
-    >
+    <button class="endBtn"
+            onclick="hangupCall()">
       ☎ End Call
     </button>
 
-    <button
-      class="callBtn"
-      onclick="toggleCallMute()"
-    >
+    <button class="callBtn"
+            onclick="toggleCallMute()">
       🎙 Mute
     </button>
 
@@ -1431,7 +1735,10 @@ button{
 
 <div id="toastContainer"></div>
 
-<audio id="remoteAudio" autoplay playsinline></audio>
+<audio id="remoteAudio"
+       autoplay
+       playsinline>
+</audio>
 
 
 <script>
@@ -1446,7 +1753,7 @@ const SUPABASE_URL =
 const SUPABASE_KEY =
 "sb_publishable_4wZB1Cg1UJpOGpeegkDVWA_ddtCQ9FZ";
 
-const supabaseClient =
+const db =
 window.supabase.createClient(
   SUPABASE_URL,
   SUPABASE_KEY
@@ -1454,12 +1761,11 @@ window.supabase.createClient(
 
 
 /* =========================================================
-   GLOBAL STATE
+   STATE
 ========================================================= */
 
 let currentUser = null;
 let currentProfile = null;
-
 let anonymous = false;
 
 let currentRoom = "public";
@@ -1470,7 +1776,6 @@ let usersChannel = null;
 let friendsChannel = null;
 
 let onlineUsers = [];
-
 let friends = [];
 
 let voiceActive = false;
@@ -1490,7 +1795,8 @@ let callState = {
 
 let callIceQueue = [];
 
-const FIVE_MINUTES = 5 * 60 * 1000;
+const FIVE_MINUTES =
+5 * 60 * 1000;
 
 
 /* =========================================================
@@ -1502,6 +1808,7 @@ function $(id){
 }
 
 function escapeHtml(value){
+
   return String(value ?? "")
     .replaceAll("&","&amp;")
     .replaceAll("<","&lt;")
@@ -1510,26 +1817,32 @@ function escapeHtml(value){
     .replaceAll("'","&#039;");
 }
 
-function showToast(text, success=true){
+function isAnonymousId(id){
+  return String(id || "").startsWith("anon-");
+}
 
-  const el = document.createElement("div");
+function showToast(text,type="success"){
 
-  el.className =
-    "toast" +
-    (success ? " joinToast" : "");
+  const t =
+    document.createElement("div");
 
-  el.textContent = text;
+  t.className =
+    "toast " + type;
 
-  $("toastContainer").appendChild(el);
+  t.textContent = text;
+
+  $("toastContainer")
+    .appendChild(t);
 
   setTimeout(()=>{
-    el.remove();
+    t.remove();
   },3500);
 }
 
 function setAuthMessage(text,error=false){
 
-  $("authMsg").textContent = text;
+  $("authMsg").textContent =
+    text;
 
   $("authMsg").style.color =
     error ? "#dc2626" : "#059669";
@@ -1546,59 +1859,53 @@ function avatarHtml(profile,name,size=""){
         alt=""
       >
     `;
-
   }
-
-  const letter =
-    String(name || "?")
-      .charAt(0)
-      .toUpperCase();
 
   return `
     <div class="avatar ${size}">
-      ${escapeHtml(letter)}
+      ${escapeHtml(
+        String(name || "?")
+        .charAt(0)
+        .toUpperCase()
+      )}
     </div>
   `;
 }
 
-function isAnonId(id){
-  return String(id || "").startsWith("anon-");
-}
-
 
 /* =========================================================
-   AUTH TABS
+   AUTH
 ========================================================= */
 
 function showAuth(type){
 
-  $("loginForm").classList.toggle(
-    "hidden",
-    type !== "login"
-  );
+  $("loginForm")
+    .classList.toggle(
+      "hidden",
+      type !== "login"
+    );
 
-  $("signupForm").classList.toggle(
-    "hidden",
-    type !== "signup"
-  );
+  $("signupForm")
+    .classList.toggle(
+      "hidden",
+      type !== "signup"
+    );
 
-  $("loginTab").classList.toggle(
-    "active",
-    type === "login"
-  );
+  $("loginTab")
+    .classList.toggle(
+      "active",
+      type === "login"
+    );
 
-  $("signupTab").classList.toggle(
-    "active",
-    type === "signup"
-  );
+  $("signupTab")
+    .classList.toggle(
+      "active",
+      type === "signup"
+    );
 
   setAuthMessage("");
 }
 
-
-/* =========================================================
-   SIGNUP
-========================================================= */
 
 async function signup(){
 
@@ -1628,10 +1935,12 @@ async function signup(){
     return;
   }
 
-  setAuthMessage("Creating account...");
+  setAuthMessage(
+    "Creating account..."
+  );
 
   const {data,error} =
-    await supabaseClient.auth.signUp({
+    await db.auth.signUp({
       email,
       password
     });
@@ -1648,7 +1957,8 @@ async function signup(){
 
   if(data.session){
 
-    currentUser = data.user;
+    currentUser =
+      data.user;
 
     await startApp();
 
@@ -1657,14 +1967,9 @@ async function signup(){
     setAuthMessage(
       "Account created. Check your email if confirmation is enabled."
     );
-
   }
 }
 
-
-/* =========================================================
-   LOGIN
-========================================================= */
 
 async function login(){
 
@@ -1684,10 +1989,12 @@ async function login(){
     return;
   }
 
-  setAuthMessage("Logging in...");
+  setAuthMessage(
+    "Logging in..."
+  );
 
   const {data,error} =
-    await supabaseClient.auth.signInWithPassword({
+    await db.auth.signInWithPassword({
       email,
       password
     });
@@ -1702,15 +2009,12 @@ async function login(){
     return;
   }
 
-  currentUser = data.user;
+  currentUser =
+    data.user;
 
   await startApp();
 }
 
-
-/* =========================================================
-   ANONYMOUS
-========================================================= */
 
 async function continueAnonymous(){
 
@@ -1723,7 +2027,9 @@ async function continueAnonymous(){
 
   const nickname =
     "Anonymous_" +
-    Math.floor(1000 + Math.random()*9000);
+    Math.floor(
+      1000 + Math.random()*9000
+    );
 
   currentProfile = {
     id:currentUser.id,
@@ -1733,44 +2039,15 @@ async function continueAnonymous(){
     bio:"Anonymous user"
   };
 
-  await registerOnlineUser(nickname);
+  await registerOnlineUser(
+    nickname
+  );
 
   await startInterface();
 
   showToast(
-    "You joined as " + nickname
+    "Joined as " + nickname
   );
-}
-
-
-/* =========================================================
-   START APP
-========================================================= */
-
-async function startApp(){
-
-  anonymous = false;
-
-  if(!currentUser){
-
-    const {
-      data:{user}
-    } = await supabaseClient.auth.getUser();
-
-    currentUser = user;
-  }
-
-  if(!currentUser) return;
-
-  await ensureProfile();
-
-  await registerOnlineUser(
-    currentProfile?.display_name ||
-    currentProfile?.username ||
-    "User"
-  );
-
-  await startInterface();
 }
 
 
@@ -1782,8 +2059,8 @@ async function ensureProfile(){
 
   if(!currentUser) return;
 
-  const {data,error} =
-    await supabaseClient
+  const {data} =
+    await db
       .from("profiles")
       .select("*")
       .eq("id",currentUser.id)
@@ -1791,7 +2068,8 @@ async function ensureProfile(){
 
   if(data){
 
-    currentProfile = data;
+    currentProfile =
+      data;
 
     return;
   }
@@ -1809,1268 +2087,28 @@ async function ensureProfile(){
     bio:""
   };
 
-  const result =
-    await supabaseClient
+  const {data:newProfile,error} =
+    await db
       .from("profiles")
       .insert(profile)
       .select()
       .single();
 
-  if(result.error){
-
-    showToast(
-      "Profile setup error: " +
-      result.error.message,
-      false
-    );
-
-    currentProfile = profile;
-
-  }else{
-
-    currentProfile = result.data;
-
-  }
-}
-
-
-/* =========================================================
-   ONLINE USER
-========================================================= */
-
-async function registerOnlineUser(nickname){
-
-  if(isAnonId(currentUser.id)){
-
-    const {error} =
-      await supabaseClient
-        .from("chat_users")
-        .insert({
-          id:currentUser.id,
-          nickname
-        });
-
-    if(error){
-      console.log(error);
-    }
-
-    return;
-  }
-
-  const {data:existing} =
-    await supabaseClient
-      .from("chat_users")
-      .select("id")
-      .eq("id",currentUser.id)
-      .maybeSingle();
-
-  if(existing){
-
-    await supabaseClient
-      .from("chat_users")
-      .update({
-        nickname
-      })
-      .eq("id",currentUser.id);
-
-  }else{
-
-    await supabaseClient
-      .from("chat_users")
-      .insert({
-        id:currentUser.id,
-        nickname
-      });
-
-  }
-}
-
-
-/* =========================================================
-   INTERFACE
-========================================================= */
-
-async function startInterface(){
-
-  $("authScreen").classList.add("hidden");
-
-  $("app").classList.remove("hidden");
-
-  updateMiniProfile();
-
-  await loadFriends();
-
-  await loadFriendRequests();
-
-  await loadOnlineUsers();
-
-  subscribeRealtime();
-
-  await openPublicChat();
-
-  showToast(
-    "Welcome to Shadow Chat Daanians"
-  );
-}
-
-
-function updateMiniProfile(){
-
-  const name =
-    currentProfile?.display_name ||
-    currentProfile?.username ||
-    "Anonymous";
-
-  $("miniProfile").innerHTML = `
-
-    ${avatarHtml(currentProfile,name)}
-
-    <div class="userMiniText">
-      <strong>${escapeHtml(name)}</strong>
-      <span>@${escapeHtml(currentProfile?.username || name)}</span>
-    </div>
-
-  `;
-}
-
-
-/* =========================================================
-   REALTIME
-========================================================= */
-
-function subscribeRealtime(){
-
-  if(messagesChannel){
-    supabaseClient.removeChannel(messagesChannel);
-  }
-
-  if(usersChannel){
-    supabaseClient.removeChannel(usersChannel);
-  }
-
-  if(friendsChannel){
-    supabaseClient.removeChannel(friendsChannel);
-  }
-
-
-  messagesChannel =
-    supabaseClient
-      .channel("shadow-messages-" + Math.random())
-
-      .on(
-        "postgres_changes",
-        {
-          event:"INSERT",
-          schema:"public",
-          table:"messages"
-        },
-        async payload => {
-
-          const m = payload.new;
-
-          /* SIGNALS MUST BE HANDLED FIRST */
-
-          if(m.message_type === "voice_signal"){
-
-            await handleVoiceSignal(m);
-
-            return;
-          }
-
-          if(m.message_type === "call_signal"){
-
-            await handleCallSignal(m);
-
-            return;
-          }
-
-          if(m.message_type !== "chat"){
-            return;
-          }
-
-          if(!messageBelongsToCurrentRoom(m)){
-            return;
-          }
-
-          addMessageToScreen(m);
-
-        }
-      )
-
-      .subscribe();
-
-
-  usersChannel =
-    supabaseClient
-      .channel("shadow-users-" + Math.random())
-
-      .on(
-        "postgres_changes",
-        {
-          event:"*",
-          schema:"public",
-          table:"chat_users"
-        },
-        async payload => {
-
-          await loadOnlineUsers();
-
-          if(payload.eventType === "INSERT"){
-
-            const u = payload.new;
-
-            if(u.id !== currentUser?.id){
-
-              showToast(
-                "👋 " +
-                u.nickname +
-                " joined the chat"
-              );
-
-            }
-
-          }
-
-        }
-      )
-
-      .subscribe();
-
-
-  friendsChannel =
-    supabaseClient
-      .channel("shadow-friends-" + Math.random())
-
-      .on(
-        "postgres_changes",
-        {
-          event:"*",
-          schema:"public",
-          table:"friend_requests"
-        },
-        async () => {
-
-          await loadFriendRequests();
-
-        }
-      )
-
-      .on(
-        "postgres_changes",
-        {
-          event:"*",
-          schema:"public",
-          table:"friendships"
-        },
-        async () => {
-
-          await loadFriends();
-
-        }
-      )
-
-      .subscribe();
-
-}
-
-
-/* =========================================================
-   ONLINE USERS
-========================================================= */
-
-async function loadOnlineUsers(){
-
-  const {data,error} =
-    await supabaseClient
-      .from("chat_users")
-      .select("*")
-      .order("created_at",{ascending:true});
-
-  if(error){
-
-    console.log("Online users:",error);
-
-    return;
-  }
-
-  onlineUsers = data || [];
-
-  renderOnlineUsers();
-}
-
-
-async function getProfile(id){
-
-  if(isAnonId(id)){
-
-    const u =
-      onlineUsers.find(x=>x.id===id);
-
-    if(u){
-
-      return {
-        id,
-        username:u.nickname,
-        display_name:u.nickname,
-        avatar_url:null
-      };
-
-    }
-
-    return null;
-  }
-
-  const {data} =
-    await supabaseClient
-      .from("profiles")
-      .select("*")
-      .eq("id",id)
-      .maybeSingle();
-
-  return data;
-}
-
-
-async function renderOnlineUsers(){
-
-  const box = $("onlineUsers");
-
-  if(!onlineUsers.length){
-
-    box.innerHTML =
-      `<div style="font-size:12px;color:#91a5b4">
-        Nobody online
-      </div>`;
-
-    return;
-  }
-
-  const html = [];
-
-  for(const u of onlineUsers){
-
-    if(u.id === currentUser.id) continue;
-
-    const profile =
-      await getProfile(u.id);
-
-    const name =
-      profile?.display_name ||
-      profile?.username ||
-      u.nickname;
-
-    html.push(`
-
-      <div
-        class="onlineItem"
-        onclick="handleOnlineUser('${u.id}')"
-      >
-
-        <div class="onlineDot"></div>
-
-        ${avatarHtml(profile,name,"small")}
-
-        <div class="onlineName">
-          ${escapeHtml(name)}
-        </div>
-
-      </div>
-
-    `);
-  }
-
-  box.innerHTML =
-    html.join("") ||
-    `<div style="font-size:12px;color:#91a5b4">
-      No other users online
-    </div>`;
-}
-
-
-async function handleOnlineUser(id){
-
-  if(id === currentUser.id) return;
-
-  const friend =
-    friends.find(f =>
-      f.user_id === id ||
-      f.friend_id === id
-    );
-
-  if(friend){
-
-    await openPrivateChat(id);
-
-  }else{
-
-    openSearch();
-
-    const profile =
-      await getProfile(id);
-
-    if(profile){
-
-      $("modalSearchInput").value =
-        profile.username;
-
-      await searchUsers();
-
-    }
-
-  }
-}
-
-
-/* =========================================================
-   PUBLIC CHAT
-========================================================= */
-
-async function openPublicChat(){
-
-  currentRoom = "public";
-
-  privateFriend = null;
-
-  $("chatTitleText").textContent =
-    "Public Chat";
-
-  $("chatSubtitle").textContent =
-    "Everyone online can see this";
-
-  $("chatHeaderAvatar").innerHTML =
-    "🌐";
-
-  $("privateActions").innerHTML = "";
-
-  await loadMessages();
-
-  $("messageInput").focus();
-}
-
-
-/* =========================================================
-   PRIVATE CHAT
-========================================================= */
-
-async function isFriend(userId){
-
-  if(anonymous) return false;
-
-  const found =
-    friends.some(f =>
-      f.user_id === userId ||
-      f.friend_id === userId
-    );
-
-  return found;
-}
-
-
-async function openPrivateChat(friendId){
-
-  if(!(await isFriend(friendId))){
-
-    showToast(
-      "You can only chat with accepted friends.",
-      false
-    );
-
-    return;
-  }
-
-  const profile =
-    await getProfile(friendId);
-
-  if(!profile){
-
-    showToast(
-      "User profile not found.",
-      false
-    );
-
-    return;
-  }
-
-  privateFriend = {
-    id:friendId,
-    ...profile
-  };
-
-  currentRoom =
-    privateRoomId(
-      currentUser.id,
-      friendId
-    );
-
-  const name =
-    profile.display_name ||
-    profile.username;
-
-  $("chatTitleText").textContent =
-    name;
-
-  $("chatSubtitle").textContent =
-    "Private chat";
-
-  $("chatHeaderAvatar").innerHTML =
-    avatarHtml(profile,name);
-
-  $("privateActions").innerHTML = `
-
-    <button
-      class="iconBtn"
-      onclick="startPrivateCall('${friendId}')"
-      title="Voice Call"
-    >
-      📞
-    </button>
-
-  `;
-
-  await loadMessages();
-
-  $("messageInput").focus();
-}
-
-
-function privateRoomId(a,b){
-
-  return "private_" +
-    [a,b]
-      .sort()
-      .join("_");
-}
-
-
-function messageBelongsToCurrentRoom(m){
-
-  if(currentRoom === "public"){
-
-    return m.room === "public";
-  }
-
-  return m.room === currentRoom;
-}
-
-
-/* =========================================================
-   MESSAGES
-========================================================= */
-
-async function loadMessages(){
-
-  $("messages").innerHTML =
-    `<div class="empty">Loading...</div>`;
-
-  const since =
-    new Date(
-      Date.now() - FIVE_MINUTES
-    ).toISOString();
-
-  let query =
-    supabaseClient
-      .from("messages")
-      .select("*")
-      .eq("room",currentRoom)
-      .eq("message_type","chat")
-      .gte("created_at",since)
-      .order("created_at",{ascending:true});
-
-  const {data,error} =
-    await query;
-
   if(error){
 
     console.log(error);
 
-    $("messages").innerHTML =
-      `<div class="empty">
-        Could not load messages.
-      </div>`;
+    currentProfile =
+      profile;
 
-    return;
-  }
+  }else{
 
-  $("messages").innerHTML = "";
-
-  if(!data?.length){
-
-    $("messages").innerHTML =
-      `<div class="empty">
-        No messages yet.<br>
-        Start the conversation.
-      </div>`;
-
-    return;
-  }
-
-  for(const m of data){
-
-    addMessageToScreen(m);
-
-  }
-
-  scrollMessages();
-}
-
-
-async function addMessageToScreen(m){
-
-  if(!messageBelongsToCurrentRoom(m)){
-    return;
-  }
-
-  const created =
-    new Date(m.created_at).getTime();
-
-  const remaining =
-    FIVE_MINUTES -
-    (Date.now() - created);
-
-  if(remaining <= 0){
-    return;
-  }
-
-  const empty =
-    $("messages").querySelector(".empty");
-
-  if(empty){
-    empty.remove();
-  }
-
-  const row =
-    document.createElement("div");
-
-  const mine =
-    m.sender_id === currentUser.id;
-
-  row.className =
-    "msg" +
-    (mine ? " mine" : "");
-
-  const profile =
-    await getProfile(m.sender_id);
-
-  const name =
-    profile?.display_name ||
-    profile?.username ||
-    m.nickname ||
-    "User";
-
-  const time =
-    new Date(m.created_at)
-      .toLocaleTimeString([],{
-        hour:"2-digit",
-        minute:"2-digit"
-      });
-
-  row.innerHTML = `
-
-    ${avatarHtml(profile,name,"small")}
-
-    <div class="msgContent">
-
-      <div class="msgName">
-        ${escapeHtml(name)}
-      </div>
-
-      <div class="bubble">
-        ${escapeHtml(m.message)}
-      </div>
-
-      <div class="msgTime">
-        ${time}
-      </div>
-
-    </div>
-
-  `;
-
-  $("messages").appendChild(row);
-
-  scrollMessages();
-
-  setTimeout(()=>{
-
-    if(row.isConnected){
-      row.remove();
-    }
-
-  },remaining);
-}
-
-
-function scrollMessages(){
-
-  const box = $("messages");
-
-  requestAnimationFrame(()=>{
-    box.scrollTop =
-      box.scrollHeight;
-  });
-}
-
-
-function handleMessageKey(e){
-
-  if(e.key === "Enter" && !e.shiftKey){
-
-    e.preventDefault();
-
-    sendMessage();
-  }
-}
-
-
-async function sendMessage(){
-
-  const input =
-    $("messageInput");
-
-  const text =
-    input.value.trim();
-
-  if(!text) return;
-
-  if(!anonymous &&
-     currentRoom !== "public" &&
-     privateFriend &&
-     !(await isFriend(privateFriend.id))){
-
-    showToast(
-      "This user is not your friend anymore.",
-      false
-    );
-
-    return;
-  }
-
-  input.value = "";
-
-  const nickname =
-    currentProfile?.display_name ||
-    currentProfile?.username ||
-    "Anonymous";
-
-  const {error} =
-    await supabaseClient
-      .from("messages")
-      .insert({
-        room:currentRoom,
-        sender_id:currentUser.id,
-        receiver_id:
-          privateFriend?.id || null,
-        nickname,
-        message:text,
-        message_type:"chat"
-      });
-
-  if(error){
-
-    console.log(error);
-
-    showToast(
-      "Message failed: " + error.message,
-      false
-    );
+    currentProfile =
+      newProfile;
 
   }
 }
 
-
-/* =========================================================
-   FRIENDS
-========================================================= */
-
-async function loadFriends(){
-
-  if(anonymous){
-
-    friends = [];
-
-    renderFriends();
-
-    return;
-  }
-
-  const {data,error} =
-    await supabaseClient
-      .from("friendships")
-      .select("*")
-      .or(
-        `user_id.eq.${currentUser.id},friend_id.eq.${currentUser.id}`
-      );
-
-  if(error){
-
-    console.log("Friendships:",error);
-
-    friends = [];
-
-    renderFriends();
-
-    return;
-  }
-
-  friends = data || [];
-
-  renderFriends();
-}
-
-
-async function renderFriends(){
-
-  const box =
-    $("friendsList");
-
-  if(!friends.length){
-
-    box.innerHTML =
-      `<div style="font-size:12px;color:#91a5b4;padding:8px">
-        No friends yet
-      </div>`;
-
-    return;
-  }
-
-  let html = "";
-
-  for(const f of friends){
-
-    const id =
-      f.user_id === currentUser.id
-        ? f.friend_id
-        : f.user_id;
-
-    const profile =
-      await getProfile(id);
-
-    const name =
-      profile?.display_name ||
-      profile?.username ||
-      "User";
-
-    html += `
-
-      <div
-        class="friendItem"
-        onclick="openPrivateChat('${id}')"
-      >
-
-        ${avatarHtml(profile,name,"small")}
-
-        <div class="friendInfo">
-          <strong>${escapeHtml(name)}</strong>
-          <span>Private chat</span>
-        </div>
-
-      </div>
-
-    `;
-  }
-
-  box.innerHTML = html;
-}
-
-
-/* =========================================================
-   FRIEND REQUESTS
-========================================================= */
-
-async function loadFriendRequests(){
-
-  if(anonymous){
-
-    $("requestsList").innerHTML =
-      `<div style="font-size:12px;color:#91a5b4;padding:8px">
-        Login to use friends
-      </div>`;
-
-    return;
-  }
-
-  const {data,error} =
-    await supabaseClient
-      .from("friend_requests")
-      .select("*")
-      .eq("receiver_id",currentUser.id)
-      .eq("status","pending")
-      .order("created_at",{ascending:false});
-
-  if(error){
-
-    console.log("Requests:",error);
-
-    return;
-  }
-
-  const requests = data || [];
-
-  if(!requests.length){
-
-    $("requestsList").innerHTML =
-      `<div style="font-size:12px;color:#91a5b4;padding:8px">
-        No requests
-      </div>`;
-
-    return;
-  }
-
-  let html = "";
-
-  for(const r of requests){
-
-    const profile =
-      await getProfile(r.sender_id);
-
-    const name =
-      profile?.display_name ||
-      profile?.username ||
-      "User";
-
-    html += `
-
-      <div class="result">
-
-        ${avatarHtml(profile,name,"small")}
-
-        <div class="resultInfo">
-          <strong>${escapeHtml(name)}</strong>
-          <small>Friend request</small>
-        </div>
-
-        <button
-          class="smallBtn"
-          onclick="acceptRequest(${r.id},'${r.sender_id}')"
-        >
-          ✓
-        </button>
-
-        <button
-          class="smallBtn dangerBtn"
-          onclick="rejectRequest(${r.id})"
-        >
-          ✕
-        </button>
-
-      </div>
-
-    `;
-  }
-
-  $("requestsList").innerHTML = html;
-}
-
-
-async function sendFriendRequest(userId){
-
-  if(anonymous){
-
-    showToast(
-      "Login required for friend requests.",
-      false
-    );
-
-    return;
-  }
-
-  if(userId === currentUser.id){
-
-    showToast(
-      "You cannot add yourself.",
-      false
-    );
-
-    return;
-  }
-
-  if(await isFriend(userId)){
-
-    showToast(
-      "Already friends.",
-      false
-    );
-
-    return;
-  }
-
-  const {data:existing} =
-    await supabaseClient
-      .from("friend_requests")
-      .select("*")
-      .or(
-        `and(sender_id.eq.${currentUser.id},receiver_id.eq.${userId}),and(sender_id.eq.${userId},receiver_id.eq.${currentUser.id})`
-      )
-      .limit(1);
-
-  if(existing?.length){
-
-    showToast(
-      "Friend request already exists.",
-      false
-    );
-
-    return;
-  }
-
-  const {error} =
-    await supabaseClient
-      .from("friend_requests")
-      .insert({
-        sender_id:currentUser.id,
-        receiver_id:userId,
-        status:"pending"
-      });
-
-  if(error){
-
-    showToast(
-      error.message,
-      false
-    );
-
-    return;
-  }
-
-  showToast(
-    "Friend request sent."
-  );
-}
-
-
-async function acceptRequest(requestId,senderId){
-
-  if(anonymous) return;
-
-  const {error} =
-    await supabaseClient
-      .from("friend_requests")
-      .update({
-        status:"accepted"
-      })
-      .eq("id",requestId)
-      .eq("receiver_id",currentUser.id);
-
-  if(error){
-
-    showToast(
-      error.message,
-      false
-    );
-
-    return;
-  }
-
-  /* friendship both directions */
-
-  const {error:friendError} =
-    await supabaseClient
-      .from("friendships")
-      .upsert([
-        {
-          user_id:currentUser.id,
-          friend_id:senderId
-        },
-        {
-          user_id:senderId,
-          friend_id:currentUser.id
-        }
-      ],{
-        onConflict:"user_id,friend_id"
-      });
-
-  if(friendError){
-
-    showToast(
-      friendError.message,
-      false
-    );
-
-    return;
-  }
-
-  await loadFriends();
-
-  await loadFriendRequests();
-
-  showToast(
-    "Friend request accepted."
-  );
-}
-
-
-async function rejectRequest(requestId){
-
-  const {error} =
-    await supabaseClient
-      .from("friend_requests")
-      .update({
-        status:"rejected"
-      })
-      .eq("id",requestId)
-      .eq("receiver_id",currentUser.id);
-
-  if(error){
-
-    showToast(
-      error.message,
-      false
-    );
-
-    return;
-  }
-
-  await loadFriendRequests();
-
-  showToast(
-    "Friend request rejected."
-  );
-}
-
-
-/* =========================================================
-   SEARCH
-========================================================= */
-
-function openSearch(){
-
-  $("searchModal")
-    .classList.remove("hidden");
-
-  setTimeout(()=>{
-    $("modalSearchInput").focus();
-  },100);
-}
-
-
-function closeSearch(){
-
-  $("searchModal")
-    .classList.add("hidden");
-}
-
-
-async function searchUsers(){
-
-  const input =
-    $("modalSearchInput").value.trim() ||
-    $("sideSearchInput").value.trim();
-
-  if(!input){
-
-    $("searchResults").innerHTML =
-      `<div style="color:#91a5b4;font-size:13px">
-        Enter a username.
-      </div>`;
-
-    return;
-  }
-
-  openSearch();
-
-  $("searchResults").innerHTML =
-    `<div style="color:#91a5b4">
-      Searching...
-    </div>`;
-
-  const {data,error} =
-    await supabaseClient
-      .from("profiles")
-      .select("*")
-      .ilike("username","%" + input + "%")
-      .limit(20);
-
-  if(error){
-
-    $("searchResults").innerHTML =
-      `<div style="color:#dc2626">
-        ${escapeHtml(error.message)}
-      </div>`;
-
-    return;
-  }
-
-  if(!data?.length){
-
-    $("searchResults").innerHTML =
-      `<div style="color:#91a5b4">
-        No users found.
-      </div>`;
-
-    return;
-  }
-
-  let html = "";
-
-  for(const p of data){
-
-    if(p.id === currentUser.id) continue;
-
-    const friend =
-      await isFriend(p.id);
-
-    html += `
-
-      <div class="result">
-
-        ${avatarHtml(
-          p,
-          p.display_name || p.username,
-          "small"
-        )}
-
-        <div class="resultInfo">
-
-          <strong>
-            ${escapeHtml(
-              p.display_name || p.username
-            )}
-          </strong>
-
-          <small>
-            @${escapeHtml(p.username)}
-          </small>
-
-        </div>
-
-        ${
-          friend
-
-          ?
-
-          `<button
-             class="smallBtn"
-             onclick="openPrivateChat('${p.id}');closeSearch()"
-           >
-             Chat
-           </button>`
-
-          :
-
-          `<button
-             class="smallBtn"
-             onclick="sendFriendRequest('${p.id}')"
-           >
-             + Add
-           </button>`
-        }
-
-      </div>
-
-    `;
-  }
-
-  $("searchResults").innerHTML =
-    html ||
-    `<div style="color:#91a5b4">
-      No users found.
-    </div>`;
-}
-
-
-/* =========================================================
-   PROFILE MODAL
-========================================================= */
 
 async function openProfile(){
 
@@ -3109,40 +2147,88 @@ function closeProfile(){
 }
 
 
+$("avatarFile")
+.addEventListener(
+  "change",
+  function(){
+
+    const file =
+      this.files[0];
+
+    if(!file) return;
+
+    if(file.size > 200*1024){
+
+      showToast(
+        "Image must be 200 KB or smaller.",
+        "error"
+      );
+
+      this.value = "";
+
+      return;
+    }
+
+    const url =
+      URL.createObjectURL(file);
+
+    const preview =
+      $("profileAvatarPreview");
+
+    if(preview.tagName === "IMG"){
+
+      preview.src = url;
+
+    }else{
+
+      preview.outerHTML = `
+        <img
+          id="profileAvatarPreview"
+          class="avatar big"
+          src="${url}"
+          alt=""
+        >
+      `;
+
+    }
+
+  }
+);
+
+
 async function saveProfile(){
 
   if(anonymous){
 
     showToast(
-      "Anonymous profiles cannot be saved.",
-      false
+      "Anonymous profile cannot be saved.",
+      "error"
     );
 
     return;
   }
 
   const displayName =
-    $("profileDisplayName").value.trim();
+    $("profileDisplayName")
+      .value.trim();
 
   const bio =
-    $("profileBio").value.trim();
+    $("profileBio")
+      .value.trim();
 
   let avatarUrl =
     currentProfile.avatar_url || null;
-
-
-  /* IMAGE */
 
   const file =
     $("avatarFile").files[0];
 
   if(file){
 
-    if(file.size > 200 * 1024){
+    if(file.size > 200*1024){
 
       showToast(
         "Image must be 200 KB or smaller.",
-        false
+        "error"
       );
 
       return;
@@ -3151,8 +2237,8 @@ async function saveProfile(){
     const path =
       currentUser.id + ".avatar";
 
-    const {error:uploadError} =
-      await supabaseClient
+    const {error} =
+      await db
         .storage
         .from("avatars")
         .upload(
@@ -3164,38 +2250,36 @@ async function saveProfile(){
           }
         );
 
-    if(uploadError){
+    if(error){
 
       showToast(
-        "Image upload failed: " +
-        uploadError.message,
-        false
+        error.message,
+        "error"
       );
 
       return;
     }
 
-    const {data:urlData} =
-      supabaseClient
-        .storage
+    const {data} =
+      db.storage
         .from("avatars")
         .getPublicUrl(path);
 
     avatarUrl =
-      urlData.publicUrl +
+      data.publicUrl +
       "?v=" + Date.now();
   }
 
-
   const {data,error} =
-    await supabaseClient
+    await db
       .from("profiles")
       .update({
         display_name:
           displayName ||
           currentProfile.username,
         bio,
-        avatar_url:avatarUrl
+        avatar_url:
+          avatarUrl
       })
       .eq("id",currentUser.id)
       .select()
@@ -3205,13 +2289,14 @@ async function saveProfile(){
 
     showToast(
       error.message,
-      false
+      "error"
     );
 
     return;
   }
 
-  currentProfile = data;
+  currentProfile =
+    data;
 
   updateMiniProfile();
 
@@ -3221,12 +2306,1502 @@ async function saveProfile(){
     "Profile updated."
   );
 
-  if(currentRoom === "public"){
+  await loadMessages();
+}
 
-    await loadMessages();
+
+function updateMiniProfile(){
+
+  const name =
+    currentProfile?.display_name ||
+    currentProfile?.username ||
+    "Anonymous";
+
+  $("miniProfile").innerHTML = `
+
+    ${avatarHtml(
+      currentProfile,
+      name
+    )}
+
+    <div class="userMiniText">
+
+      <strong>
+        ${escapeHtml(name)}
+      </strong>
+
+      <span>
+        @${escapeHtml(
+          currentProfile?.username ||
+          name
+        )}
+      </span>
+
+    </div>
+
+  `;
+}
+
+
+/* =========================================================
+   START
+========================================================= */
+
+async function startApp(){
+
+  anonymous = false;
+
+  if(!currentUser){
+
+    const {
+      data:{user}
+    } =
+      await db.auth.getUser();
+
+    currentUser = user;
+  }
+
+  if(!currentUser) return;
+
+  await ensureProfile();
+
+  await registerOnlineUser(
+    currentProfile?.display_name ||
+    currentProfile?.username ||
+    "User"
+  );
+
+  await startInterface();
+}
+
+
+async function startInterface(){
+
+  $("authScreen")
+    .classList.add("hidden");
+
+  $("app")
+    .classList.remove("hidden");
+
+  updateMiniProfile();
+
+  await loadFriends();
+
+  await loadFriendRequests();
+
+  await loadOnlineUsers();
+
+  subscribeRealtime();
+
+  await openPublicChat();
+}
+
+
+/* =========================================================
+   ONLINE
+========================================================= */
+
+async function registerOnlineUser(nickname){
+
+  const {data} =
+    await db
+      .from("chat_users")
+      .select("id")
+      .eq("id",currentUser.id)
+      .maybeSingle();
+
+  if(data){
+
+    await db
+      .from("chat_users")
+      .update({nickname})
+      .eq("id",currentUser.id);
+
+  }else{
+
+    await db
+      .from("chat_users")
+      .insert({
+        id:currentUser.id,
+        nickname
+      });
+
+  }
+}
+
+
+async function loadOnlineUsers(){
+
+  const {data,error} =
+    await db
+      .from("chat_users")
+      .select("*")
+      .order("created_at",{
+        ascending:true
+      });
+
+  if(error){
+
+    console.log(error);
+    return;
+  }
+
+  onlineUsers =
+    data || [];
+
+  await renderOnlineUsers();
+}
+
+
+async function getProfile(id){
+
+  if(isAnonymousId(id)){
+
+    const user =
+      onlineUsers.find(
+        x=>x.id===id
+      );
+
+    if(user){
+
+      return {
+        id,
+        username:user.nickname,
+        display_name:user.nickname,
+        avatar_url:null
+      };
+    }
+
+    return null;
+  }
+
+  const {data} =
+    await db
+      .from("profiles")
+      .select("*")
+      .eq("id",id)
+      .maybeSingle();
+
+  return data;
+}
+
+
+async function renderOnlineUsers(){
+
+  let html = "";
+
+  for(const u of onlineUsers){
+
+    if(u.id === currentUser.id)
+      continue;
+
+    const profile =
+      await getProfile(u.id);
+
+    const name =
+      profile?.display_name ||
+      profile?.username ||
+      u.nickname;
+
+    html += `
+
+      <div class="onlineItem">
+
+        <div class="onlineDot"></div>
+
+        ${avatarHtml(
+          profile,
+          name,
+          "small"
+        )}
+
+        <div
+          class="onlineName"
+          onclick="handleOnlineUser('${u.id}')"
+        >
+          ${escapeHtml(name)}
+        </div>
+
+      </div>
+
+    `;
+  }
+
+  $("onlineUsers").innerHTML =
+    html ||
+    `<div style="font-size:11px;color:#91a5b4">
+      No other users online
+    </div>`;
+}
+
+
+async function handleOnlineUser(id){
+
+  if(await isFriend(id)){
+
+    await openPrivateChat(id);
+
+  }else{
+
+    openSearch();
+
+    const profile =
+      await getProfile(id);
+
+    if(profile){
+
+      $("modalSearchInput").value =
+        profile.username;
+
+      await searchUsers();
+    }
+  }
+}
+
+
+/* =========================================================
+   REALTIME
+========================================================= */
+
+function subscribeRealtime(){
+
+  if(messagesChannel)
+    db.removeChannel(messagesChannel);
+
+  if(usersChannel)
+    db.removeChannel(usersChannel);
+
+  if(friendsChannel)
+    db.removeChannel(friendsChannel);
+
+
+  messagesChannel =
+    db.channel(
+      "messages-" +
+      crypto.randomUUID()
+    )
+
+    .on(
+      "postgres_changes",
+      {
+        event:"INSERT",
+        schema:"public",
+        table:"messages"
+      },
+      async payload => {
+
+        const m =
+          payload.new;
+
+        /* SIGNALS FIRST */
+
+        if(
+          m.message_type ===
+          "voice_signal"
+        ){
+
+          await handleVoiceSignal(m);
+          return;
+        }
+
+        if(
+          m.message_type ===
+          "call_signal"
+        ){
+
+          await handleCallSignal(m);
+          return;
+        }
+
+        if(
+          m.message_type !==
+          "chat"
+        ){
+          return;
+        }
+
+
+        /* CURRENT CHAT */
+
+        if(
+          messageBelongsToCurrentRoom(m)
+        ){
+
+          await addMessageToScreen(m);
+
+        }
+
+
+        /* PRIVATE MESSAGE NOTIFICATION */
+
+        if(
+          m.receiver_id ===
+          currentUser.id &&
+          m.sender_id !==
+          currentUser.id &&
+          m.room !== "public"
+        ){
+
+          const profile =
+            await getProfile(
+              m.sender_id
+            );
+
+          const name =
+            profile?.display_name ||
+            profile?.username ||
+            m.nickname ||
+            "User";
+
+          showToast(
+            "💬 " +
+            name +
+            ": " +
+            m.message
+          );
+
+          sendBrowserNotification(
+            name,
+            m.message
+          );
+
+        }
+
+      }
+    )
+
+    .subscribe();
+
+
+  usersChannel =
+    db.channel(
+      "users-" +
+      crypto.randomUUID()
+    )
+
+    .on(
+      "postgres_changes",
+      {
+        event:"*",
+        schema:"public",
+        table:"chat_users"
+      },
+      async payload => {
+
+        await loadOnlineUsers();
+
+        if(
+          payload.eventType ===
+          "INSERT" &&
+          payload.new.id !==
+          currentUser.id
+        ){
+
+          showToast(
+            "👋 " +
+            payload.new.nickname +
+            " joined the chat"
+          );
+
+        }
+
+      }
+    )
+
+    .subscribe();
+
+
+  friendsChannel =
+    db.channel(
+      "friends-" +
+      crypto.randomUUID()
+    )
+
+    .on(
+      "postgres_changes",
+      {
+        event:"*",
+        schema:"public",
+        table:"friend_requests"
+      },
+      async payload => {
+
+        await loadFriendRequests();
+
+      }
+    )
+
+    .on(
+      "postgres_changes",
+      {
+        event:"*",
+        schema:"public",
+        table:"friendships"
+      },
+      async payload => {
+
+        await loadFriends();
+
+      }
+    )
+
+    .subscribe();
+}
+
+
+/* =========================================================
+   BROWSER NOTIFICATION
+========================================================= */
+
+async function enableNotifications(){
+
+  if(!("Notification" in window))
+    return;
+
+  if(
+    Notification.permission ===
+    "default"
+  ){
+
+    try{
+
+      await Notification.requestPermission();
+
+    }catch(e){
+
+      console.log(e);
+
+    }
+  }
+}
+
+
+function sendBrowserNotification(
+  name,
+  message
+){
+
+  if(
+    !("Notification" in window)
+  ){
+    return;
+  }
+
+  if(
+    Notification.permission !==
+    "granted"
+  ){
+    return;
+  }
+
+  try{
+
+    new Notification(
+      "💬 " + name,
+      {
+        body:message,
+        icon:"data:image/svg+xml," +
+        encodeURIComponent(`
+          <svg xmlns="http://www.w3.org/2000/svg"
+               width="128"
+               height="128">
+            <rect width="128"
+                  height="128"
+                  rx="30"
+                  fill="#38bdf8"/>
+            <text x="64"
+                  y="82"
+                  text-anchor="middle"
+                  font-size="65">
+              💬
+            </text>
+          </svg>
+        `)
+      }
+    );
+
+  }catch(e){
+
+    console.log(e);
+
+  }
+}
+
+
+/* =========================================================
+   PUBLIC / PRIVATE CHAT
+========================================================= */
+
+async function openPublicChat(){
+
+  currentRoom =
+    "public";
+
+  privateFriend =
+    null;
+
+  $("chatTitleText")
+    .textContent =
+    "Public Chat";
+
+  $("chatSubtitle")
+    .textContent =
+    "Everyone online can see this";
+
+  $("chatHeaderAvatar")
+    .innerHTML =
+    "🌐";
+
+  $("privateActions")
+    .innerHTML = "";
+
+  setMobileNav("navPublic");
+
+  await loadMessages();
+
+  $("messageInput")
+    .focus();
+}
+
+
+function privateRoomId(a,b){
+
+  return "private_" +
+    [a,b]
+      .sort()
+      .join("_");
+}
+
+
+async function isFriend(userId){
+
+  if(anonymous)
+    return false;
+
+  return friends.some(
+    f =>
+      f.user_id === userId ||
+      f.friend_id === userId
+  );
+}
+
+
+async function openPrivateChat(friendId){
+
+  if(!(await isFriend(friendId))){
+
+    showToast(
+      "You can only chat with accepted friends.",
+      "error"
+    );
+
+    return;
+  }
+
+  const profile =
+    await getProfile(friendId);
+
+  if(!profile)
+    return;
+
+  privateFriend = {
+    id:friendId,
+    ...profile
+  };
+
+  currentRoom =
+    privateRoomId(
+      currentUser.id,
+      friendId
+    );
+
+  const name =
+    profile.display_name ||
+    profile.username ||
+    "User";
+
+  $("chatTitleText")
+    .textContent =
+    name;
+
+  $("chatSubtitle")
+    .textContent =
+    "🔒 Private Chat";
+
+  $("chatHeaderAvatar")
+    .innerHTML =
+    avatarHtml(
+      profile,
+      name
+    );
+
+  $("privateActions")
+    .innerHTML = `
+
+      <button
+        class="iconBtn"
+        onclick="startPrivateCall('${friendId}')"
+        title="Voice Call">
+        📞
+      </button>
+
+    `;
+
+  setMobileNav("navPublic");
+
+  await loadMessages();
+
+  $("messageInput")
+    .focus();
+}
+
+
+/* =========================================================
+   MESSAGE LOAD
+========================================================= */
+
+function messageBelongsToCurrentRoom(m){
+
+  return m.room === currentRoom;
+}
+
+
+async function loadMessages(){
+
+  $("messages").innerHTML =
+    `<div class="empty">
+      Loading messages...
+    </div>`;
+
+  const since =
+    new Date(
+      Date.now() -
+      FIVE_MINUTES
+    ).toISOString();
+
+  const {data,error} =
+    await db
+      .from("messages")
+      .select("*")
+      .eq("room",currentRoom)
+      .eq("message_type","chat")
+      .gte("created_at",since)
+      .order("created_at",{
+        ascending:true
+      });
+
+  if(error){
+
+    console.log(error);
+
+    $("messages").innerHTML =
+      `<div class="empty">
+        Unable to load messages.
+      </div>`;
+
+    return;
+  }
+
+  $("messages").innerHTML = "";
+
+  if(!data?.length){
+
+    $("messages").innerHTML =
+      `<div class="empty">
+        No messages yet.<br>
+        Start the conversation 💬
+      </div>`;
+
+    return;
+  }
+
+  for(const m of data){
+
+    await addMessageToScreen(m);
 
   }
 
+  scrollMessages();
+}
+
+
+async function addMessageToScreen(m){
+
+  if(!messageBelongsToCurrentRoom(m))
+    return;
+
+  const created =
+    new Date(
+      m.created_at
+    ).getTime();
+
+  const remaining =
+    FIVE_MINUTES -
+    (Date.now()-created);
+
+  if(remaining <= 0)
+    return;
+
+  const empty =
+    $("messages")
+      .querySelector(".empty");
+
+  if(empty)
+    empty.remove();
+
+  const row =
+    document.createElement("div");
+
+  const mine =
+    m.sender_id ===
+    currentUser.id;
+
+  row.className =
+    "msg" +
+    (mine ? " mine" : "");
+
+  const profile =
+    await getProfile(
+      m.sender_id
+    );
+
+  const name =
+    profile?.display_name ||
+    profile?.username ||
+    m.nickname ||
+    "User";
+
+  const time =
+    new Date(
+      m.created_at
+    ).toLocaleTimeString(
+      [],
+      {
+        hour:"2-digit",
+        minute:"2-digit"
+      }
+    );
+
+  row.innerHTML = `
+
+    ${avatarHtml(
+      profile,
+      name,
+      "small"
+    )}
+
+    <div class="msgContent">
+
+      <div class="msgName">
+        ${escapeHtml(name)}
+      </div>
+
+      <div class="bubble">
+        ${escapeHtml(m.message)}
+      </div>
+
+      <div class="msgTime">
+        ${time}
+      </div>
+
+    </div>
+
+  `;
+
+  $("messages")
+    .appendChild(row);
+
+  setTimeout(()=>{
+
+    if(row.isConnected)
+      row.remove();
+
+  },remaining);
+
+  scrollMessages();
+}
+
+
+function scrollMessages(){
+
+  const box =
+    $("messages");
+
+  requestAnimationFrame(()=>{
+    box.scrollTop =
+      box.scrollHeight;
+  });
+}
+
+
+function handleMessageKey(e){
+
+  if(
+    e.key === "Enter" &&
+    !e.shiftKey
+  ){
+
+    e.preventDefault();
+
+    sendMessage();
+  }
+}
+
+
+async function sendMessage(){
+
+  const input =
+    $("messageInput");
+
+  const message =
+    input.value.trim();
+
+  if(!message)
+    return;
+
+  if(
+    currentRoom !== "public" &&
+    privateFriend &&
+    !(await isFriend(
+      privateFriend.id
+    ))
+  ){
+
+    showToast(
+      "You are no longer friends.",
+      "error"
+    );
+
+    return;
+  }
+
+  input.value = "";
+
+  const nickname =
+    currentProfile?.display_name ||
+    currentProfile?.username ||
+    "Anonymous";
+
+  const {error} =
+    await db
+      .from("messages")
+      .insert({
+        room:currentRoom,
+        sender_id:currentUser.id,
+        receiver_id:
+          privateFriend?.id ||
+          null,
+        nickname,
+        message,
+        message_type:"chat"
+      });
+
+  if(error){
+
+    input.value =
+      message;
+
+    showToast(
+      error.message,
+      "error"
+    );
+  }
+}
+
+
+/* =========================================================
+   FRIENDS
+========================================================= */
+
+async function loadFriends(){
+
+  if(anonymous){
+
+    friends = [];
+
+    renderFriends();
+
+    return;
+  }
+
+  const {data,error} =
+    await db
+      .from("friendships")
+      .select("*")
+      .or(
+        `user_id.eq.${currentUser.id},friend_id.eq.${currentUser.id}`
+      );
+
+  if(error){
+
+    console.log(
+      "Friendships:",
+      error
+    );
+
+    friends = [];
+
+    renderFriends();
+
+    return;
+  }
+
+  friends =
+    data || [];
+
+  await renderFriends();
+}
+
+
+async function renderFriends(){
+
+  const box =
+    $("friendsList");
+
+  if(!friends.length){
+
+    box.innerHTML =
+      `<div style="font-size:11px;color:#91a5b4;padding:7px">
+        No friends yet
+      </div>`;
+
+    return;
+  }
+
+  let html = "";
+
+  for(const f of friends){
+
+    const id =
+      f.user_id ===
+      currentUser.id
+        ? f.friend_id
+        : f.user_id;
+
+    const profile =
+      await getProfile(id);
+
+    const name =
+      profile?.display_name ||
+      profile?.username ||
+      "User";
+
+    html += `
+
+      <div
+        class="friendItem"
+        onclick="openPrivateChat('${id}')">
+
+        ${avatarHtml(
+          profile,
+          name,
+          "small"
+        )}
+
+        <div class="friendInfo">
+
+          <strong>
+            ${escapeHtml(name)}
+          </strong>
+
+          <span>
+            🔒 Private Chat
+          </span>
+
+        </div>
+
+      </div>
+
+    `;
+  }
+
+  box.innerHTML =
+    html;
+}
+
+
+/* =========================================================
+   REQUESTS
+========================================================= */
+
+async function loadFriendRequests(){
+
+  if(anonymous){
+
+    $("requestsList").innerHTML =
+      `<div style="font-size:11px;color:#91a5b4;padding:7px">
+        Login to use friends
+      </div>`;
+
+    return;
+  }
+
+  const {data,error} =
+    await db
+      .from("friend_requests")
+      .select("*")
+      .eq(
+        "receiver_id",
+        currentUser.id
+      )
+      .eq(
+        "status",
+        "pending"
+      )
+      .order(
+        "created_at",
+        {ascending:false}
+      );
+
+  if(error){
+
+    console.log(error);
+    return;
+  }
+
+  if(!data?.length){
+
+    $("requestsList").innerHTML =
+      `<div style="font-size:11px;color:#91a5b4;padding:7px">
+        No requests
+      </div>`;
+
+    return;
+  }
+
+  let html = "";
+
+  for(const r of data){
+
+    const profile =
+      await getProfile(
+        r.sender_id
+      );
+
+    const name =
+      profile?.display_name ||
+      profile?.username ||
+      "User";
+
+    html += `
+
+      <div class="result">
+
+        ${avatarHtml(
+          profile,
+          name,
+          "small"
+        )}
+
+        <div class="resultInfo">
+
+          <strong>
+            ${escapeHtml(name)}
+          </strong>
+
+          <small>
+            Friend Request
+          </small>
+
+        </div>
+
+        <button
+          class="smallBtn"
+          onclick="acceptRequest(${r.id},'${r.sender_id}')">
+          ✓
+        </button>
+
+        <button
+          class="smallBtn dangerBtn"
+          onclick="rejectRequest(${r.id})">
+          ✕
+        </button>
+
+      </div>
+
+    `;
+  }
+
+  $("requestsList").innerHTML =
+    html;
+}
+
+
+async function sendFriendRequest(userId){
+
+  if(anonymous){
+
+    showToast(
+      "Login required.",
+      "error"
+    );
+
+    return;
+  }
+
+  if(userId === currentUser.id){
+
+    showToast(
+      "You cannot add yourself.",
+      "error"
+    );
+
+    return;
+  }
+
+  if(await isFriend(userId)){
+
+    showToast(
+      "Already friends."
+    );
+
+    return;
+  }
+
+  const {data} =
+    await db
+      .from("friend_requests")
+      .select("*")
+      .or(
+        `and(sender_id.eq.${currentUser.id},receiver_id.eq.${userId}),and(sender_id.eq.${userId},receiver_id.eq.${currentUser.id})`
+      )
+      .limit(1);
+
+  if(data?.length){
+
+    showToast(
+      "Request already exists.",
+      "error"
+    );
+
+    return;
+  }
+
+  const {error} =
+    await db
+      .from("friend_requests")
+      .insert({
+        sender_id:currentUser.id,
+        receiver_id:userId,
+        status:"pending"
+      });
+
+  if(error){
+
+    showToast(
+      error.message,
+      "error"
+    );
+
+    return;
+  }
+
+  showToast(
+    "Friend request sent."
+  );
+}
+
+
+async function acceptRequest(
+  requestId,
+  senderId
+){
+
+  const {error} =
+    await db
+      .from("friend_requests")
+      .update({
+        status:"accepted"
+      })
+      .eq("id",requestId)
+      .eq(
+        "receiver_id",
+        currentUser.id
+      );
+
+  if(error){
+
+    showToast(
+      error.message,
+      "error"
+    );
+
+    return;
+  }
+
+  const {error:friendError} =
+    await db
+      .from("friendships")
+      .upsert([
+        {
+          user_id:currentUser.id,
+          friend_id:senderId
+        },
+        {
+          user_id:senderId,
+          friend_id:currentUser.id
+        }
+      ],{
+        onConflict:
+          "user_id,friend_id"
+      });
+
+  if(friendError){
+
+    showToast(
+      friendError.message,
+      "error"
+    );
+
+    return;
+  }
+
+  await loadFriends();
+  await loadFriendRequests();
+
+  showToast(
+    "Friend request accepted."
+  );
+}
+
+
+async function rejectRequest(
+  requestId
+){
+
+  const {error} =
+    await db
+      .from("friend_requests")
+      .update({
+        status:"rejected"
+      })
+      .eq("id",requestId)
+      .eq(
+        "receiver_id",
+        currentUser.id
+      );
+
+  if(error){
+
+    showToast(
+      error.message,
+      "error"
+    );
+
+    return;
+  }
+
+  await loadFriendRequests();
+
+  showToast(
+    "Request rejected."
+  );
+}
+
+
+/* =========================================================
+   SEARCH
+========================================================= */
+
+function openSearch(){
+
+  $("searchModal")
+    .classList.remove("hidden");
+
+  setTimeout(()=>{
+    $("modalSearchInput")
+      .focus();
+  },100);
+}
+
+
+function closeSearch(){
+
+  $("searchModal")
+    .classList.add("hidden");
+}
+
+
+async function searchUsers(){
+
+  const value =
+    $("modalSearchInput")
+      .value.trim() ||
+    $("sideSearchInput")
+      .value.trim();
+
+  if(!value){
+
+    $("searchResults").innerHTML =
+      `<div style="font-size:12px;color:#91a5b4">
+        Enter a username.
+      </div>`;
+
+    return;
+  }
+
+  openSearch();
+
+  $("searchResults").innerHTML =
+    `<div style="font-size:12px;color:#91a5b4">
+      Searching...
+    </div>`;
+
+  const {data,error} =
+    await db
+      .from("profiles")
+      .select("*")
+      .ilike(
+        "username",
+        "%" + value + "%"
+      )
+      .limit(20);
+
+  if(error){
+
+    $("searchResults").innerHTML =
+      `<div style="font-size:12px;color:#dc2626">
+        ${escapeHtml(error.message)}
+      </div>`;
+
+    return;
+  }
+
+  const users =
+    (data || [])
+    .filter(
+      p=>p.id !== currentUser.id
+    );
+
+  if(!users.length){
+
+    $("searchResults").innerHTML =
+      `<div style="font-size:12px;color:#91a5b4">
+        No users found.
+      </div>`;
+
+    return;
+  }
+
+  let html = "";
+
+  for(const p of users){
+
+    const name =
+      p.display_name ||
+      p.username;
+
+    const friend =
+      await isFriend(p.id);
+
+    html += `
+
+      <div class="result">
+
+        ${avatarHtml(
+          p,
+          name,
+          "small"
+        )}
+
+        <div class="resultInfo">
+
+          <strong>
+            ${escapeHtml(name)}
+          </strong>
+
+          <small>
+            @${escapeHtml(
+              p.username
+            )}
+          </small>
+
+        </div>
+
+        ${
+          friend
+
+          ?
+
+          `<button
+            class="smallBtn"
+            onclick="openPrivateChat('${p.id}');closeSearch()">
+            Chat
+          </button>`
+
+          :
+
+          `<button
+            class="smallBtn"
+            onclick="sendFriendRequest('${p.id}')">
+            + Add
+          </button>`
+        }
+
+      </div>
+
+    `;
+  }
+
+  $("searchResults").innerHTML =
+    html;
+}
+
+
+/* =========================================================
+   MOBILE NAV
+========================================================= */
+
+function setMobileNav(id){
+
+  document
+    .querySelectorAll(".mobileNav button")
+    .forEach(
+      b=>b.classList.remove("active")
+    );
+
+  const el =
+    $(id);
+
+  if(el)
+    el.classList.add("active");
+}
+
+
+function mobilePublic(){
+
+  setMobileNav(
+    "navPublic"
+  );
+
+  openPublicChat();
+}
+
+
+function mobileFriends(){
+
+  setMobileNav(
+    "navFriends"
+  );
+
+  if(friends.length){
+
+    const id =
+      friends[0].user_id ===
+      currentUser.id
+        ? friends[0].friend_id
+        : friends[0].user_id;
+
+    openPrivateChat(id);
+
+  }else{
+
+    openSearch();
+
+    showToast(
+      "Search and add friends first."
+    );
+  }
 }
 
 
@@ -3236,25 +3811,40 @@ async function saveProfile(){
 
 async function openVoiceRoom(){
 
-  if(voiceActive) return;
+  if(voiceActive)
+    return;
+
+  if(
+    !navigator.mediaDevices ||
+    !navigator.mediaDevices.getUserMedia
+  ){
+
+    showToast(
+      "Your browser does not support microphone.",
+      "error"
+    );
+
+    return;
+  }
 
   try{
 
     voiceStream =
-      await navigator.mediaDevices.getUserMedia({
-        audio:{
-          echoCancellation:true,
-          noiseSuppression:true,
-          autoGainControl:true
-        },
-        video:false
-      });
+      await navigator.mediaDevices
+        .getUserMedia({
+          audio:{
+            echoCancellation:true,
+            noiseSuppression:true,
+            autoGainControl:true
+          },
+          video:false
+        });
 
-  }catch(error){
+  }catch(e){
 
     showToast(
-      "Microphone permission required.",
-      false
+      "Please allow microphone permission.",
+      "error"
     );
 
     return;
@@ -3265,46 +3855,48 @@ async function openVoiceRoom(){
   $("voicePanel")
     .classList.remove("hidden");
 
+  setMobileNav(
+    "navVoice"
+  );
+
   await renderVoiceUsers();
 
   const users =
-    await getCurrentVoiceUsers();
-
-  /* announce */
+    await getVoiceUsers();
 
   await sendVoiceSignal({
     type:"voice_join"
   });
 
-  /* create offers only for users with smaller ID */
-
   for(const user of users){
 
-    if(user.id === currentUser.id){
+    if(
+      user.id === currentUser.id
+    ){
       continue;
     }
 
-    if(String(currentUser.id) <
-       String(user.id)){
+    if(
+      String(currentUser.id) <
+      String(user.id)
+    ){
 
       await createVoiceOffer(
         user.id
       );
-
     }
-
   }
 
   showToast(
-    "You joined the voice room."
+    "🎙 You joined Voice Room."
   );
 }
 
 
-async function getCurrentVoiceUsers(){
+async function getVoiceUsers(){
 
   const {data} =
-    await supabaseClient
+    await db
       .from("chat_users")
       .select("*");
 
@@ -3315,34 +3907,46 @@ async function getCurrentVoiceUsers(){
 async function renderVoiceUsers(){
 
   const users =
-    await getCurrentVoiceUsers();
+    await getVoiceUsers();
 
   $("voiceUsers").innerHTML =
-    users.map(u=>`
+    users.map(
+      u=>`
 
-      <div class="voiceUser">
+        <div class="voiceUser">
 
-        <div class="onlineDot"></div>
+          <div class="onlineDot"></div>
 
-        <span>
-          ${escapeHtml(u.nickname)}
-        </span>
+          <span style="font-size:12px">
+            ${escapeHtml(
+              u.nickname
+            )}
+          </span>
 
-        ${
-          u.id === currentUser.id
-          ? "<small style='color:#8aa0b1'>(You)</small>"
-          : ""
-        }
+          ${
+            u.id === currentUser.id
+            ?
+            `<small style="color:#8aa0ad">
+              You
+            </small>`
+            :
+            ""
+          }
 
-      </div>
+        </div>
 
-    `).join("");
+      `
+    ).join("");
 }
 
 
-async function createVoicePeer(remoteId){
+async function createVoicePeer(
+  remoteId
+){
 
-  if(voicePeers[remoteId]){
+  if(
+    voicePeers[remoteId]
+  ){
     return voicePeers[remoteId];
   }
 
@@ -3350,31 +3954,35 @@ async function createVoicePeer(remoteId){
     new RTCPeerConnection({
       iceServers:[
         {
-          urls:"stun:stun.l.google.com:19302"
+          urls:
+          "stun:stun.l.google.com:19302"
         },
         {
-          urls:"stun:stun1.l.google.com:19302"
+          urls:
+          "stun:stun1.l.google.com:19302"
         }
       ]
     });
 
-  voicePeers[remoteId] = pc;
+  voicePeers[remoteId] =
+    pc;
 
   if(voiceStream){
 
     voiceStream
       .getTracks()
-      .forEach(track=>{
-        pc.addTrack(
-          track,
-          voiceStream
-        );
-      });
-
+      .forEach(
+        track=>{
+          pc.addTrack(
+            track,
+            voiceStream
+          );
+        }
+      );
   }
 
   pc.onicecandidate =
-    async event => {
+    async event=>{
 
       if(event.candidate){
 
@@ -3383,74 +3991,88 @@ async function createVoicePeer(remoteId){
           target:remoteId,
           candidate:event.candidate
         });
-
       }
-
     };
 
-
   pc.ontrack =
-    event => {
+    event=>{
 
       const stream =
         event.streams[0];
 
-      if(!stream) return;
+      if(!stream)
+        return;
 
       let audio =
         document.getElementById(
-          "voice-audio-" + remoteId
+          "voiceAudio-" +
+          remoteId
         );
 
       if(!audio){
 
         audio =
-          document.createElement("audio");
+          document.createElement(
+            "audio"
+          );
 
         audio.id =
-          "voice-audio-" + remoteId;
+          "voiceAudio-" +
+          remoteId;
 
-        audio.autoplay = true;
+        audio.autoplay =
+          true;
 
-        audio.playsInline = true;
+        audio.playsInline =
+          true;
 
-        document.body.appendChild(audio);
+        document.body
+          .appendChild(audio);
       }
 
-      audio.srcObject = stream;
+      audio.srcObject =
+        stream;
 
-      audio.play().catch(()=>{});
-
+      audio.play()
+        .catch(()=>{});
     };
 
-
   pc.onconnectionstatechange =
-    () => {
+    ()=>{
 
       if([
         "failed",
         "closed",
         "disconnected"
-      ].includes(pc.connectionState)){
+      ].includes(
+        pc.connectionState
+      )){
 
-        closeVoicePeer(remoteId);
+        closeVoicePeer(
+          remoteId
+        );
       }
-
     };
 
   return pc;
 }
 
 
-async function createVoiceOffer(remoteId){
+async function createVoiceOffer(
+  remoteId
+){
 
   const pc =
-    await createVoicePeer(remoteId);
+    await createVoicePeer(
+      remoteId
+    );
 
   const offer =
     await pc.createOffer();
 
-  await pc.setLocalDescription(offer);
+  await pc.setLocalDescription(
+    offer
+  );
 
   await sendVoiceSignal({
     type:"voice_offer",
@@ -3460,14 +4082,16 @@ async function createVoiceOffer(remoteId){
 }
 
 
-async function sendVoiceSignal(signal){
+async function sendVoiceSignal(
+  signal
+){
 
   const nickname =
     currentProfile?.display_name ||
     currentProfile?.username ||
     "Anonymous";
 
-  await supabaseClient
+  await db
     .from("messages")
     .insert({
       room:"voice",
@@ -3475,21 +4099,30 @@ async function sendVoiceSignal(signal){
       receiver_id:
         signal.target || null,
       nickname,
-      message:JSON.stringify(signal),
-      message_type:"voice_signal"
+      message:
+        JSON.stringify(signal),
+      message_type:
+        "voice_signal"
     });
 }
 
 
 async function handleVoiceSignal(m){
 
-  if(!voiceActive){
+  if(!voiceActive)
+    return;
+
+  if(
+    m.receiver_id &&
+    m.receiver_id !==
+    currentUser.id
+  ){
     return;
   }
 
   if(
-    m.receiver_id &&
-    m.receiver_id !== currentUser.id
+    m.sender_id ===
+    currentUser.id
   ){
     return;
   }
@@ -3497,38 +4130,45 @@ async function handleVoiceSignal(m){
   let signal;
 
   try{
+
     signal =
       JSON.parse(m.message);
+
   }catch{
+
     return;
   }
 
   const remoteId =
     m.sender_id;
 
-  if(remoteId === currentUser.id){
-    return;
-  }
-
-  if(signal.type === "voice_join"){
+  if(
+    signal.type ===
+    "voice_join"
+  ){
 
     if(
       String(currentUser.id) <
       String(remoteId)
     ){
 
-      await createVoiceOffer(remoteId);
+      await createVoiceOffer(
+        remoteId
+      );
     }
 
     return;
   }
 
-
   const pc =
-    await createVoicePeer(remoteId);
+    await createVoicePeer(
+      remoteId
+    );
 
-
-  if(signal.type === "voice_offer"){
+  if(
+    signal.type ===
+    "voice_offer"
+  ){
 
     await pc.setRemoteDescription(
       new RTCSessionDescription(
@@ -3536,12 +4176,16 @@ async function handleVoiceSignal(m){
       )
     );
 
-    await flushVoiceIce(remoteId);
+    await flushVoiceIce(
+      remoteId
+    );
 
     const answer =
       await pc.createAnswer();
 
-    await pc.setLocalDescription(answer);
+    await pc.setLocalDescription(
+      answer
+    );
 
     await sendVoiceSignal({
       type:"voice_answer",
@@ -3552,8 +4196,10 @@ async function handleVoiceSignal(m){
     return;
   }
 
-
-  if(signal.type === "voice_answer"){
+  if(
+    signal.type ===
+    "voice_answer"
+  ){
 
     await pc.setRemoteDescription(
       new RTCSessionDescription(
@@ -3561,15 +4207,21 @@ async function handleVoiceSignal(m){
       )
     );
 
-    await flushVoiceIce(remoteId);
+    await flushVoiceIce(
+      remoteId
+    );
 
     return;
   }
 
+  if(
+    signal.type ===
+    "voice_ice"
+  ){
 
-  if(signal.type === "voice_ice"){
-
-    if(pc.remoteDescription){
+    if(
+      pc.remoteDescription
+    ){
 
       try{
 
@@ -3587,36 +4239,42 @@ async function handleVoiceSignal(m){
 
     }else{
 
-      if(!voiceIceQueue[remoteId]){
-        voiceIceQueue[remoteId] = [];
-      }
+      if(!voiceIceQueue[remoteId])
+        voiceIceQueue[remoteId]=[];
 
       voiceIceQueue[remoteId]
-        .push(signal.candidate);
-
+        .push(
+          signal.candidate
+        );
     }
-
   }
-
 }
 
 
-async function flushVoiceIce(remoteId){
+async function flushVoiceIce(
+  remoteId
+){
 
   const pc =
     voicePeers[remoteId];
 
-  if(!pc) return;
+  if(!pc)
+    return;
 
   const queue =
-    voiceIceQueue[remoteId] || [];
+    voiceIceQueue[remoteId] ||
+    [];
 
-  for(const candidate of queue){
+  for(
+    const candidate of queue
+  ){
 
     try{
 
       await pc.addIceCandidate(
-        new RTCIceCandidate(candidate)
+        new RTCIceCandidate(
+          candidate
+        )
       );
 
     }catch(e){
@@ -3624,14 +4282,17 @@ async function flushVoiceIce(remoteId){
       console.log(e);
 
     }
-
   }
 
-  delete voiceIceQueue[remoteId];
+  delete voiceIceQueue[
+    remoteId
+  ];
 }
 
 
-function closeVoicePeer(remoteId){
+function closeVoicePeer(
+  remoteId
+){
 
   const pc =
     voicePeers[remoteId];
@@ -3641,20 +4302,20 @@ function closeVoicePeer(remoteId){
     try{
       pc.close();
     }catch{}
-
   }
 
-  delete voicePeers[remoteId];
+  delete voicePeers[
+    remoteId
+  ];
 
   const audio =
     document.getElementById(
-      "voice-audio-" + remoteId
+      "voiceAudio-" +
+      remoteId
     );
 
-  if(audio){
+  if(audio)
     audio.remove();
-  }
-
 }
 
 
@@ -3662,18 +4323,22 @@ async function closeVoiceRoom(){
 
   voiceActive = false;
 
-  Object.keys(voicePeers)
-    .forEach(closeVoicePeer);
+  Object.keys(
+    voicePeers
+  ).forEach(
+    closeVoicePeer
+  );
 
   voicePeers = {};
-
   voiceIceQueue = {};
 
   if(voiceStream){
 
     voiceStream
       .getTracks()
-      .forEach(track=>track.stop());
+      .forEach(
+        track=>track.stop()
+      );
 
     voiceStream = null;
   }
@@ -3681,25 +4346,33 @@ async function closeVoiceRoom(){
   $("voicePanel")
     .classList.add("hidden");
 
+  setMobileNav(
+    "navPublic"
+  );
+
   showToast(
-    "You left the voice room."
+    "You left Voice Room."
   );
 }
 
 
 function toggleMute(){
 
-  if(!voiceStream) return;
+  if(!voiceStream)
+    return;
 
   const track =
-    voiceStream.getAudioTracks()[0];
+    voiceStream
+      .getAudioTracks()[0];
 
-  if(!track) return;
+  if(!track)
+    return;
 
   track.enabled =
     !track.enabled;
 
-  $("muteVoiceBtn").textContent =
+  $("muteVoiceBtn")
+    .textContent =
     track.enabled
       ? "🎙 Mute"
       : "🔇 Unmute";
@@ -3719,23 +4392,27 @@ function callRoomId(a,b){
 }
 
 
-async function startPrivateCall(friendId){
+async function startPrivateCall(
+  friendId
+){
 
   if(anonymous){
 
     showToast(
       "Login required for private calls.",
-      false
+      "error"
     );
 
     return;
   }
 
-  if(!(await isFriend(friendId))){
+  if(
+    !(await isFriend(friendId))
+  ){
 
     showToast(
-      "You can only call accepted friends.",
-      false
+      "You can only call friends.",
+      "error"
     );
 
     return;
@@ -3745,7 +4422,7 @@ async function startPrivateCall(friendId){
 
     showToast(
       "You are already in a call.",
-      false
+      "error"
     );
 
     return;
@@ -3754,7 +4431,8 @@ async function startPrivateCall(friendId){
   const profile =
     await getProfile(friendId);
 
-  if(!profile) return;
+  if(!profile)
+    return;
 
   callState = {
     active:true,
@@ -3769,10 +4447,12 @@ async function startPrivateCall(friendId){
     role:"caller"
   };
 
-  $("activeCallName").textContent =
+  $("activeCallName")
+    .textContent =
     callState.remoteName;
 
-  $("callStatus").textContent =
+  $("callStatus")
+    .textContent =
     "Calling...";
 
   $("activeCallPanel")
@@ -3784,51 +4464,41 @@ async function startPrivateCall(friendId){
   });
 
   showToast(
-    "Calling " +
+    "📞 Calling " +
     callState.remoteName
   );
-
-  /* ring timeout */
-
-  setTimeout(()=>{
-
-    if(
-      callState.active &&
-      callState.role === "caller" &&
-      callState.calling === true
-    ){
-
-      hangupCall();
-
-    }
-
-  },45000);
 }
 
 
-async function sendCallSignal(signal){
+async function sendCallSignal(
+  signal
+){
 
   const nickname =
     currentProfile?.display_name ||
     currentProfile?.username ||
     "Anonymous";
 
-  await supabaseClient
+  await db
     .from("messages")
     .insert({
-      room:callRoomId(
+      room:
+        callRoomId(
+          currentUser.id,
+          signal.target ||
+          callState.remoteId
+        ),
+      sender_id:
         currentUser.id,
-        signal.target ||
-        callState.remoteId
-      ),
-      sender_id:currentUser.id,
       receiver_id:
         signal.target ||
         callState.remoteId ||
         null,
       nickname,
-      message:JSON.stringify(signal),
-      message_type:"call_signal"
+      message:
+        JSON.stringify(signal),
+      message_type:
+        "call_signal"
     });
 }
 
@@ -3837,28 +4507,38 @@ async function handleCallSignal(m){
 
   if(
     m.receiver_id &&
-    m.receiver_id !== currentUser.id
+    m.receiver_id !==
+    currentUser.id
   ){
     return;
   }
 
-  if(m.sender_id === currentUser.id){
+  if(
+    m.sender_id ===
+    currentUser.id
+  ){
     return;
   }
 
   let signal;
 
   try{
+
     signal =
       JSON.parse(m.message);
+
   }catch{
+
     return;
   }
 
 
-  /* INCOMING RING */
+  /* RING */
 
-  if(signal.type === "ring"){
+  if(
+    signal.type ===
+    "ring"
+  ){
 
     if(callState.active){
 
@@ -3871,7 +4551,9 @@ async function handleCallSignal(m){
     }
 
     const profile =
-      await getProfile(m.sender_id);
+      await getProfile(
+        m.sender_id
+      );
 
     callState = {
       active:false,
@@ -3887,7 +4569,8 @@ async function handleCallSignal(m){
       role:"callee"
     };
 
-    $("incomingCallName").textContent =
+    $("incomingCallName")
+      .textContent =
       callState.remoteName;
 
     $("incomingCallModal")
@@ -3899,14 +4582,17 @@ async function handleCallSignal(m){
 
   /* BUSY */
 
-  if(signal.type === "busy"){
+  if(
+    signal.type ===
+    "busy"
+  ){
 
     showToast(
       "User is busy.",
-      false
+      "error"
     );
 
-    hangupCall();
+    closeCallLocal();
 
     return;
   }
@@ -3914,16 +4600,18 @@ async function handleCallSignal(m){
 
   /* ACCEPT */
 
-  if(signal.type === "accept"){
+  if(
+    signal.type ===
+    "accept"
+  ){
 
     if(
-      !callState.active ||
-      callState.role !== "caller"
+      callState.role ===
+      "caller"
     ){
-      return;
-    }
 
-    await startCallerWebRTC();
+      await startCallerWebRTC();
+    }
 
     return;
   }
@@ -3931,14 +4619,10 @@ async function handleCallSignal(m){
 
   /* OFFER */
 
-  if(signal.type === "offer"){
-
-    if(
-      !callState.incoming &&
-      !callState.active
-    ){
-      return;
-    }
+  if(
+    signal.type ===
+    "offer"
+  ){
 
     await startCalleeWebRTC(
       m.sender_id,
@@ -3951,21 +4635,25 @@ async function handleCallSignal(m){
 
   /* ANSWER */
 
-  if(signal.type === "answer"){
+  if(
+    signal.type ===
+    "answer"
+  ){
 
-    if(!callState.pc){
+    if(!callState.pc)
       return;
-    }
 
-    await callState.pc.setRemoteDescription(
-      new RTCSessionDescription(
-        signal.answer
-      )
-    );
+    await callState.pc
+      .setRemoteDescription(
+        new RTCSessionDescription(
+          signal.answer
+        )
+      );
 
     await flushCallIce();
 
-    $("callStatus").textContent =
+    $("callStatus")
+      .textContent =
       "Connected";
 
     return;
@@ -3974,7 +4662,10 @@ async function handleCallSignal(m){
 
   /* ICE */
 
-  if(signal.type === "ice"){
+  if(
+    signal.type ===
+    "ice"
+  ){
 
     if(
       callState.pc &&
@@ -3983,11 +4674,12 @@ async function handleCallSignal(m){
 
       try{
 
-        await callState.pc.addIceCandidate(
-          new RTCIceCandidate(
-            signal.candidate
-          )
-        );
+        await callState.pc
+          .addIceCandidate(
+            new RTCIceCandidate(
+              signal.candidate
+            )
+          );
 
       }catch(e){
 
@@ -4000,7 +4692,6 @@ async function handleCallSignal(m){
       callIceQueue.push(
         signal.candidate
       );
-
     }
 
     return;
@@ -4009,35 +4700,42 @@ async function handleCallSignal(m){
 
   /* HANGUP */
 
-  if(signal.type === "hangup"){
+  if(
+    signal.type ===
+    "hangup"
+  ){
 
     closeCallLocal();
 
     showToast(
       "Call ended."
     );
-
   }
-
 }
 
 
 async function acceptCall(){
 
-  if(!callState.incoming){
+  if(
+    !callState.incoming
+  )
     return;
-  }
 
-  callState.active = true;
-  callState.incoming = false;
+  callState.active =
+    true;
+
+  callState.incoming =
+    false;
 
   $("incomingCallModal")
     .classList.add("hidden");
 
-  $("activeCallName").textContent =
+  $("activeCallName")
+    .textContent =
     callState.remoteName;
 
-  $("callStatus").textContent =
+  $("callStatus")
+    .textContent =
     "Connecting...";
 
   $("activeCallPanel")
@@ -4056,11 +4754,11 @@ async function acceptCall(){
           video:false
         });
 
-  }catch(error){
+  }catch(e){
 
     showToast(
       "Microphone permission denied.",
-      false
+      "error"
     );
 
     closeCallLocal();
@@ -4072,7 +4770,6 @@ async function acceptCall(){
     type:"accept",
     target:callState.remoteId
   });
-
 }
 
 
@@ -4091,14 +4788,14 @@ async function startCallerWebRTC(){
           video:false
         });
 
-  }catch(error){
+  }catch(e){
 
     showToast(
       "Microphone permission denied.",
-      false
+      "error"
     );
 
-    hangupCall();
+    closeCallLocal();
 
     return;
   }
@@ -4106,11 +4803,13 @@ async function startCallerWebRTC(){
   await createCallPeer();
 
   const offer =
-    await callState.pc.createOffer();
+    await callState.pc
+      .createOffer();
 
-  await callState.pc.setLocalDescription(
-    offer
-  );
+  await callState.pc
+    .setLocalDescription(
+      offer
+    );
 
   await sendCallSignal({
     type:"offer",
@@ -4118,47 +4817,50 @@ async function startCallerWebRTC(){
     offer
   });
 
-  $("callStatus").textContent =
+  $("callStatus")
+    .textContent =
     "Connecting...";
-
 }
 
 
 async function createCallPeer(){
 
-  if(callState.pc){
+  if(callState.pc)
     return callState.pc;
-  }
 
   const pc =
     new RTCPeerConnection({
       iceServers:[
         {
-          urls:"stun:stun.l.google.com:19302"
+          urls:
+          "stun:stun.l.google.com:19302"
         },
         {
-          urls:"stun:stun1.l.google.com:19302"
+          urls:
+          "stun:stun1.l.google.com:19302"
         }
       ]
     });
 
-  callState.pc = pc;
+  callState.pc =
+    pc;
 
   if(callState.localStream){
 
     callState.localStream
       .getTracks()
-      .forEach(track=>{
-        pc.addTrack(
-          track,
-          callState.localStream
-        );
-      });
-
+      .forEach(
+        track=>{
+          pc.addTrack(
+            track,
+            callState.localStream
+          );
+        }
+      );
   }
 
   pc.onicecandidate =
-    async event => {
+    async event=>{
 
       if(event.candidate){
 
@@ -4167,14 +4869,11 @@ async function createCallPeer(){
           target:callState.remoteId,
           candidate:event.candidate
         });
-
       }
-
     };
 
-
   pc.ontrack =
-    event => {
+    event=>{
 
       const audio =
         $("remoteAudio");
@@ -4182,33 +4881,32 @@ async function createCallPeer(){
       audio.srcObject =
         event.streams[0];
 
-      audio.play().catch(()=>{});
-
+      audio.play()
+        .catch(()=>{});
     };
 
-
   pc.onconnectionstatechange =
-    () => {
+    ()=>{
 
       if(
-        pc.connectionState === "connected"
+        pc.connectionState ===
+        "connected"
       ){
 
-        $("callStatus").textContent =
+        $("callStatus")
+          .textContent =
           "Connected";
-
       }
 
       if([
         "failed",
-        "closed",
-        "disconnected"
-      ].includes(pc.connectionState)){
+        "closed"
+      ].includes(
+        pc.connectionState
+      )){
 
         closeCallLocal();
-
       }
-
     };
 
   return pc;
@@ -4238,34 +4936,50 @@ async function startCalleeWebRTC(
             video:false
           });
 
-    }catch(error){
+    }catch(e){
 
       showToast(
         "Microphone permission denied.",
-        false
+        "error"
       );
 
       closeCallLocal();
 
       return;
     }
-
   }
+
+  callState.active =
+    true;
+
+  callState.incoming =
+    false;
+
+  $("incomingCallModal")
+    .classList.add("hidden");
+
+  $("activeCallPanel")
+    .classList.remove("hidden");
 
   await createCallPeer();
 
-  await callState.pc.setRemoteDescription(
-    new RTCSessionDescription(offer)
-  );
+  await callState.pc
+    .setRemoteDescription(
+      new RTCSessionDescription(
+        offer
+      )
+    );
 
   await flushCallIce();
 
   const answer =
-    await callState.pc.createAnswer();
+    await callState.pc
+      .createAnswer();
 
-  await callState.pc.setLocalDescription(
-    answer
-  );
+  await callState.pc
+    .setLocalDescription(
+      answer
+    );
 
   await sendCallSignal({
     type:"answer",
@@ -4273,14 +4987,16 @@ async function startCalleeWebRTC(
     answer
   });
 
-  $("callStatus").textContent =
+  $("callStatus")
+    .textContent =
     "Connected";
 }
 
 
 async function flushCallIce(){
 
-  if(!callState.pc) return;
+  if(!callState.pc)
+    return;
 
   for(
     const candidate of callIceQueue
@@ -4288,16 +5004,17 @@ async function flushCallIce(){
 
     try{
 
-      await callState.pc.addIceCandidate(
-        new RTCIceCandidate(candidate)
-      );
+      await callState.pc
+        .addIceCandidate(
+          new RTCIceCandidate(
+            candidate
+          )
+        );
 
     }catch(e){
 
       console.log(e);
-
     }
-
   }
 
   callIceQueue = [];
@@ -4318,7 +5035,6 @@ async function rejectCall(){
       type:"hangup",
       target:remote
     });
-
   }
 
   closeCallLocal();
@@ -4336,7 +5052,6 @@ async function hangupCall(){
       type:"hangup",
       target:remote
     });
-
   }
 
   closeCallLocal();
@@ -4354,15 +5069,15 @@ function closeCallLocal(){
     try{
       callState.pc.close();
     }catch{}
-
   }
 
   if(callState.localStream){
 
     callState.localStream
       .getTracks()
-      .forEach(track=>track.stop());
-
+      .forEach(
+        track=>track.stop()
+      );
   }
 
   callState = {
@@ -4390,15 +5105,15 @@ function closeCallLocal(){
 
 function toggleCallMute(){
 
-  const stream =
-    callState.localStream;
-
-  if(!stream) return;
+  if(!callState.localStream)
+    return;
 
   const track =
-    stream.getAudioTracks()[0];
+    callState.localStream
+      .getAudioTracks()[0];
 
-  if(!track) return;
+  if(!track)
+    return;
 
   track.enabled =
     !track.enabled;
@@ -4412,39 +5127,6 @@ function toggleCallMute(){
 
 
 /* =========================================================
-   PROFILE IMAGE PREVIEW
-========================================================= */
-
-$("avatarFile")
-  .addEventListener("change",function(){
-
-    const file =
-      this.files[0];
-
-    if(!file) return;
-
-    if(file.size > 200 * 1024){
-
-      showToast(
-        "Image must be 200 KB or smaller.",
-        false
-      );
-
-      this.value = "";
-
-      return;
-    }
-
-    const url =
-      URL.createObjectURL(file);
-
-    $("profileAvatarPreview").src =
-      url;
-
-  });
-
-
-/* =========================================================
    LOGOUT
 ========================================================= */
 
@@ -4454,39 +5136,42 @@ async function logout(){
 
     if(currentUser){
 
-      await supabaseClient
+      await db
         .from("chat_users")
         .delete()
-        .eq("id",currentUser.id);
-
+        .eq(
+          "id",
+          currentUser.id
+        );
     }
 
   }catch(e){
+
     console.log(e);
   }
 
-  closeVoiceLocal();
-
   await closeVoiceRoomSilent();
 
-  if(messagesChannel){
-    await supabaseClient
-      .removeChannel(messagesChannel);
-  }
+  closeCallLocal();
 
-  if(usersChannel){
-    await supabaseClient
-      .removeChannel(usersChannel);
-  }
+  if(messagesChannel)
+    await db.removeChannel(
+      messagesChannel
+    );
 
-  if(friendsChannel){
-    await supabaseClient
-      .removeChannel(friendsChannel);
-  }
+  if(usersChannel)
+    await db.removeChannel(
+      usersChannel
+    );
+
+  if(friendsChannel)
+    await db.removeChannel(
+      friendsChannel
+    );
 
   if(!anonymous){
 
-    await supabaseClient.auth.signOut();
+    await db.auth.signOut();
 
   }
 
@@ -4498,8 +5183,11 @@ async function closeVoiceRoomSilent(){
 
   voiceActive = false;
 
-  Object.keys(voicePeers)
-    .forEach(closeVoicePeer);
+  Object.keys(
+    voicePeers
+  ).forEach(
+    closeVoicePeer
+  );
 
   voicePeers = {};
 
@@ -4507,11 +5195,12 @@ async function closeVoiceRoomSilent(){
 
     voiceStream
       .getTracks()
-      .forEach(track=>track.stop());
+      .forEach(
+        track=>track.stop()
+      );
 
     voiceStream = null;
   }
-
 }
 
 
@@ -4526,7 +5215,7 @@ async function boot(){
     const {
       data:{session}
     } =
-      await supabaseClient.auth.getSession();
+      await db.auth.getSession();
 
     if(session?.user){
 
@@ -4542,7 +5231,6 @@ async function boot(){
 
       $("app")
         .classList.add("hidden");
-
     }
 
   }catch(error){
@@ -4556,15 +5244,24 @@ async function boot(){
       .classList.add("hidden");
 
     setAuthMessage(
-      "Please refresh the page and try again.",
+      "Please refresh and try again.",
       true
     );
-
   }
 }
 
 
-boot();
+/* =========================================================
+   NOTIFICATION PERMISSION
+========================================================= */
+
+document.addEventListener(
+  "click",
+  ()=>{
+    enableNotifications();
+  },
+  {once:true}
+);
 
 
 /* =========================================================
@@ -4577,15 +5274,23 @@ window.addEventListener(
 
     if(currentUser){
 
-      supabaseClient
+      db
         .from("chat_users")
         .delete()
-        .eq("id",currentUser.id);
+        .eq(
+          "id",
+          currentUser.id
+        );
 
     }
 
   }
 );
+
+
+/* START */
+
+boot();
 
 </script>
 
