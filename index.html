@@ -2,1453 +2,4591 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+
 <title>Shadow Chat Daanians</title>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
-:root{
---bg:#f4faff;--panel:#fff;--panel2:#eaf7ff;--text:#123047;
---muted:#6b8495;--accent:#38aee8;--accent2:#168bd0;
---border:#d9edf8;--bubble:#eaf7ff;--danger:#ef4444;--success:#20a463
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
 }
+
+html,body{
+  width:100%;
+  height:100%;
+  overflow:hidden;
+}
+
 body{
-font-family:Inter,Segoe UI,Arial,sans-serif;background:linear-gradient(135deg,#f8fdff,#eaf7ff);
-color:var(--text);min-height:100vh;overflow:hidden
+  font-family:Arial,Segoe UI,sans-serif;
+  background:#f3faff;
+  color:#17324d;
 }
-button,input,textarea{font:inherit}
-button{cursor:pointer}
-.hidden{display:none!important}
 
-/* AUTH */
-#authScreen{height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
-.auth-card{
-width:100%;max-width:440px;background:#fff;border:1px solid var(--border);
-border-radius:28px;padding:32px;box-shadow:0 25px 70px #2b9bd322;animation:pop .5s
+button,input,textarea{
+  font-family:inherit;
 }
-.logo{text-align:center;margin-bottom:25px}
-.logo-icon,.brand-icon{
-display:flex;align-items:center;justify-content:center;
-background:linear-gradient(135deg,var(--accent),var(--accent2));color:white
-}
-.logo-icon{width:76px;height:76px;border-radius:24px;margin:auto;font-size:35px}
-.logo h1{margin-top:15px;font-size:26px}
-.logo p{color:var(--muted);margin-top:7px}
-.tabs{display:flex;background:var(--panel2);padding:4px;border-radius:14px;margin-bottom:18px}
-.tabs button{flex:1;border:0;padding:11px;border-radius:11px;background:transparent;color:var(--muted)}
-.tabs button.active{color:white;background:linear-gradient(135deg,var(--accent),var(--accent2))}
-.field{margin-bottom:13px}
-.field label{display:block;color:var(--muted);font-size:13px;margin-bottom:6px}
-.field input,.field textarea{
-width:100%;border:1px solid var(--border);background:#f8fcff;color:var(--text);
-padding:13px 14px;border-radius:13px;outline:none
-}
-.field input:focus,.field textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px #38aee81c}
-.primary{
-width:100%;border:0;border-radius:14px;padding:14px;color:white;font-weight:700;
-background:linear-gradient(135deg,var(--accent),var(--accent2));transition:.2s
-}
-.primary:hover{transform:translateY(-2px)}
-.anonymous,.secondary{
-width:100%;padding:13px;border-radius:14px;background:#fff;
-border:1px solid var(--border);color:var(--text)
-}
-.anonymous{margin-top:10px}
-.auth-msg{color:#e04444;font-size:13px;margin-top:12px;min-height:18px}
 
-/* APP */
-#app{height:100vh;display:flex;flex-direction:column}
+button{
+  border:0;
+  cursor:pointer;
+}
+
+.hidden{
+  display:none!important;
+}
+
+/* ================= AUTH ================= */
+
+#authScreen{
+  position:fixed;
+  inset:0;
+  width:100%;
+  height:100%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+  background:linear-gradient(135deg,#e8f8ff,#ffffff);
+  z-index:9999;
+}
+
+.authCard{
+  width:min(420px,100%);
+  background:#fff;
+  border:1px solid #d7ebf5;
+  border-radius:25px;
+  padding:30px;
+  box-shadow:0 20px 60px rgba(0,100,160,.12);
+}
+
+.logo{
+  text-align:center;
+  margin-bottom:24px;
+}
+
+.logoIcon{
+  width:65px;
+  height:65px;
+  margin:auto;
+  border-radius:20px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:30px;
+  background:linear-gradient(135deg,#38bdf8,#0284c7);
+  color:white;
+  box-shadow:0 10px 25px rgba(2,132,199,.25);
+}
+
+.logo h1{
+  margin-top:12px;
+  font-size:24px;
+  color:#075985;
+}
+
+.logo p{
+  margin-top:6px;
+  color:#7890a3;
+  font-size:13px;
+}
+
+.tabs{
+  display:flex;
+  background:#eef8fd;
+  border-radius:12px;
+  padding:4px;
+  margin-bottom:18px;
+}
+
+.tabs button{
+  flex:1;
+  padding:11px;
+  border-radius:9px;
+  background:transparent;
+  color:#668095;
+  font-weight:bold;
+}
+
+.tabs button.active{
+  background:white;
+  color:#0284c7;
+  box-shadow:0 3px 10px rgba(0,0,0,.06);
+}
+
+.field{
+  margin-bottom:13px;
+}
+
+.field label{
+  display:block;
+  font-size:12px;
+  font-weight:bold;
+  margin-bottom:6px;
+  color:#557086;
+}
+
+.field input,
+.field textarea{
+  width:100%;
+  border:1px solid #d6e7f0;
+  background:#fbfeff;
+  border-radius:11px;
+  padding:12px;
+  outline:none;
+  color:#17324d;
+}
+
+.field textarea{
+  resize:none;
+  height:80px;
+}
+
+.field input:focus,
+.field textarea:focus{
+  border-color:#38bdf8;
+  box-shadow:0 0 0 3px rgba(56,189,248,.12);
+}
+
+.primaryBtn{
+  width:100%;
+  padding:13px;
+  border-radius:11px;
+  color:white;
+  font-weight:bold;
+  background:linear-gradient(135deg,#38bdf8,#0284c7);
+}
+
+.secondaryBtn{
+  width:100%;
+  padding:12px;
+  border-radius:11px;
+  background:#eaf7fd;
+  color:#0369a1;
+  font-weight:bold;
+  margin-top:10px;
+}
+
+.authMsg{
+  min-height:20px;
+  text-align:center;
+  margin-top:12px;
+  font-size:13px;
+}
+
+.dev{
+  text-align:center;
+  color:#8aa0b1;
+  font-size:11px;
+  margin-top:20px;
+}
+
+/* ================= APP ================= */
+
+#app{
+  width:100%;
+  height:100dvh;
+  min-height:100dvh;
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+}
+
 .topbar{
-height:68px;display:flex;align-items:center;justify-content:space-between;padding:0 20px;
-border-bottom:1px solid var(--border);background:#ffffffed;backdrop-filter:blur(20px);z-index:5
-}
-.brand{display:flex;align-items:center;gap:10px}
-.brand-icon{width:40px;height:40px;border-radius:12px}
-.brand-text strong{display:block}.brand-text small{color:var(--muted)}
-.top-actions{display:flex;gap:8px}
-.icon-btn{
-width:40px;height:40px;border-radius:12px;border:1px solid var(--border);
-background:white;color:var(--text)
-}
-.layout{flex:1;min-height:0;display:grid;grid-template-columns:250px 1fr 270px}
-.sidebar,.rightbar{
-background:#ffffffc9;padding:15px;overflow:auto;border-right:1px solid var(--border)
-}
-.rightbar{border-right:0;border-left:1px solid var(--border)}
-.side-title{
-color:var(--muted);text-transform:uppercase;font-size:11px;letter-spacing:1.5px;margin:10px 8px
-}
-.nav-btn{
-width:100%;display:flex;align-items:center;gap:10px;padding:12px;margin-bottom:7px;
-border:1px solid transparent;border-radius:13px;background:transparent;color:#456276;text-align:left
-}
-.nav-btn:hover,.nav-btn.active{color:var(--accent2);background:var(--panel2);border-color:var(--border)}
-.online-count{
-margin-left:auto;background:#20a46318;color:#159052;padding:3px 7px;border-radius:10px;font-size:11px
+  height:64px;
+  min-height:64px;
+  background:white;
+  border-bottom:1px solid #dcebf3;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 18px;
+  z-index:20;
 }
 
-/* CHAT */
-.chat{min-width:0;display:flex;flex-direction:column}
-.chat-head{
-min-height:65px;padding:12px 18px;display:flex;align-items:center;gap:12px;
-border-bottom:1px solid var(--border);background:#ffffffaa
+.brand{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  font-weight:bold;
+  color:#075985;
 }
-.chat-title{font-weight:700}.chat-sub{color:var(--muted);font-size:12px;margin-top:2px}
-.messages{flex:1;overflow-y:auto;padding:20px}
-.empty{height:100%;display:flex;align-items:center;justify-content:center;color:var(--muted);text-align:center}
-.message{display:flex;gap:10px;margin-bottom:15px;animation:messageIn .25s}
-.message.mine{flex-direction:row-reverse}
+
+.brandIcon{
+  width:38px;
+  height:38px;
+  border-radius:12px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:white;
+  background:linear-gradient(135deg,#38bdf8,#0284c7);
+}
+
+.topActions{
+  display:flex;
+  gap:7px;
+}
+
+.iconBtn{
+  width:39px;
+  height:39px;
+  border-radius:10px;
+  background:#eef8fd;
+  color:#0369a1;
+  font-size:17px;
+}
+
+.iconBtn:hover{
+  background:#dff3fc;
+}
+
+.layout{
+  flex:1;
+  min-height:0;
+  display:grid;
+  grid-template-columns:250px minmax(0,1fr) 280px;
+  overflow:hidden;
+}
+
+/* ================= SIDEBAR ================= */
+
+.sidebar{
+  min-height:0;
+  overflow-y:auto;
+  background:#fff;
+  border-right:1px solid #dcebf3;
+  padding:15px;
+}
+
+.userMini{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:11px;
+  background:#f0faff;
+  border-radius:14px;
+  margin-bottom:15px;
+}
+
 .avatar{
-width:40px;height:40px;flex:0 0 40px;border-radius:50%;object-fit:cover;
-background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;
-align-items:center;justify-content:center;font-weight:700;color:white;overflow:hidden
+  width:40px;
+  height:40px;
+  border-radius:50%;
+  object-fit:cover;
+  background:#dff5ff;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:bold;
+  color:#0284c7;
+  flex-shrink:0;
 }
-.avatar img{width:100%;height:100%;object-fit:cover}
-.msg-body{max-width:min(72%,600px)}.mine .msg-body{text-align:right}
-.msg-name{color:var(--accent2);font-size:12px;font-weight:700;margin-bottom:4px}
+
+.avatar.big{
+  width:58px;
+  height:58px;
+}
+
+.avatar.small{
+  width:32px;
+  height:32px;
+}
+
+.userMiniText{
+  min-width:0;
+}
+
+.userMiniText strong{
+  display:block;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+
+.userMiniText span{
+  display:block;
+  font-size:11px;
+  color:#8195a5;
+  margin-top:2px;
+}
+
+.sectionTitle{
+  font-size:11px;
+  text-transform:uppercase;
+  letter-spacing:.7px;
+  color:#8aa0b1;
+  margin:17px 5px 8px;
+}
+
+.sideBtn{
+  width:100%;
+  padding:11px;
+  margin-bottom:6px;
+  text-align:left;
+  border-radius:10px;
+  background:transparent;
+  color:#36556b;
+}
+
+.sideBtn:hover{
+  background:#eff9fd;
+  color:#0284c7;
+}
+
+.friendItem{
+  display:flex;
+  align-items:center;
+  gap:9px;
+  padding:8px;
+  border-radius:10px;
+  cursor:pointer;
+}
+
+.friendItem:hover{
+  background:#f0faff;
+}
+
+.friendInfo{
+  min-width:0;
+  flex:1;
+}
+
+.friendInfo strong{
+  display:block;
+  font-size:13px;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.friendInfo span{
+  font-size:10px;
+  color:#8ba0af;
+}
+
+/* ================= CHAT ================= */
+
+.chat{
+  min-width:0;
+  min-height:0;
+  height:100%;
+  display:flex;
+  flex-direction:column;
+  background:#f7fbfd;
+}
+
+.chatHeader{
+  min-height:62px;
+  padding:10px 15px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  background:white;
+  border-bottom:1px solid #dcebf3;
+}
+
+.chatTitle{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+.chatTitle strong{
+  display:block;
+}
+
+.chatTitle span{
+  font-size:11px;
+  color:#8aa0b1;
+}
+
+.messages{
+  flex:1;
+  min-height:0;
+  overflow-y:auto;
+  padding:18px;
+  scroll-behavior:smooth;
+}
+
+.empty{
+  height:100%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  color:#91a5b4;
+  font-size:13px;
+}
+
+.msg{
+  display:flex;
+  gap:9px;
+  margin-bottom:13px;
+  animation:messageIn .2s ease;
+}
+
+.msg.mine{
+  flex-direction:row-reverse;
+}
+
+.msgContent{
+  max-width:min(72%,620px);
+}
+
+.msgName{
+  font-size:10px;
+  color:#7c92a3;
+  margin-bottom:3px;
+}
+
+.msg.mine .msgName{
+  text-align:right;
+}
+
 .bubble{
-display:inline-block;padding:10px 13px;border-radius:16px;background:var(--bubble);
-border:1px solid var(--border);text-align:left;word-break:break-word
+  background:white;
+  border:1px solid #e0edf3;
+  border-radius:14px 14px 14px 4px;
+  padding:10px 12px;
+  box-shadow:0 3px 12px rgba(0,80,120,.04);
+  word-break:break-word;
 }
-.mine .bubble{background:linear-gradient(135deg,var(--accent),var(--accent2));color:white;border:0}
-.msg-time{color:var(--muted);font-size:10px;margin-top:4px}
+
+.msg.mine .bubble{
+  background:#dff5ff;
+  border-color:#c5eafa;
+  border-radius:14px 14px 4px 14px;
+}
+
+.msgTime{
+  font-size:9px;
+  color:#91a2ae;
+  margin-top:3px;
+}
+
+.msg.mine .msgTime{
+  text-align:right;
+}
+
+/* ================= COMPOSER ================= */
+
 .composer{
-padding:13px 16px;border-top:1px solid var(--border);background:#ffffffdd;display:flex;gap:9px
+  flex-shrink:0;
+  display:flex;
+  gap:8px;
+  padding:10px;
+  padding-bottom:calc(10px + env(safe-area-inset-bottom));
+  background:white;
+  border-top:1px solid #dcebf3;
+  z-index:15;
 }
+
 .composer input{
-flex:1;min-width:0;background:#f8fcff;border:1px solid var(--border);
-border-radius:14px;padding:13px 15px;color:var(--text);outline:none
-}
-.send-btn{
-width:50px;border:0;border-radius:14px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:white
+  min-width:0;
+  flex:1;
+  border:1px solid #d6e7f0;
+  background:#f8fcfe;
+  border-radius:12px;
+  padding:12px;
+  outline:none;
 }
 
-/* USERS */
-.search{
-width:100%;padding:10px;border:1px solid var(--border);border-radius:12px;
-background:#f8fcff;outline:none;margin-bottom:10px;color:var(--text)
+.composer input:focus{
+  border-color:#38bdf8;
 }
-.user-card{
-display:flex;align-items:center;gap:10px;padding:10px;border-radius:13px;cursor:pointer
-}
-.user-card:hover{background:var(--panel2)}
-.user-info{min-width:0;flex:1}.user-info strong{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:13px}
-.user-info small{color:#20a463;font-size:11px}
-.status-dot{width:8px;height:8px;border-radius:50%;background:#20a463}
 
-/* MODAL */
-.modal-bg{
-position:fixed;inset:0;background:#12304766;backdrop-filter:blur(7px);
-display:flex;align-items:center;justify-content:center;z-index:50;padding:20px
+.sendBtn{
+  width:46px;
+  min-width:46px;
+  border-radius:12px;
+  color:white;
+  background:linear-gradient(135deg,#38bdf8,#0284c7);
+  font-size:18px;
 }
+
+/* ================= RIGHT BAR ================= */
+
+.rightbar{
+  min-height:0;
+  overflow-y:auto;
+  background:white;
+  border-left:1px solid #dcebf3;
+  padding:15px;
+}
+
+.searchBox{
+  display:flex;
+  gap:6px;
+  margin-bottom:15px;
+}
+
+.searchBox input{
+  width:100%;
+  min-width:0;
+  border:1px solid #d6e7f0;
+  border-radius:10px;
+  padding:10px;
+  outline:none;
+}
+
+.searchBtn{
+  width:42px;
+  border-radius:10px;
+  background:#e6f7fd;
+  color:#0284c7;
+}
+
+.onlineItem{
+  display:flex;
+  align-items:center;
+  gap:9px;
+  padding:8px;
+  border-radius:10px;
+}
+
+.onlineItem:hover{
+  background:#f0faff;
+}
+
+.onlineDot{
+  width:8px;
+  height:8px;
+  border-radius:50%;
+  background:#10b981;
+  box-shadow:0 0 0 3px #d8f9ed;
+}
+
+.onlineName{
+  min-width:0;
+  flex:1;
+  font-size:13px;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+/* ================= MODALS ================= */
+
 .modal{
-width:100%;max-width:450px;max-height:90vh;overflow:auto;background:white;
-border:1px solid var(--border);border-radius:25px;padding:25px;animation:pop .3s
-}
-.modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
-.close{width:35px;height:35px;border:1px solid var(--border);border-radius:10px;background:white}
-.profile-big{text-align:center}.profile-big .avatar{width:100px;height:100px;margin:auto;font-size:30px}
-.profile-big h2{margin-top:12px}.profile-big p{color:var(--muted);margin-top:5px}
-.profile-actions{margin-top:20px;display:grid;gap:9px}
-.action-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:15px}
-.danger{background:#fff0f0!important;color:#dc3d3d!important;border-color:#ffd0d0!important}
-
-/* FRIENDS */
-.friend-item{
-display:flex;align-items:center;justify-content:space-between;gap:8px;
-padding:10px;border:1px solid var(--border);border-radius:13px;margin-bottom:8px
-}
-.friend-item small{display:block;color:var(--muted)}
-.mini-btn{
-border:1px solid var(--border);background:white;border-radius:9px;padding:7px 9px;color:var(--text)
+  position:fixed;
+  inset:0;
+  z-index:5000;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:15px;
+  background:rgba(8,40,60,.38);
+  backdrop-filter:blur(5px);
 }
 
-/* VOICE */
-.voice-panel{text-align:center;padding-top:50px}
-.voice-circle{
-width:125px;height:125px;margin:20px auto;border-radius:50%;display:flex;
-align-items:center;justify-content:center;font-size:45px;
-background:linear-gradient(135deg,var(--accent),var(--accent2));color:white;animation:pulse 2s infinite
+.modalCard{
+  width:min(500px,100%);
+  max-height:90dvh;
+  overflow-y:auto;
+  background:white;
+  border-radius:20px;
+  padding:20px;
+  box-shadow:0 25px 80px rgba(0,0,0,.2);
 }
-.voice-status{color:var(--muted);margin-bottom:18px}
 
-/* TOAST */
+.modalHead{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom:16px;
+}
+
+.closeBtn{
+  width:34px;
+  height:34px;
+  border-radius:9px;
+  background:#eef7fb;
+  color:#477084;
+}
+
+.result{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:10px;
+  border:1px solid #e2edf2;
+  border-radius:12px;
+  margin-bottom:8px;
+}
+
+.resultInfo{
+  min-width:0;
+  flex:1;
+}
+
+.resultInfo strong{
+  display:block;
+}
+
+.resultInfo small{
+  color:#8aa0af;
+}
+
+.smallBtn{
+  padding:8px 10px;
+  border-radius:9px;
+  background:#e6f7fd;
+  color:#0369a1;
+  font-size:12px;
+  font-weight:bold;
+}
+
+.dangerBtn{
+  background:#fee2e2;
+  color:#dc2626;
+}
+
+/* ================= VOICE ================= */
+
+.voicePanel{
+  position:fixed;
+  right:20px;
+  bottom:20px;
+  width:min(370px,calc(100% - 30px));
+  background:white;
+  border:1px solid #d5eaf3;
+  border-radius:20px;
+  padding:18px;
+  box-shadow:0 20px 60px rgba(0,70,100,.2);
+  z-index:4000;
+}
+
+.voiceHead{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  margin-bottom:15px;
+}
+
+.voiceIcon{
+  width:45px;
+  height:45px;
+  border-radius:14px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:#e0f7ef;
+  color:#059669;
+  font-size:20px;
+}
+
+.voiceUsers{
+  max-height:180px;
+  overflow-y:auto;
+}
+
+.voiceUser{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  padding:8px;
+}
+
+.voiceButtons{
+  display:flex;
+  gap:8px;
+  margin-top:14px;
+}
+
+.voiceButtons button{
+  flex:1;
+  padding:11px;
+  border-radius:10px;
+}
+
+.endBtn{
+  background:#fee2e2;
+  color:#dc2626;
+}
+
+.callBtn{
+  background:#dcfce7;
+  color:#047857;
+}
+
+.callModalIcon{
+  width:65px;
+  height:65px;
+  margin:5px auto 12px;
+  border-radius:50%;
+  background:#dff7ea;
+  color:#059669;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:28px;
+}
+
+.callText{
+  text-align:center;
+  margin-bottom:18px;
+}
+
+.callActions{
+  display:flex;
+  gap:10px;
+}
+
+.callActions button{
+  flex:1;
+  padding:12px;
+  border-radius:11px;
+  font-weight:bold;
+}
+
+.acceptBtn{
+  background:#10b981;
+  color:white;
+}
+
+.rejectBtn{
+  background:#fee2e2;
+  color:#dc2626;
+}
+
+/* ================= TOAST ================= */
+
+#toastContainer{
+  position:fixed;
+  top:75px;
+  right:15px;
+  z-index:10000;
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+
 .toast{
-position:fixed;top:82px;right:20px;z-index:100;padding:13px 17px;border-radius:15px;
-background:white;border:1px solid var(--border);box-shadow:0 15px 45px #267fa522;animation:toastIn .4s
+  background:white;
+  border:1px solid #d9ebf3;
+  border-left:4px solid #38bdf8;
+  padding:11px 14px;
+  border-radius:10px;
+  box-shadow:0 10px 30px rgba(0,70,100,.13);
+  animation:toastIn .25s ease;
+  font-size:13px;
+  max-width:300px;
 }
 
-/* CALL */
-.call-box{text-align:center}
-.call-avatar{width:110px;height:110px;margin:15px auto}
-.call-buttons{display:flex;justify-content:center;gap:10px;margin-top:20px}
-.call-btn{width:55px;height:55px;border:0;border-radius:50%;color:white;font-size:20px}
-.accept{background:#20a463}.reject{background:#ef4444}
-
-/* ANIMATION */
-@keyframes pop{from{opacity:0;transform:scale(.9) translateY(15px)}to{opacity:1;transform:scale(1) translateY(0)}}
-@keyframes messageIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
-@keyframes toastIn{from{opacity:0;transform:translateX(40px)}to{opacity:1;transform:translateX(0)}}
-@keyframes pulse{50%{box-shadow:0 0 45px #38aee866}}
-
-@media(max-width:900px){
-.layout{grid-template-columns:1fr}.sidebar,.rightbar{display:none}.msg-body{max-width:78%}
+.joinToast{
+  border-left-color:#10b981;
 }
-@media(max-width:500px){
-.auth-card{padding:22px}.topbar{padding:0 12px}.messages{padding:14px}
-.composer{padding:10px}.msg-body{max-width:80%}.brand-text small{display:none}
+
+/* ================= MOBILE ================= */
+
+.mobileNav{
+  display:none;
+}
+
+@media(max-width:1050px){
+  .layout{
+    grid-template-columns:220px minmax(0,1fr);
+  }
+
+  .rightbar{
+    display:none;
+  }
+}
+
+@media(max-width:700px){
+
+  html,body{
+    height:100%;
+    min-height:100%;
+  }
+
+  #app{
+    height:100dvh;
+    min-height:100dvh;
+  }
+
+  .topbar{
+    height:58px;
+    min-height:58px;
+    padding:0 10px;
+  }
+
+  .brandText{
+    font-size:14px;
+  }
+
+  .topActions .iconBtn{
+    width:35px;
+    height:35px;
+  }
+
+  .layout{
+    display:block;
+    height:calc(100dvh - 58px);
+    min-height:0;
+    overflow:hidden;
+  }
+
+  .sidebar{
+    display:none;
+  }
+
+  .chat{
+    width:100%;
+    height:100%;
+    min-height:0;
+  }
+
+  .chatHeader{
+    min-height:54px;
+    height:54px;
+    padding:8px 10px;
+  }
+
+  .messages{
+    padding:12px 10px;
+    min-height:0;
+  }
+
+  .msgContent{
+    max-width:82%;
+  }
+
+  .composer{
+    min-height:62px;
+    padding:8px;
+    padding-bottom:calc(8px + env(safe-area-inset-bottom));
+  }
+
+  .composer input{
+    padding:11px;
+  }
+
+  .sendBtn{
+    width:44px;
+    min-width:44px;
+  }
+
+  .mobileNav{
+    display:flex;
+    position:fixed;
+    left:10px;
+    right:10px;
+    bottom:calc(8px + env(safe-area-inset-bottom));
+    z-index:100;
+    pointer-events:none;
+  }
+
+  .mobileNav button{
+    pointer-events:auto;
+  }
+
+  .voicePanel{
+    right:10px;
+    bottom:10px;
+  }
+
+  #toastContainer{
+    top:65px;
+    left:10px;
+    right:10px;
+  }
+
+  .toast{
+    max-width:none;
+  }
+}
+
+@media(max-width:380px){
+  .brandText{
+    display:none;
+  }
+
+  .authCard{
+    padding:22px;
+  }
+}
+
+/* ================= ANIMATIONS ================= */
+
+@keyframes pop{
+  from{
+    opacity:0;
+    transform:scale(.95) translateY(10px);
+  }
+  to{
+    opacity:1;
+    transform:scale(1) translateY(0);
+  }
+}
+
+@keyframes messageIn{
+  from{
+    opacity:0;
+    transform:translateY(6px);
+  }
+  to{
+    opacity:1;
+    transform:translateY(0);
+  }
+}
+
+@keyframes toastIn{
+  from{
+    opacity:0;
+    transform:translateX(20px);
+  }
+  to{
+    opacity:1;
+    transform:translateX(0);
+  }
+}
+
+.pulse{
+  animation:pulse 1.5s infinite;
+}
+
+@keyframes pulse{
+  0%,100%{
+    box-shadow:0 0 0 0 rgba(16,185,129,.35);
+  }
+  50%{
+    box-shadow:0 0 0 10px rgba(16,185,129,0);
+  }
 }
 </style>
 </head>
 
 <body>
 
+<!-- ================= AUTH ================= -->
+
 <section id="authScreen">
-<div class="auth-card">
-<div class="logo">
-<div class="logo-icon">👻</div>
-<h1>Shadow Chat Daanians</h1>
-<p>Real-time • Friends • Private Chat</p>
-</div>
 
-<div class="tabs">
-<button id="loginTab" class="active" onclick="showAuth('login')">Login</button>
-<button id="signupTab" onclick="showAuth('signup')">Create Account</button>
-</div>
+  <div class="authCard">
 
-<div class="field">
-<label>Email</label>
-<input id="email" type="email" placeholder="your@email.com">
-</div>
+    <div class="logo">
+      <div class="logoIcon">💬</div>
+      <h1>Shadow Chat Daanians</h1>
+      <p>Real-time private & public chatting</p>
+    </div>
 
-<div class="field">
-<label>Password</label>
-<input id="password" type="password" placeholder="Password">
-</div>
+    <div class="tabs">
+      <button id="loginTab" class="active" onclick="showAuth('login')">
+        Login
+      </button>
 
-<div id="signupFields" class="hidden">
-<div class="field">
-<label>Username / User ID</label>
-<input id="username" placeholder="your_username">
-</div>
-<div class="field">
-<label>Display Name</label>
-<input id="displayName" placeholder="Your Name">
-</div>
-</div>
+      <button id="signupTab" onclick="showAuth('signup')">
+        Sign Up
+      </button>
+    </div>
 
-<button class="primary" id="authButton" onclick="submitAuth()">Login</button>
-<button class="anonymous" onclick="continueAnonymous()">👻 Continue as Anonymous</button>
-<div id="authMsg" class="auth-msg"></div>
-</div>
+    <div id="loginForm">
+
+      <div class="field">
+        <label>Email</label>
+        <input id="loginEmail" type="email" placeholder="Enter email">
+      </div>
+
+      <div class="field">
+        <label>Password</label>
+        <input id="loginPassword" type="password" placeholder="Enter password">
+      </div>
+
+      <button class="primaryBtn" onclick="login()">
+        Login
+      </button>
+
+      <button class="secondaryBtn" onclick="continueAnonymous()">
+        👤 Continue as Anonymous
+      </button>
+
+    </div>
+
+    <div id="signupForm" class="hidden">
+
+      <div class="field">
+        <label>Email</label>
+        <input id="signupEmail" type="email" placeholder="Enter email">
+      </div>
+
+      <div class="field">
+        <label>Password</label>
+        <input id="signupPassword" type="password" placeholder="Minimum 6 characters">
+      </div>
+
+      <button class="primaryBtn" onclick="signup()">
+        Create Account
+      </button>
+
+      <button class="secondaryBtn" onclick="continueAnonymous()">
+        👤 Continue as Anonymous
+      </button>
+
+    </div>
+
+    <div id="authMsg" class="authMsg"></div>
+
+    <div class="dev">
+      Developer Cherry — From Danish School Mailsi
+    </div>
+
+  </div>
+
 </section>
+
+
+<!-- ================= APP ================= -->
 
 <section id="app" class="hidden">
 
-<header class="topbar">
-<div class="brand">
-<div class="brand-icon">👻</div>
-<div class="brand-text">
-<strong>Shadow Chat Daanians</strong>
-<small>Private • Real-time • Connected</small>
-</div>
-</div>
-<div class="top-actions">
-<button class="icon-btn" onclick="openSearch()">🔎</button>
-<button class="icon-btn" onclick="openProfile()">👤</button>
-<button class="icon-btn" onclick="logout()">↪</button>
-</div>
-</header>
+  <header class="topbar">
 
-<div class="layout">
+    <div class="brand">
+      <div class="brandIcon">💬</div>
+      <span class="brandText">Shadow Chat Daanians</span>
+    </div>
 
-<aside class="sidebar">
-<div class="side-title">Chat</div>
+    <div class="topActions">
 
-<button class="nav-btn active" id="publicBtn" onclick="openPublic()">🌐 <span>Public Chat</span></button>
-<button class="nav-btn" onclick="openFriends()">🤝 <span>Friends</span></button>
-<button class="nav-btn" onclick="openRequests()">🔔 <span>Requests</span></button>
-<button class="nav-btn" onclick="openVoice()">🎤 <span>Voice Room</span></button>
+      <button class="iconBtn" onclick="openSearch()" title="Search">
+        🔎
+      </button>
 
-<div class="side-title">Account</div>
-<button class="nav-btn" onclick="openProfile()">👤 <span>My Profile</span></button>
-<button class="nav-btn" onclick="openSearch()">🔎 <span>Find Users</span></button>
-</aside>
+      <button class="iconBtn" onclick="openProfile()" title="Profile">
+        👤
+      </button>
 
-<main class="chat">
+      <button class="iconBtn" onclick="logout()" title="Logout">
+        ↪
+      </button>
 
-<div class="chat-head">
-<div class="avatar" id="roomAvatar">🌐</div>
-<div>
-<div class="chat-title" id="roomTitle">Public Chat</div>
-<div class="chat-sub" id="roomSub">Messages disappear after 5 minutes</div>
-</div>
-<div style="margin-left:auto" id="callAction"></div>
-</div>
+    </div>
 
-<div id="messages" class="messages">
-<div class="empty"><div><div style="font-size:40px">💬</div><p>Start the conversation</p></div></div>
-</div>
+  </header>
 
-<div class="composer">
-<input id="messageInput" maxlength="1000" placeholder="Write a message..." onkeydown="handleEnter(event)">
-<button class="send-btn" onclick="sendMessage()">➤</button>
-</div>
 
-</main>
+  <div class="layout">
 
-<aside class="rightbar">
-<div class="side-title">Online Users <span id="onlineCount" class="online-count">0</span></div>
-<div id="usersList"></div>
-</aside>
+    <!-- SIDEBAR -->
 
-</div>
+    <aside class="sidebar">
 
-<div style="position:fixed;bottom:5px;left:50%;transform:translateX(-50%);color:#6b8495;font-size:9px;pointer-events:none">
-Developer Cherry — From Danish School Mailsi
-</div>
+      <div id="miniProfile" class="userMini"></div>
+
+      <div class="sectionTitle">Chat</div>
+
+      <button class="sideBtn" onclick="openPublicChat()">
+        🌐 Public Chat
+      </button>
+
+      <button class="sideBtn" onclick="openVoiceRoom()">
+        🎙 Voice Room
+      </button>
+
+      <div class="sectionTitle">
+        Friends
+      </div>
+
+      <div id="friendsList">
+        <div style="font-size:12px;color:#91a5b4;padding:8px">
+          No friends yet
+        </div>
+      </div>
+
+      <div class="sectionTitle">
+        Requests
+      </div>
+
+      <div id="requestsList">
+        <div style="font-size:12px;color:#91a5b4;padding:8px">
+          No requests
+        </div>
+      </div>
+
+    </aside>
+
+
+    <!-- MAIN CHAT -->
+
+    <main class="chat">
+
+      <div class="chatHeader">
+
+        <div class="chatTitle">
+
+          <div id="chatHeaderAvatar" class="avatar">
+            🌐
+          </div>
+
+          <div>
+            <strong id="chatTitleText">
+              Public Chat
+            </strong>
+
+            <span id="chatSubtitle">
+              Everyone online can see this
+            </span>
+          </div>
+
+        </div>
+
+        <div id="privateActions"></div>
+
+      </div>
+
+
+      <div id="messages" class="messages">
+
+        <div class="empty">
+          Loading messages...
+        </div>
+
+      </div>
+
+
+      <div class="composer">
+
+        <input
+          id="messageInput"
+          type="text"
+          autocomplete="off"
+          placeholder="Write a message..."
+          onkeydown="handleMessageKey(event)"
+        >
+
+        <button class="sendBtn" onclick="sendMessage()">
+          ➤
+        </button>
+
+      </div>
+
+    </main>
+
+
+    <!-- RIGHT BAR -->
+
+    <aside class="rightbar">
+
+      <div class="sectionTitle">
+        Search Users
+      </div>
+
+      <div class="searchBox">
+
+        <input
+          id="sideSearchInput"
+          placeholder="Username..."
+          onkeydown="if(event.key==='Enter')searchUsers()"
+        >
+
+        <button class="searchBtn" onclick="searchUsers()">
+          🔎
+        </button>
+
+      </div>
+
+      <div class="sectionTitle">
+        Online Users
+      </div>
+
+      <div id="onlineUsers"></div>
+
+    </aside>
+
+  </div>
+
 </section>
 
-<div id="modalBg" class="modal-bg hidden">
-<div class="modal">
-<div class="modal-head">
-<strong id="modalTitle">Profile</strong>
-<button class="close" onclick="closeModal()">×</button>
+
+<!-- ================= SEARCH MODAL ================= -->
+
+<div id="searchModal" class="modal hidden">
+
+  <div class="modalCard">
+
+    <div class="modalHead">
+      <h3>Search Users</h3>
+
+      <button class="closeBtn" onclick="closeSearch()">
+        ✕
+      </button>
+    </div>
+
+    <div class="searchBox">
+
+      <input
+        id="modalSearchInput"
+        placeholder="Search username..."
+        onkeydown="if(event.key==='Enter')searchUsers()"
+      >
+
+      <button class="searchBtn" onclick="searchUsers()">
+        🔎
+      </button>
+
+    </div>
+
+    <div id="searchResults"></div>
+
+  </div>
+
 </div>
-<div id="modalContent"></div>
+
+
+<!-- ================= PROFILE MODAL ================= -->
+
+<div id="profileModal" class="modal hidden">
+
+  <div class="modalCard">
+
+    <div class="modalHead">
+      <h3>My Profile</h3>
+
+      <button class="closeBtn" onclick="closeProfile()">
+        ✕
+      </button>
+    </div>
+
+    <div style="text-align:center;margin-bottom:18px">
+
+      <div
+        id="profileAvatarPreview"
+        class="avatar big"
+        style="margin:auto"
+      >
+        👤
+      </div>
+
+      <div style="margin-top:10px;font-size:12px;color:#7c92a3">
+        Maximum profile image size: 200 KB
+      </div>
+
+    </div>
+
+    <div class="field">
+      <label>Profile Picture</label>
+      <input id="avatarFile" type="file" accept="image/*">
+    </div>
+
+    <div class="field">
+      <label>Username</label>
+      <input id="profileUsername" disabled>
+    </div>
+
+    <div class="field">
+      <label>Display Name</label>
+      <input id="profileDisplayName">
+    </div>
+
+    <div class="field">
+      <label>Bio</label>
+      <textarea id="profileBio" placeholder="Write something about yourself..."></textarea>
+    </div>
+
+    <button class="primaryBtn" onclick="saveProfile()">
+      Save Profile
+    </button>
+
+    <button
+      class="secondaryBtn"
+      onclick="logout()"
+      style="color:#dc2626;background:#fee2e2"
+    >
+      Logout
+    </button>
+
+  </div>
+
 </div>
+
+
+<!-- ================= VOICE ROOM ================= -->
+
+<div id="voicePanel" class="voicePanel hidden">
+
+  <div class="voiceHead">
+
+    <div id="voiceIcon" class="voiceIcon pulse">
+      🎙
+    </div>
+
+    <div>
+      <strong>Voice Room</strong>
+      <div style="font-size:11px;color:#8aa0b1">
+        Live voice room
+      </div>
+    </div>
+
+  </div>
+
+  <div id="voiceUsers" class="voiceUsers"></div>
+
+  <div class="voiceButtons">
+
+    <button class="endBtn" onclick="closeVoiceRoom()">
+      Leave
+    </button>
+
+    <button
+      id="muteVoiceBtn"
+      class="callBtn"
+      onclick="toggleMute()"
+    >
+      🎙 Mute
+    </button>
+
+  </div>
+
 </div>
+
+
+<!-- ================= INCOMING CALL ================= -->
+
+<div id="incomingCallModal" class="modal hidden">
+
+  <div class="modalCard" style="max-width:360px">
+
+    <div class="callModalIcon pulse">
+      📞
+    </div>
+
+    <div class="callText">
+
+      <h3 id="incomingCallName">
+        Incoming Call
+      </h3>
+
+      <p style="font-size:13px;color:#8195a5;margin-top:5px">
+        wants to start a voice call with you
+      </p>
+
+    </div>
+
+    <div class="callActions">
+
+      <button class="rejectBtn" onclick="rejectCall()">
+        Decline
+      </button>
+
+      <button class="acceptBtn" onclick="acceptCall()">
+        Accept
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<!-- ================= ACTIVE CALL ================= -->
+
+<div id="activeCallPanel" class="voicePanel hidden">
+
+  <div class="voiceHead">
+
+    <div class="voiceIcon pulse">
+      📞
+    </div>
+
+    <div>
+      <strong id="activeCallName">
+        Voice Call
+      </strong>
+
+      <div id="callStatus"
+           style="font-size:11px;color:#10b981">
+        Connecting...
+      </div>
+    </div>
+
+  </div>
+
+  <div class="voiceButtons">
+
+    <button
+      class="endBtn"
+      onclick="hangupCall()"
+    >
+      ☎ End Call
+    </button>
+
+    <button
+      class="callBtn"
+      onclick="toggleCallMute()"
+    >
+      🎙 Mute
+    </button>
+
+  </div>
+
+</div>
+
+
+<div id="toastContainer"></div>
+
+<audio id="remoteAudio" autoplay playsinline></audio>
+
 
 <script>
-/* ================= SUPABASE ================= */
 
-const SUPABASE_URL="https://vqpjdhbdmcxhkcpghsrp.supabase.co";
-const SUPABASE_KEY="sb_publishable_4wZB1Cg1UJpOGpeegkDVWA_ddtCQ9FZ";
+/* =========================================================
+   SUPABASE
+========================================================= */
 
-const supabaseClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+const SUPABASE_URL =
+"https://vqpjdhbdmcxhkcpghsrp.supabase.co";
 
-/* ================= STATE ================= */
+const SUPABASE_KEY =
+"sb_publishable_4wZB1Cg1UJpOGpeegkDVWA_ddtCQ9FZ";
 
-let currentUser=null;
-let currentProfile=null;
-let anonymous=false;
-let currentRoom="public";
-let onlineUsers=[];
-let profilesCache={};
-let realtimeChannel=null;
-let usersChannel=null;
-let appSubscription=null;
+const supabaseClient =
+window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY
+);
 
-let callPeer=null;
-let callStream=null;
-let callTarget=null;
-let callMode=false;
 
-/* ================= AUTH ================= */
+/* =========================================================
+   GLOBAL STATE
+========================================================= */
 
-let authMode="login";
+let currentUser = null;
+let currentProfile = null;
 
-function showAuth(mode){
-authMode=mode;
-loginTab.classList.toggle("active",mode==="login");
-signupTab.classList.toggle("active",mode==="signup");
-signupFields.classList.toggle("hidden",mode!=="signup");
-authButton.textContent=mode==="login"?"Login":"Create Account";
-authMsg.textContent="";
+let anonymous = false;
+
+let currentRoom = "public";
+let privateFriend = null;
+
+let messagesChannel = null;
+let usersChannel = null;
+let friendsChannel = null;
+
+let onlineUsers = [];
+
+let friends = [];
+
+let voiceActive = false;
+let voiceStream = null;
+let voicePeers = {};
+let voiceIceQueue = {};
+
+let callState = {
+  active:false,
+  incoming:false,
+  remoteId:null,
+  remoteName:"",
+  pc:null,
+  localStream:null,
+  role:null
+};
+
+let callIceQueue = [];
+
+const FIVE_MINUTES = 5 * 60 * 1000;
+
+
+/* =========================================================
+   HELPERS
+========================================================= */
+
+function $(id){
+  return document.getElementById(id);
 }
 
-async function submitAuth(){
-const email=document.getElementById("email").value.trim();
-const password=document.getElementById("password").value;
-authMsg.textContent="";
-
-if(!email||!password){
-authMsg.textContent="Email aur password enter karo.";
-return;
+function escapeHtml(value){
+  return String(value ?? "")
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
 }
 
-try{
-if(authMode==="login"){
-const {data,error}=await supabaseClient.auth.signInWithPassword({email,password});
-if(error)throw error;
-currentUser=data.user;
-await startApp();
-}else{
-const username=document.getElementById("username").value.trim().toLowerCase();
-const displayName=document.getElementById("displayName").value.trim()||username;
+function showToast(text, success=true){
 
-if(!/^[a-z0-9_]{3,30}$/.test(username)){
-authMsg.textContent="Username 3-30 characters ka ho aur sirf a-z, 0-9, _ use karo.";
-return;
-}
+  const el = document.createElement("div");
 
-const existing=await supabaseClient.from("profiles").select("id").eq("username",username).maybeSingle();
-if(existing.data){
-authMsg.textContent="Ye username already taken hai.";
-return;
+  el.className =
+    "toast" +
+    (success ? " joinToast" : "");
+
+  el.textContent = text;
+
+  $("toastContainer").appendChild(el);
+
+  setTimeout(()=>{
+    el.remove();
+  },3500);
 }
 
-const {data,error}=await supabaseClient.auth.signUp({
-email,password,options:{data:{username,display_name:displayName}}
-});
-if(error)throw error;
+function setAuthMessage(text,error=false){
 
-if(data.session){
-currentUser=data.user;
-await ensureProfile(username,displayName);
-await startApp();
-}else{
-authMsg.textContent="Account create ho gaya. Email confirmation ke baad login karo.";
-}
-}
-}catch(e){
-authMsg.textContent=e.message||"Authentication error.";
-}
+  $("authMsg").textContent = text;
+
+  $("authMsg").style.color =
+    error ? "#dc2626" : "#059669";
 }
 
-/* ================= ANONYMOUS ================= */
+function avatarHtml(profile,name,size=""){
+
+  if(profile?.avatar_url){
+
+    return `
+      <img
+        class="avatar ${size}"
+        src="${escapeHtml(profile.avatar_url)}"
+        alt=""
+      >
+    `;
+
+  }
+
+  const letter =
+    String(name || "?")
+      .charAt(0)
+      .toUpperCase();
+
+  return `
+    <div class="avatar ${size}">
+      ${escapeHtml(letter)}
+    </div>
+  `;
+}
+
+function isAnonId(id){
+  return String(id || "").startsWith("anon-");
+}
+
+
+/* =========================================================
+   AUTH TABS
+========================================================= */
+
+function showAuth(type){
+
+  $("loginForm").classList.toggle(
+    "hidden",
+    type !== "login"
+  );
+
+  $("signupForm").classList.toggle(
+    "hidden",
+    type !== "signup"
+  );
+
+  $("loginTab").classList.toggle(
+    "active",
+    type === "login"
+  );
+
+  $("signupTab").classList.toggle(
+    "active",
+    type === "signup"
+  );
+
+  setAuthMessage("");
+}
+
+
+/* =========================================================
+   SIGNUP
+========================================================= */
+
+async function signup(){
+
+  const email =
+    $("signupEmail").value.trim();
+
+  const password =
+    $("signupPassword").value;
+
+  if(!email || !password){
+
+    setAuthMessage(
+      "Email and password required.",
+      true
+    );
+
+    return;
+  }
+
+  if(password.length < 6){
+
+    setAuthMessage(
+      "Password must be at least 6 characters.",
+      true
+    );
+
+    return;
+  }
+
+  setAuthMessage("Creating account...");
+
+  const {data,error} =
+    await supabaseClient.auth.signUp({
+      email,
+      password
+    });
+
+  if(error){
+
+    setAuthMessage(
+      error.message,
+      true
+    );
+
+    return;
+  }
+
+  if(data.session){
+
+    currentUser = data.user;
+
+    await startApp();
+
+  }else{
+
+    setAuthMessage(
+      "Account created. Check your email if confirmation is enabled."
+    );
+
+  }
+}
+
+
+/* =========================================================
+   LOGIN
+========================================================= */
+
+async function login(){
+
+  const email =
+    $("loginEmail").value.trim();
+
+  const password =
+    $("loginPassword").value;
+
+  if(!email || !password){
+
+    setAuthMessage(
+      "Enter email and password.",
+      true
+    );
+
+    return;
+  }
+
+  setAuthMessage("Logging in...");
+
+  const {data,error} =
+    await supabaseClient.auth.signInWithPassword({
+      email,
+      password
+    });
+
+  if(error){
+
+    setAuthMessage(
+      error.message,
+      true
+    );
+
+    return;
+  }
+
+  currentUser = data.user;
+
+  await startApp();
+}
+
+
+/* =========================================================
+   ANONYMOUS
+========================================================= */
 
 async function continueAnonymous(){
-anonymous=true;
-currentUser={id:crypto.randomUUID()};
-currentProfile={
-id:currentUser.id,
-username:"Anonymous_"+Math.floor(1000+Math.random()*9000),
-display_name:"Anonymous",
-avatar_url:null,
-bio:"Anonymous Shadow Chat user"
-};
-await registerOnlineUser();
-showApp();
-subscribeRealtime();
-await loadMessages();
-await loadUsers();
-showToast("👋 Anonymous user joined Shadow Chat");
+
+  anonymous = true;
+
+  currentUser = {
+    id:"anon-" + crypto.randomUUID(),
+    email:null
+  };
+
+  const nickname =
+    "Anonymous_" +
+    Math.floor(1000 + Math.random()*9000);
+
+  currentProfile = {
+    id:currentUser.id,
+    username:nickname,
+    display_name:nickname,
+    avatar_url:null,
+    bio:"Anonymous user"
+  };
+
+  await registerOnlineUser(nickname);
+
+  await startInterface();
+
+  showToast(
+    "You joined as " + nickname
+  );
 }
 
-async function checkSession(){
-const {data}=await supabaseClient.auth.getSession();
-if(data.session){
-currentUser=data.session.user;
-anonymous=false;
-await startApp();
-}
-}
+
+/* =========================================================
+   START APP
+========================================================= */
 
 async function startApp(){
-if(!currentUser)return;
-anonymous=false;
-await loadProfile();
 
-if(!currentProfile){
-await ensureProfile("User_"+currentUser.id.substring(0,8),"New User");
-await loadProfile();
+  anonymous = false;
+
+  if(!currentUser){
+
+    const {
+      data:{user}
+    } = await supabaseClient.auth.getUser();
+
+    currentUser = user;
+  }
+
+  if(!currentUser) return;
+
+  await ensureProfile();
+
+  await registerOnlineUser(
+    currentProfile?.display_name ||
+    currentProfile?.username ||
+    "User"
+  );
+
+  await startInterface();
 }
 
-await registerOnlineUser();
-showApp();
-subscribeRealtime();
-await loadMessages();
-await loadUsers();
-showToast("👋 Welcome back, "+(currentProfile.display_name||currentProfile.username));
+
+/* =========================================================
+   PROFILE
+========================================================= */
+
+async function ensureProfile(){
+
+  if(!currentUser) return;
+
+  const {data,error} =
+    await supabaseClient
+      .from("profiles")
+      .select("*")
+      .eq("id",currentUser.id)
+      .maybeSingle();
+
+  if(data){
+
+    currentProfile = data;
+
+    return;
+  }
+
+  const username =
+    "User_" +
+    currentUser.id
+      .replaceAll("-","")
+      .substring(0,8);
+
+  const profile = {
+    id:currentUser.id,
+    username,
+    display_name:"New User",
+    bio:""
+  };
+
+  const result =
+    await supabaseClient
+      .from("profiles")
+      .insert(profile)
+      .select()
+      .single();
+
+  if(result.error){
+
+    showToast(
+      "Profile setup error: " +
+      result.error.message,
+      false
+    );
+
+    currentProfile = profile;
+
+  }else{
+
+    currentProfile = result.data;
+
+  }
 }
 
-/* ================= PROFILE ================= */
 
-async function loadProfile(){
-if(!currentUser||anonymous)return;
-const {data}=await supabaseClient.from("profiles").select("*").eq("id",currentUser.id).maybeSingle();
-if(data)currentProfile=data;
+/* =========================================================
+   ONLINE USER
+========================================================= */
+
+async function registerOnlineUser(nickname){
+
+  if(isAnonId(currentUser.id)){
+
+    const {error} =
+      await supabaseClient
+        .from("chat_users")
+        .insert({
+          id:currentUser.id,
+          nickname
+        });
+
+    if(error){
+      console.log(error);
+    }
+
+    return;
+  }
+
+  const {data:existing} =
+    await supabaseClient
+      .from("chat_users")
+      .select("id")
+      .eq("id",currentUser.id)
+      .maybeSingle();
+
+  if(existing){
+
+    await supabaseClient
+      .from("chat_users")
+      .update({
+        nickname
+      })
+      .eq("id",currentUser.id);
+
+  }else{
+
+    await supabaseClient
+      .from("chat_users")
+      .insert({
+        id:currentUser.id,
+        nickname
+      });
+
+  }
 }
 
-async function ensureProfile(username,displayName){
-if(!currentUser||anonymous)return;
-const {data,error}=await supabaseClient.from("profiles").upsert({
-id:currentUser.id,username,display_name:displayName
-},{onConflict:"id"}).select().single();
-if(!error)currentProfile=data;
+
+/* =========================================================
+   INTERFACE
+========================================================= */
+
+async function startInterface(){
+
+  $("authScreen").classList.add("hidden");
+
+  $("app").classList.remove("hidden");
+
+  updateMiniProfile();
+
+  await loadFriends();
+
+  await loadFriendRequests();
+
+  await loadOnlineUsers();
+
+  subscribeRealtime();
+
+  await openPublicChat();
+
+  showToast(
+    "Welcome to Shadow Chat Daanians"
+  );
 }
 
-/* ================= ONLINE ================= */
 
-async function registerOnlineUser(){
-if(!currentUser||!currentProfile)return;
-await supabaseClient.from("chat_users").upsert({
-id:currentUser.id,
-nickname:currentProfile.display_name||currentProfile.username||"Anonymous"
-},{onConflict:"id"});
+function updateMiniProfile(){
+
+  const name =
+    currentProfile?.display_name ||
+    currentProfile?.username ||
+    "Anonymous";
+
+  $("miniProfile").innerHTML = `
+
+    ${avatarHtml(currentProfile,name)}
+
+    <div class="userMiniText">
+      <strong>${escapeHtml(name)}</strong>
+      <span>@${escapeHtml(currentProfile?.username || name)}</span>
+    </div>
+
+  `;
 }
 
-async function loadUsers(){
-const {data}=await supabaseClient.from("chat_users").select("*").order("created_at",{ascending:true});
-onlineUsers=data||[];
-renderUsers();
-}
 
-function renderUsers(){
-const box=document.getElementById("usersList");
-box.innerHTML="";
-onlineCount.textContent=onlineUsers.length;
-
-onlineUsers.forEach(u=>{
-const div=document.createElement("div");
-div.className="user-card";
-const p=profilesCache[u.id];
-
-div.innerHTML=`
-${createAvatarHTML(p?.avatar_url,u.nickname)}
-<div class="user-info">
-<strong>${escapeHTML(p?.display_name||u.nickname)}</strong>
-<small>● Online</small>
-</div>`;
-
-div.onclick=()=>openUserProfile(u.id);
-box.appendChild(div);
-
-if(!profilesCache[u.id])loadProfileForUser(u.id);
-});
-}
-
-async function loadProfileForUser(id){
-if(profilesCache[id])return;
-const {data}=await supabaseClient.from("profiles").select("*").eq("id",id).maybeSingle();
-if(data){
-profilesCache[id]=data;
-renderUsers();
-}
-}
-
-/* ================= REALTIME ================= */
+/* =========================================================
+   REALTIME
+========================================================= */
 
 function subscribeRealtime(){
 
-if(realtimeChannel)supabaseClient.removeChannel(realtimeChannel);
-if(usersChannel)supabaseClient.removeChannel(usersChannel);
+  if(messagesChannel){
+    supabaseClient.removeChannel(messagesChannel);
+  }
 
-realtimeChannel=supabaseClient.channel("shadow-main-"+Math.random())
-.on("postgres_changes",{
-event:"INSERT",schema:"public",table:"messages"
-},async payload=>{
+  if(usersChannel){
+    supabaseClient.removeChannel(usersChannel);
+  }
 
-const m=payload.new;
+  if(friendsChannel){
+    supabaseClient.removeChannel(friendsChannel);
+  }
 
-if(m.message_type==="chat"){
-if(Date.now()-new Date(m.created_at).getTime()>300000)return;
 
-if(m.room===currentRoom){
-await addMessageToScreen(m,true);
+  messagesChannel =
+    supabaseClient
+      .channel("shadow-messages-" + Math.random())
+
+      .on(
+        "postgres_changes",
+        {
+          event:"INSERT",
+          schema:"public",
+          table:"messages"
+        },
+        async payload => {
+
+          const m = payload.new;
+
+          /* SIGNALS MUST BE HANDLED FIRST */
+
+          if(m.message_type === "voice_signal"){
+
+            await handleVoiceSignal(m);
+
+            return;
+          }
+
+          if(m.message_type === "call_signal"){
+
+            await handleCallSignal(m);
+
+            return;
+          }
+
+          if(m.message_type !== "chat"){
+            return;
+          }
+
+          if(!messageBelongsToCurrentRoom(m)){
+            return;
+          }
+
+          addMessageToScreen(m);
+
+        }
+      )
+
+      .subscribe();
+
+
+  usersChannel =
+    supabaseClient
+      .channel("shadow-users-" + Math.random())
+
+      .on(
+        "postgres_changes",
+        {
+          event:"*",
+          schema:"public",
+          table:"chat_users"
+        },
+        async payload => {
+
+          await loadOnlineUsers();
+
+          if(payload.eventType === "INSERT"){
+
+            const u = payload.new;
+
+            if(u.id !== currentUser?.id){
+
+              showToast(
+                "👋 " +
+                u.nickname +
+                " joined the chat"
+              );
+
+            }
+
+          }
+
+        }
+      )
+
+      .subscribe();
+
+
+  friendsChannel =
+    supabaseClient
+      .channel("shadow-friends-" + Math.random())
+
+      .on(
+        "postgres_changes",
+        {
+          event:"*",
+          schema:"public",
+          table:"friend_requests"
+        },
+        async () => {
+
+          await loadFriendRequests();
+
+        }
+      )
+
+      .on(
+        "postgres_changes",
+        {
+          event:"*",
+          schema:"public",
+          table:"friendships"
+        },
+        async () => {
+
+          await loadFriends();
+
+        }
+      )
+
+      .subscribe();
+
 }
+
+
+/* =========================================================
+   ONLINE USERS
+========================================================= */
+
+async function loadOnlineUsers(){
+
+  const {data,error} =
+    await supabaseClient
+      .from("chat_users")
+      .select("*")
+      .order("created_at",{ascending:true});
+
+  if(error){
+
+    console.log("Online users:",error);
+
+    return;
+  }
+
+  onlineUsers = data || [];
+
+  renderOnlineUsers();
 }
 
-if(m.message_type==="call_signal"){
-handleCallSignal(m);
+
+async function getProfile(id){
+
+  if(isAnonId(id)){
+
+    const u =
+      onlineUsers.find(x=>x.id===id);
+
+    if(u){
+
+      return {
+        id,
+        username:u.nickname,
+        display_name:u.nickname,
+        avatar_url:null
+      };
+
+    }
+
+    return null;
+  }
+
+  const {data} =
+    await supabaseClient
+      .from("profiles")
+      .select("*")
+      .eq("id",id)
+      .maybeSingle();
+
+  return data;
 }
 
-}).subscribe();
 
-usersChannel=supabaseClient.channel("shadow-users-"+Math.random())
-.on("postgres_changes",{
-event:"*",
-schema:"public",table:"chat_users"
-},async payload=>{
-await loadUsers();
-if(payload.eventType==="INSERT"&&payload.new?.id!==currentUser?.id){
-showToast("👋 "+(payload.new.nickname||"Someone")+" joined Shadow Chat");
+async function renderOnlineUsers(){
+
+  const box = $("onlineUsers");
+
+  if(!onlineUsers.length){
+
+    box.innerHTML =
+      `<div style="font-size:12px;color:#91a5b4">
+        Nobody online
+      </div>`;
+
+    return;
+  }
+
+  const html = [];
+
+  for(const u of onlineUsers){
+
+    if(u.id === currentUser.id) continue;
+
+    const profile =
+      await getProfile(u.id);
+
+    const name =
+      profile?.display_name ||
+      profile?.username ||
+      u.nickname;
+
+    html.push(`
+
+      <div
+        class="onlineItem"
+        onclick="handleOnlineUser('${u.id}')"
+      >
+
+        <div class="onlineDot"></div>
+
+        ${avatarHtml(profile,name,"small")}
+
+        <div class="onlineName">
+          ${escapeHtml(name)}
+        </div>
+
+      </div>
+
+    `);
+  }
+
+  box.innerHTML =
+    html.join("") ||
+    `<div style="font-size:12px;color:#91a5b4">
+      No other users online
+    </div>`;
 }
-}).subscribe();
 
+
+async function handleOnlineUser(id){
+
+  if(id === currentUser.id) return;
+
+  const friend =
+    friends.find(f =>
+      f.user_id === id ||
+      f.friend_id === id
+    );
+
+  if(friend){
+
+    await openPrivateChat(id);
+
+  }else{
+
+    openSearch();
+
+    const profile =
+      await getProfile(id);
+
+    if(profile){
+
+      $("modalSearchInput").value =
+        profile.username;
+
+      await searchUsers();
+
+    }
+
+  }
 }
 
-/* ================= MESSAGES ================= */
+
+/* =========================================================
+   PUBLIC CHAT
+========================================================= */
+
+async function openPublicChat(){
+
+  currentRoom = "public";
+
+  privateFriend = null;
+
+  $("chatTitleText").textContent =
+    "Public Chat";
+
+  $("chatSubtitle").textContent =
+    "Everyone online can see this";
+
+  $("chatHeaderAvatar").innerHTML =
+    "🌐";
+
+  $("privateActions").innerHTML = "";
+
+  await loadMessages();
+
+  $("messageInput").focus();
+}
+
+
+/* =========================================================
+   PRIVATE CHAT
+========================================================= */
+
+async function isFriend(userId){
+
+  if(anonymous) return false;
+
+  const found =
+    friends.some(f =>
+      f.user_id === userId ||
+      f.friend_id === userId
+    );
+
+  return found;
+}
+
+
+async function openPrivateChat(friendId){
+
+  if(!(await isFriend(friendId))){
+
+    showToast(
+      "You can only chat with accepted friends.",
+      false
+    );
+
+    return;
+  }
+
+  const profile =
+    await getProfile(friendId);
+
+  if(!profile){
+
+    showToast(
+      "User profile not found.",
+      false
+    );
+
+    return;
+  }
+
+  privateFriend = {
+    id:friendId,
+    ...profile
+  };
+
+  currentRoom =
+    privateRoomId(
+      currentUser.id,
+      friendId
+    );
+
+  const name =
+    profile.display_name ||
+    profile.username;
+
+  $("chatTitleText").textContent =
+    name;
+
+  $("chatSubtitle").textContent =
+    "Private chat";
+
+  $("chatHeaderAvatar").innerHTML =
+    avatarHtml(profile,name);
+
+  $("privateActions").innerHTML = `
+
+    <button
+      class="iconBtn"
+      onclick="startPrivateCall('${friendId}')"
+      title="Voice Call"
+    >
+      📞
+    </button>
+
+  `;
+
+  await loadMessages();
+
+  $("messageInput").focus();
+}
+
+
+function privateRoomId(a,b){
+
+  return "private_" +
+    [a,b]
+      .sort()
+      .join("_");
+}
+
+
+function messageBelongsToCurrentRoom(m){
+
+  if(currentRoom === "public"){
+
+    return m.room === "public";
+  }
+
+  return m.room === currentRoom;
+}
+
+
+/* =========================================================
+   MESSAGES
+========================================================= */
 
 async function loadMessages(){
 
-const box=document.getElementById("messages");
-box.innerHTML="";
+  $("messages").innerHTML =
+    `<div class="empty">Loading...</div>`;
 
-if(currentRoom==="voice")return;
+  const since =
+    new Date(
+      Date.now() - FIVE_MINUTES
+    ).toISOString();
 
-const since=new Date(Date.now()-300000).toISOString();
+  let query =
+    supabaseClient
+      .from("messages")
+      .select("*")
+      .eq("room",currentRoom)
+      .eq("message_type","chat")
+      .gte("created_at",since)
+      .order("created_at",{ascending:true});
 
-const {data,error}=await supabaseClient
-.from("messages")
-.select("*")
-.eq("room",currentRoom)
-.eq("message_type","chat")
-.gte("created_at",since)
-.order("created_at",{ascending:true});
+  const {data,error} =
+    await query;
 
-if(error){
-box.innerHTML='<div class="empty">Unable to load messages.</div>';
-return;
+  if(error){
+
+    console.log(error);
+
+    $("messages").innerHTML =
+      `<div class="empty">
+        Could not load messages.
+      </div>`;
+
+    return;
+  }
+
+  $("messages").innerHTML = "";
+
+  if(!data?.length){
+
+    $("messages").innerHTML =
+      `<div class="empty">
+        No messages yet.<br>
+        Start the conversation.
+      </div>`;
+
+    return;
+  }
+
+  for(const m of data){
+
+    addMessageToScreen(m);
+
+  }
+
+  scrollMessages();
 }
 
-if(!data?.length){
-box.innerHTML='<div class="empty"><div><div style="font-size:40px">💬</div><p>No recent messages</p></div></div>';
-return;
+
+async function addMessageToScreen(m){
+
+  if(!messageBelongsToCurrentRoom(m)){
+    return;
+  }
+
+  const created =
+    new Date(m.created_at).getTime();
+
+  const remaining =
+    FIVE_MINUTES -
+    (Date.now() - created);
+
+  if(remaining <= 0){
+    return;
+  }
+
+  const empty =
+    $("messages").querySelector(".empty");
+
+  if(empty){
+    empty.remove();
+  }
+
+  const row =
+    document.createElement("div");
+
+  const mine =
+    m.sender_id === currentUser.id;
+
+  row.className =
+    "msg" +
+    (mine ? " mine" : "");
+
+  const profile =
+    await getProfile(m.sender_id);
+
+  const name =
+    profile?.display_name ||
+    profile?.username ||
+    m.nickname ||
+    "User";
+
+  const time =
+    new Date(m.created_at)
+      .toLocaleTimeString([],{
+        hour:"2-digit",
+        minute:"2-digit"
+      });
+
+  row.innerHTML = `
+
+    ${avatarHtml(profile,name,"small")}
+
+    <div class="msgContent">
+
+      <div class="msgName">
+        ${escapeHtml(name)}
+      </div>
+
+      <div class="bubble">
+        ${escapeHtml(m.message)}
+      </div>
+
+      <div class="msgTime">
+        ${time}
+      </div>
+
+    </div>
+
+  `;
+
+  $("messages").appendChild(row);
+
+  scrollMessages();
+
+  setTimeout(()=>{
+
+    if(row.isConnected){
+      row.remove();
+    }
+
+  },remaining);
 }
 
-for(const m of data)await addMessageToScreen(m,false);
-scrollBottom();
+
+function scrollMessages(){
+
+  const box = $("messages");
+
+  requestAnimationFrame(()=>{
+    box.scrollTop =
+      box.scrollHeight;
+  });
 }
+
+
+function handleMessageKey(e){
+
+  if(e.key === "Enter" && !e.shiftKey){
+
+    e.preventDefault();
+
+    sendMessage();
+  }
+}
+
 
 async function sendMessage(){
 
-const input=document.getElementById("messageInput");
-const text=input.value.trim();
+  const input =
+    $("messageInput");
 
-if(!text||!currentUser)return;
+  const text =
+    input.value.trim();
 
-input.value="";
+  if(!text) return;
 
-let receiver=null;
+  if(!anonymous &&
+     currentRoom !== "public" &&
+     privateFriend &&
+     !(await isFriend(privateFriend.id))){
 
-if(currentRoom.startsWith("private_")){
-receiver=currentRoom.replace("private_","").split("_").find(x=>x!==currentUser.id)||null;
+    showToast(
+      "This user is not your friend anymore.",
+      false
+    );
+
+    return;
+  }
+
+  input.value = "";
+
+  const nickname =
+    currentProfile?.display_name ||
+    currentProfile?.username ||
+    "Anonymous";
+
+  const {error} =
+    await supabaseClient
+      .from("messages")
+      .insert({
+        room:currentRoom,
+        sender_id:currentUser.id,
+        receiver_id:
+          privateFriend?.id || null,
+        nickname,
+        message:text,
+        message_type:"chat"
+      });
+
+  if(error){
+
+    console.log(error);
+
+    showToast(
+      "Message failed: " + error.message,
+      false
+    );
+
+  }
 }
 
-const {data,error}=await supabaseClient.from("messages").insert({
-room:currentRoom,
-sender_id:currentUser.id,
-receiver_id:receiver,
-nickname:currentProfile?.display_name||currentProfile?.username||"Anonymous",
-message:text,
-message_type:"chat"
-}).select().single();
 
-if(error){
-console.error(error);
-showToast("Message send nahi hua.");
-return;
+/* =========================================================
+   FRIENDS
+========================================================= */
+
+async function loadFriends(){
+
+  if(anonymous){
+
+    friends = [];
+
+    renderFriends();
+
+    return;
+  }
+
+  const {data,error} =
+    await supabaseClient
+      .from("friendships")
+      .select("*")
+      .or(
+        `user_id.eq.${currentUser.id},friend_id.eq.${currentUser.id}`
+      );
+
+  if(error){
+
+    console.log("Friendships:",error);
+
+    friends = [];
+
+    renderFriends();
+
+    return;
+  }
+
+  friends = data || [];
+
+  renderFriends();
 }
 
-if(data)await addMessageToScreen(data,true);
+
+async function renderFriends(){
+
+  const box =
+    $("friendsList");
+
+  if(!friends.length){
+
+    box.innerHTML =
+      `<div style="font-size:12px;color:#91a5b4;padding:8px">
+        No friends yet
+      </div>`;
+
+    return;
+  }
+
+  let html = "";
+
+  for(const f of friends){
+
+    const id =
+      f.user_id === currentUser.id
+        ? f.friend_id
+        : f.user_id;
+
+    const profile =
+      await getProfile(id);
+
+    const name =
+      profile?.display_name ||
+      profile?.username ||
+      "User";
+
+    html += `
+
+      <div
+        class="friendItem"
+        onclick="openPrivateChat('${id}')"
+      >
+
+        ${avatarHtml(profile,name,"small")}
+
+        <div class="friendInfo">
+          <strong>${escapeHtml(name)}</strong>
+          <span>Private chat</span>
+        </div>
+
+      </div>
+
+    `;
+  }
+
+  box.innerHTML = html;
 }
 
-function handleEnter(e){
-if(e.key==="Enter"){
-e.preventDefault();
-sendMessage();
-}
-}
 
-async function addMessageToScreen(m,scroll=true){
+/* =========================================================
+   FRIEND REQUESTS
+========================================================= */
 
-if(document.querySelector(`[data-message-id="${m.id}"]`))return;
+async function loadFriendRequests(){
 
-if(Date.now()-new Date(m.created_at).getTime()>300000)return;
+  if(anonymous){
 
-const box=document.getElementById("messages");
-box.querySelector(".empty")?.remove();
+    $("requestsList").innerHTML =
+      `<div style="font-size:12px;color:#91a5b4;padding:8px">
+        Login to use friends
+      </div>`;
 
-let p=profilesCache[m.sender_id];
+    return;
+  }
 
-if(!p){
-const {data}=await supabaseClient.from("profiles").select("*").eq("id",m.sender_id).maybeSingle();
-p=data;
-if(data)profilesCache[m.sender_id]=data;
-}
+  const {data,error} =
+    await supabaseClient
+      .from("friend_requests")
+      .select("*")
+      .eq("receiver_id",currentUser.id)
+      .eq("status","pending")
+      .order("created_at",{ascending:false});
 
-const mine=m.sender_id===currentUser?.id;
-const name=p?.display_name||m.nickname||"Anonymous";
+  if(error){
 
-const row=document.createElement("div");
-row.className="message"+(mine?" mine":"");
-row.dataset.messageId=m.id;
-row.innerHTML=`
-${createAvatarHTML(p?.avatar_url,name)}
-<div class="msg-body">
-<div class="msg-name">${escapeHTML(name)}</div>
-<div class="bubble">${escapeHTML(m.message)}</div>
-<div class="msg-time">${formatTime(m.created_at)}</div>
-</div>`;
+    console.log("Requests:",error);
 
-box.appendChild(row);
+    return;
+  }
 
-const delay=Math.max(100,new Date(m.created_at).getTime()+300000-Date.now());
-setTimeout(()=>row.remove(),delay);
+  const requests = data || [];
 
-if(scroll)scrollBottom();
-}
+  if(!requests.length){
 
-/* ================= PUBLIC ================= */
+    $("requestsList").innerHTML =
+      `<div style="font-size:12px;color:#91a5b4;padding:8px">
+        No requests
+      </div>`;
 
-async function openPublic(){
-currentRoom="public";
-roomTitle.textContent="Public Chat";
-roomSub.textContent="Everyone online • Messages disappear after 5 minutes";
-roomAvatar.textContent="🌐";
-callAction.innerHTML="";
-publicBtn.classList.add("active");
-await loadMessages();
-}
+    return;
+  }
 
-/* ================= USER SEARCH ================= */
+  let html = "";
 
-async function openSearch(){
+  for(const r of requests){
 
-document.getElementById("modalTitle").textContent="Find Users";
+    const profile =
+      await getProfile(r.sender_id);
 
-document.getElementById("modalContent").innerHTML=`
-<div class="field">
-<label>Search by username / User ID</label>
-<input id="userSearchInput" placeholder="example: cherry_123" oninput="searchUsers()">
-</div>
-<div id="searchResults"></div>`;
+    const name =
+      profile?.display_name ||
+      profile?.username ||
+      "User";
 
-document.getElementById("modalBg").classList.remove("hidden");
-}
+    html += `
 
-let searchTimer=null;
+      <div class="result">
 
-function searchUsers(){
-clearTimeout(searchTimer);
-searchTimer=setTimeout(doSearchUsers,300);
-}
+        ${avatarHtml(profile,name,"small")}
 
-async function doSearchUsers(){
+        <div class="resultInfo">
+          <strong>${escapeHtml(name)}</strong>
+          <small>Friend request</small>
+        </div>
 
-const q=document.getElementById("userSearchInput")?.value.trim().toLowerCase();
-const box=document.getElementById("searchResults");
-if(!box)return;
+        <button
+          class="smallBtn"
+          onclick="acceptRequest(${r.id},'${r.sender_id}')"
+        >
+          ✓
+        </button>
 
-if(!q){
-box.innerHTML='<p style="color:var(--muted)">Username type karo.</p>';
-return;
+        <button
+          class="smallBtn dangerBtn"
+          onclick="rejectRequest(${r.id})"
+        >
+          ✕
+        </button>
+
+      </div>
+
+    `;
+  }
+
+  $("requestsList").innerHTML = html;
 }
 
-const {data,error}=await supabaseClient
-.from("profiles")
-.select("*")
-.ilike("username","%"+q+"%")
-.limit(15);
 
-if(error){
-box.innerHTML="Search error.";
-return;
+async function sendFriendRequest(userId){
+
+  if(anonymous){
+
+    showToast(
+      "Login required for friend requests.",
+      false
+    );
+
+    return;
+  }
+
+  if(userId === currentUser.id){
+
+    showToast(
+      "You cannot add yourself.",
+      false
+    );
+
+    return;
+  }
+
+  if(await isFriend(userId)){
+
+    showToast(
+      "Already friends.",
+      false
+    );
+
+    return;
+  }
+
+  const {data:existing} =
+    await supabaseClient
+      .from("friend_requests")
+      .select("*")
+      .or(
+        `and(sender_id.eq.${currentUser.id},receiver_id.eq.${userId}),and(sender_id.eq.${userId},receiver_id.eq.${currentUser.id})`
+      )
+      .limit(1);
+
+  if(existing?.length){
+
+    showToast(
+      "Friend request already exists.",
+      false
+    );
+
+    return;
+  }
+
+  const {error} =
+    await supabaseClient
+      .from("friend_requests")
+      .insert({
+        sender_id:currentUser.id,
+        receiver_id:userId,
+        status:"pending"
+      });
+
+  if(error){
+
+    showToast(
+      error.message,
+      false
+    );
+
+    return;
+  }
+
+  showToast(
+    "Friend request sent."
+  );
 }
 
-if(!data?.length){
-box.innerHTML='<p style="color:var(--muted)">No users found.</p>';
-return;
+
+async function acceptRequest(requestId,senderId){
+
+  if(anonymous) return;
+
+  const {error} =
+    await supabaseClient
+      .from("friend_requests")
+      .update({
+        status:"accepted"
+      })
+      .eq("id",requestId)
+      .eq("receiver_id",currentUser.id);
+
+  if(error){
+
+    showToast(
+      error.message,
+      false
+    );
+
+    return;
+  }
+
+  /* friendship both directions */
+
+  const {error:friendError} =
+    await supabaseClient
+      .from("friendships")
+      .upsert([
+        {
+          user_id:currentUser.id,
+          friend_id:senderId
+        },
+        {
+          user_id:senderId,
+          friend_id:currentUser.id
+        }
+      ],{
+        onConflict:"user_id,friend_id"
+      });
+
+  if(friendError){
+
+    showToast(
+      friendError.message,
+      false
+    );
+
+    return;
+  }
+
+  await loadFriends();
+
+  await loadFriendRequests();
+
+  showToast(
+    "Friend request accepted."
+  );
 }
 
-box.innerHTML=data.map(p=>`
-<div class="friend-item">
-<div style="display:flex;align-items:center;gap:9px">
-${createAvatarHTML(p.avatar_url,p.display_name)}
-<div>
-<strong>${escapeHTML(p.display_name||p.username)}</strong>
-<small>@${escapeHTML(p.username)}</small>
-</div>
-</div>
-<button class="mini-btn" onclick="viewFoundUser('${p.id}')">View</button>
-</div>`).join("");
+
+async function rejectRequest(requestId){
+
+  const {error} =
+    await supabaseClient
+      .from("friend_requests")
+      .update({
+        status:"rejected"
+      })
+      .eq("id",requestId)
+      .eq("receiver_id",currentUser.id);
+
+  if(error){
+
+    showToast(
+      error.message,
+      false
+    );
+
+    return;
+  }
+
+  await loadFriendRequests();
+
+  showToast(
+    "Friend request rejected."
+  );
 }
 
-async function viewFoundUser(id){
-closeModal();
-await openUserProfile(id);
+
+/* =========================================================
+   SEARCH
+========================================================= */
+
+function openSearch(){
+
+  $("searchModal")
+    .classList.remove("hidden");
+
+  setTimeout(()=>{
+    $("modalSearchInput").focus();
+  },100);
 }
 
-/* ================= FRIEND SYSTEM ================= */
 
-async function openUserProfile(id){
+function closeSearch(){
 
-if(id===currentUser?.id){
-openProfile();
-return;
+  $("searchModal")
+    .classList.add("hidden");
 }
 
-const {data:p}=await supabaseClient.from("profiles").select("*").eq("id",id).maybeSingle();
 
-if(!p)return;
+async function searchUsers(){
 
-const {data:friend}=await getFriendship(id);
+  const input =
+    $("modalSearchInput").value.trim() ||
+    $("sideSearchInput").value.trim();
 
-const {data:sent}=await supabaseClient.from("friend_requests")
-.select("*")
-.eq("sender_id",currentUser.id)
-.eq("receiver_id",id)
-.eq("status","pending")
-.maybeSingle();
+  if(!input){
 
-const {data:received}=await supabaseClient.from("friend_requests")
-.select("*")
-.eq("sender_id",id)
-.eq("receiver_id",currentUser.id)
-.eq("status","pending")
-.maybeSingle();
+    $("searchResults").innerHTML =
+      `<div style="color:#91a5b4;font-size:13px">
+        Enter a username.
+      </div>`;
 
-const {data:block}=await supabaseClient.from("blocks")
-.select("*")
-.eq("blocker_id",currentUser.id)
-.eq("blocked_id",id)
-.maybeSingle();
+    return;
+  }
 
-modalTitle.textContent="User Profile";
+  openSearch();
 
-modalContent.innerHTML=`
-<div class="profile-big">
-${createAvatarHTML(p.avatar_url,p.display_name)}
-<h2>${escapeHTML(p.display_name||p.username)}</h2>
-<p>@${escapeHTML(p.username)}</p>
-<p style="margin-top:15px">${escapeHTML(p.bio||"No bio yet.")}</p>
+  $("searchResults").innerHTML =
+    `<div style="color:#91a5b4">
+      Searching...
+    </div>`;
 
-<div class="profile-actions">
+  const {data,error} =
+    await supabaseClient
+      .from("profiles")
+      .select("*")
+      .ilike("username","%" + input + "%")
+      .limit(20);
 
-${friend?`
-<button class="primary" onclick="startPrivate('${id}')">💬 Private Chat</button>
-<button class="primary" onclick="startCall('${id}')">📞 Voice Call</button>
-`:""}
+  if(error){
 
-${!friend&&!sent&&!received?`
-<button class="secondary" onclick="sendFriendRequest('${id}')">🤝 Send Friend Request</button>
-`:""}
+    $("searchResults").innerHTML =
+      `<div style="color:#dc2626">
+        ${escapeHtml(error.message)}
+      </div>`;
 
-${received?`
-<button class="primary" onclick="acceptRequest('${received.id}','${id}')">✅ Accept Request</button>
-<button class="secondary" onclick="rejectRequest('${received.id}')">❌ Reject</button>
-`:""}
+    return;
+  }
 
-${sent?`<button class="secondary" disabled>⏳ Request Sent</button>`:""}
+  if(!data?.length){
 
-${block?
-`<button class="secondary" onclick="unblockUser('${id}')">🔓 Unblock</button>`:
-`<button class="secondary danger" onclick="blockUser('${id}')">🚫 Block User</button>`}
+    $("searchResults").innerHTML =
+      `<div style="color:#91a5b4">
+        No users found.
+      </div>`;
 
-</div>
-</div>`;
+    return;
+  }
 
-modalBg.classList.remove("hidden");
+  let html = "";
+
+  for(const p of data){
+
+    if(p.id === currentUser.id) continue;
+
+    const friend =
+      await isFriend(p.id);
+
+    html += `
+
+      <div class="result">
+
+        ${avatarHtml(
+          p,
+          p.display_name || p.username,
+          "small"
+        )}
+
+        <div class="resultInfo">
+
+          <strong>
+            ${escapeHtml(
+              p.display_name || p.username
+            )}
+          </strong>
+
+          <small>
+            @${escapeHtml(p.username)}
+          </small>
+
+        </div>
+
+        ${
+          friend
+
+          ?
+
+          `<button
+             class="smallBtn"
+             onclick="openPrivateChat('${p.id}');closeSearch()"
+           >
+             Chat
+           </button>`
+
+          :
+
+          `<button
+             class="smallBtn"
+             onclick="sendFriendRequest('${p.id}')"
+           >
+             + Add
+           </button>`
+        }
+
+      </div>
+
+    `;
+  }
+
+  $("searchResults").innerHTML =
+    html ||
+    `<div style="color:#91a5b4">
+      No users found.
+    </div>`;
 }
 
-async function getFriendship(id){
 
-const {data}=await supabaseClient.from("friendships")
-.select("*")
-.or(`and(user_id.eq.${currentUser.id},friend_id.eq.${id}),and(user_id.eq.${id},friend_id.eq.${currentUser.id})`)
-.maybeSingle();
+/* =========================================================
+   PROFILE MODAL
+========================================================= */
 
-return {data};
+async function openProfile(){
+
+  if(!currentProfile) return;
+
+  $("profileUsername").value =
+    currentProfile.username || "";
+
+  $("profileDisplayName").value =
+    currentProfile.display_name || "";
+
+  $("profileBio").value =
+    currentProfile.bio || "";
+
+  $("profileAvatarPreview").outerHTML =
+    avatarHtml(
+      currentProfile,
+      currentProfile.display_name ||
+      currentProfile.username ||
+      "U",
+      "big"
+    ).replace(
+      'class="avatar big"',
+      'id="profileAvatarPreview" class="avatar big"'
+    );
+
+  $("profileModal")
+    .classList.remove("hidden");
 }
 
-async function sendFriendRequest(id){
 
-const {error}=await supabaseClient.from("friend_requests").insert({
-sender_id:currentUser.id,
-receiver_id:id,
-status:"pending"
-});
+function closeProfile(){
 
-if(error){
-showToast(error.message.includes("duplicate")?"Request already exists.":"Request send failed.");
-return;
+  $("profileModal")
+    .classList.add("hidden");
 }
 
-closeModal();
-showToast("🤝 Friend request sent.");
-}
-
-async function openRequests(){
-
-modalTitle.textContent="Friend Requests";
-
-const {data,error}=await supabaseClient.from("friend_requests")
-.select("*")
-.eq("receiver_id",currentUser.id)
-.eq("status","pending")
-.order("created_at",{ascending:false});
-
-if(error){
-modalContent.innerHTML="<p>Unable to load requests.</p>";
-modalBg.classList.remove("hidden");
-return;
-}
-
-if(!data?.length){
-modalContent.innerHTML='<p style="color:var(--muted);text-align:center">No pending requests.</p>';
-modalBg.classList.remove("hidden");
-return;
-}
-
-let html="";
-
-for(const r of data){
-
-const {data:p}=await supabaseClient.from("profiles").select("*").eq("id",r.sender_id).maybeSingle();
-
-html+=`
-<div class="friend-item">
-<div style="display:flex;align-items:center;gap:9px">
-${createAvatarHTML(p?.avatar_url,p?.display_name)}
-<div>
-<strong>${escapeHTML(p?.display_name||"User")}</strong>
-<small>@${escapeHTML(p?.username||"unknown")}</small>
-</div>
-</div>
-<div>
-<button class="mini-btn" onclick="acceptRequest('${r.id}','${r.sender_id}')">✅</button>
-<button class="mini-btn" onclick="rejectRequest('${r.id}')">❌</button>
-</div>
-</div>`;
-}
-
-modalContent.innerHTML=html;
-modalBg.classList.remove("hidden");
-}
-
-async function acceptRequest(requestId,friendId){
-
-const {error}=await supabaseClient.from("friend_requests")
-.update({status:"accepted"})
-.eq("id",requestId)
-.eq("receiver_id",currentUser.id);
-
-if(error){
-showToast(error.message);
-return;
-}
-
-await supabaseClient.from("friendships").insert({
-user_id:currentUser.id,
-friend_id:friendId
-});
-
-closeModal();
-showToast("✅ Friend added.");
-}
-
-async function rejectRequest(id){
-
-await supabaseClient.from("friend_requests")
-.update({status:"rejected"})
-.eq("id",id)
-.eq("receiver_id",currentUser.id);
-
-closeModal();
-showToast("Request rejected.");
-}
-
-async function openFriends(){
-
-modalTitle.textContent="My Friends";
-
-const {data,error}=await supabaseClient.from("friendships")
-.select("*")
-.or(`user_id.eq.${currentUser.id},friend_id.eq.${currentUser.id}`);
-
-if(error){
-modalContent.innerHTML="<p>Friend system table/policy check karo.</p>";
-modalBg.classList.remove("hidden");
-return;
-}
-
-const ids=(data||[]).map(x=>x.user_id===currentUser.id?x.friend_id:x.user_id);
-
-if(!ids.length){
-modalContent.innerHTML='<p style="color:var(--muted);text-align:center">Abhi koi friend nahi.</p>';
-modalBg.classList.remove("hidden");
-return;
-}
-
-let html="";
-
-for(const id of ids){
-const {data:p}=await supabaseClient.from("profiles").select("*").eq("id",id).maybeSingle();
-
-html+=`
-<div class="friend-item">
-<div style="display:flex;align-items:center;gap:9px">
-${createAvatarHTML(p?.avatar_url,p?.display_name)}
-<div><strong>${escapeHTML(p?.display_name||"Friend")}</strong>
-<small>@${escapeHTML(p?.username||"")}</small></div>
-</div>
-<button class="mini-btn" onclick="startPrivate('${id}')">💬</button>
-</div>`;
-}
-
-modalContent.innerHTML=html;
-modalBg.classList.remove("hidden");
-}
-
-async function blockUser(id){
-
-const {error}=await supabaseClient.from("blocks").insert({
-blocker_id:currentUser.id,
-blocked_id:id
-});
-
-if(error){
-showToast(error.message);
-return;
-}
-
-await supabaseClient.from("friendships")
-.delete()
-.or(`and(user_id.eq.${currentUser.id},friend_id.eq.${id}),and(user_id.eq.${id},friend_id.eq.${currentUser.id})`);
-
-closeModal();
-showToast("🚫 User blocked.");
-}
-
-async function unblockUser(id){
-
-await supabaseClient.from("blocks")
-.delete()
-.eq("blocker_id",currentUser.id)
-.eq("blocked_id",id);
-
-closeModal();
-showToast("🔓 User unblocked.");
-}
-
-/* ================= PRIVATE CHAT ================= */
-
-async function startPrivate(id){
-
-const {data:friend}=await getFriendship(id);
-
-if(!friend){
-showToast("Private chat sirf friends ke saath available hai.");
-return;
-}
-
-closeModal();
-
-const ids=[currentUser.id,id].sort();
-currentRoom="private_"+ids.join("_");
-
-const p=profilesCache[id]||(
-await supabaseClient.from("profiles").select("*").eq("id",id).maybeSingle()
-).data;
-
-roomTitle.textContent=p?.display_name||"Private Chat";
-roomSub.textContent="🔒 Friend-only private chat • 5 minute messages";
-roomAvatar.innerHTML=createAvatarHTML(p?.avatar_url,p?.display_name||"U");
-
-callAction.innerHTML=`<button class="icon-btn" onclick="startCall('${id}')">📞</button>`;
-
-await loadMessages();
-}
-
-/* ================= CALLING ================= */
-
-function callRoom(a,b){
-return "call_"+[a,b].sort().join("_");
-}
-
-async function sendCallSignal(receiverId,obj){
-
-await supabaseClient.from("messages").insert({
-room:callRoom(currentUser.id,receiverId),
-sender_id:currentUser.id,
-receiver_id:receiverId,
-nickname:currentProfile?.display_name||"User",
-message:JSON.stringify(obj),
-message_type:"call_signal"
-});
-}
-
-async function startCall(id){
-
-const {data:friend}=await getFriendship(id);
-
-if(!friend){
-showToast("Voice call sirf friends ke saath available hai.");
-return;
-}
-
-closeModal();
-
-callTarget=id;
-
-try{
-callStream=await navigator.mediaDevices.getUserMedia({audio:true,video:false});
-callMode=true;
-
-showCallScreen("Calling...");
-
-callPeer=makePeer(id);
-
-const offer=await callPeer.createOffer();
-await callPeer.setLocalDescription(offer);
-
-await sendCallSignal(id,{type:"offer",offer});
-}catch(e){
-console.error(e);
-showToast("Microphone permission allow karo.");
-}
-}
-
-function makePeer(remoteId){
-
-const pc=new RTCPeerConnection({
-iceServers:[{urls:"stun:stun.l.google.com:19302"}]
-});
-
-callStream?.getTracks().forEach(t=>pc.addTrack(t,callStream));
-
-pc.onicecandidate=e=>{
-if(e.candidate){
-sendCallSignal(remoteId,{type:"ice",candidate:e.candidate});
-}
-};
-
-pc.ontrack=e=>{
-let audio=document.getElementById("remoteAudio");
-if(!audio){
-audio=document.createElement("audio");
-audio.id="remoteAudio";
-audio.autoplay=true;
-document.body.appendChild(audio);
-}
-audio.srcObject=e.streams[0];
-};
-
-pc.onconnectionstatechange=()=>{
-if(pc.connectionState==="connected"){
-showCallScreen("Connected 📞");
-}
-if(["failed","disconnected","closed"].includes(pc.connectionState)){
-endCall(false);
-}
-};
-
-return pc;
-}
-
-async function handleCallSignal(m){
-
-if(m.receiver_id!==currentUser.id)return;
-
-let s;
-try{s=JSON.parse(m.message)}catch{return}
-
-const from=m.sender_id;
-
-if(s.type==="offer"){
-
-callTarget=from;
-
-const {data:p}=await supabaseClient.from("profiles").select("*").eq("id",from).maybeSingle();
-
-showIncomingCall(p);
-
-return;
-}
-
-if(!callMode)return;
-
-if(s.type==="answer"&&callPeer){
-await callPeer.setRemoteDescription(new RTCSessionDescription(s.answer));
-}
-
-if(s.type==="ice"&&callPeer){
-try{await callPeer.addIceCandidate(s.candidate)}catch(e){}
-}
-}
-
-async function acceptCall(){
-
-if(!callTarget)return;
-
-try{
-callStream=await navigator.mediaDevices.getUserMedia({audio:true,video:false});
-callMode=true;
-
-callPeer=makePeer(callTarget);
-
-await callPeer.setRemoteDescription(new RTCSessionDescription(window.pendingOffer));
-
-const answer=await callPeer.createAnswer();
-await callPeer.setLocalDescription(answer);
-
-await sendCallSignal(callTarget,{type:"answer",answer});
-
-showCallScreen("Connecting...");
-}catch(e){
-showToast("Microphone permission allow karo.");
-}
-}
-
-function showIncomingCall(p){
-
-window.pendingOffer=window.pendingOffer||null;
-
-modalTitle.textContent="Incoming Voice Call";
-
-modalContent.innerHTML=`
-<div class="call-box">
-<div class="call-avatar">${createAvatarHTML(p?.avatar_url,p?.display_name||"User")}</div>
-<h2>${escapeHTML(p?.display_name||"Someone")}</h2>
-<p style="color:var(--muted);margin-top:7px">Incoming voice call...</p>
-<div class="call-buttons">
-<button class="call-btn accept" onclick="acceptIncoming()">✓</button>
-<button class="call-btn reject" onclick="rejectIncoming()">✕</button>
-</div>
-</div>`;
-
-modalBg.classList.remove("hidden");
-
-async function acceptIncoming(){
-const {data}=await supabaseClient.from("messages")
-.select("*")
-.eq("sender_id",callTarget)
-.eq("receiver_id",currentUser.id)
-.eq("message_type","call_signal")
-.order("created_at",{ascending:false})
-.limit(1)
-.maybeSingle();
-
-try{
-const s=JSON.parse(data.message);
-window.pendingOffer=s.offer;
-}catch{}
-
-closeModal();
-await acceptCall();
-}
-window.acceptIncoming=acceptIncoming;
-
-function rejectIncoming(){
-closeModal();
-sendCallSignal(callTarget,{type:"reject"});
-}
-window.rejectIncoming=rejectIncoming;
-}
-
-function showCallScreen(status){
-
-modalTitle.textContent="Voice Call";
-
-modalContent.innerHTML=`
-<div class="call-box">
-<div class="voice-circle">📞</div>
-<h2>${escapeHTML(status)}</h2>
-<p style="color:var(--muted);margin-top:8px">Shadow Chat Voice Call</p>
-<div class="call-buttons">
-<button class="call-btn reject" onclick="endCall(true)">✕</button>
-</div>
-</div>`;
-
-modalBg.classList.remove("hidden");
-}
-
-async function endCall(sendSignal=true){
-
-if(sendSignal&&callTarget){
-await sendCallSignal(callTarget,{type:"hangup"});
-}
-
-callPeer?.close();
-callPeer=null;
-
-callStream?.getTracks().forEach(t=>t.stop());
-callStream=null;
-
-document.getElementById("remoteAudio")?.remove();
-
-callMode=false;
-callTarget=null;
-
-closeModal();
-}
-
-/* ================= VOICE ROOM ================= */
-
-async function openVoice(){
-
-currentRoom="voice";
-roomTitle.textContent="Shadow Voice Room";
-roomSub.textContent="Live community voice room";
-roomAvatar.textContent="🎤";
-callAction.innerHTML="";
-
-messages.innerHTML=`
-<div class="voice-panel">
-<div class="voice-circle">🎤</div>
-<h2>Shadow Voice Room</h2>
-<p class="voice-status" id="voiceStatus">Microphone se join karo.</p>
-<button class="primary" style="max-width:280px" onclick="joinVoiceRoom()">🎤 Join Voice Room</button>
-</div>`;
-}
-
-async function joinVoiceRoom(){
-
-try{
-const stream=await navigator.mediaDevices.getUserMedia({audio:true});
-stream.getTracks().forEach(t=>t.stop());
-
-document.getElementById("voiceStatus").textContent="You joined the voice room 🎤";
-showToast("🎤 Voice room joined.");
-}catch(e){
-showToast("Microphone permission allow karo.");
-}
-}
-
-/* ================= PROFILE ================= */
-
-function openProfile(){
-
-modalTitle.textContent="My Profile";
-
-modalContent.innerHTML=`
-<div class="profile-big">
-${createAvatarHTML(currentProfile?.avatar_url,currentProfile?.display_name||"User")}
-<h2>${escapeHTML(currentProfile?.display_name||currentProfile?.username||"Anonymous")}</h2>
-<p>@${escapeHTML(currentProfile?.username||"Anonymous")}</p>
-<p style="margin-top:15px">${escapeHTML(currentProfile?.bio||"No bio yet.")}</p>
-
-<div class="profile-actions">
-${anonymous?
-`<button class="primary" onclick="closeModal();showAuth('signup');authScreen.classList.remove('hidden');app.classList.add('hidden')">🔐 Create Permanent Account</button>`:
-`<button class="secondary" onclick="editProfile()">✏️ Edit Profile</button>`}
-</div>
-</div>`;
-
-modalBg.classList.remove("hidden");
-}
-
-function editProfile(){
-
-modalTitle.textContent="Edit Profile";
-
-modalContent.innerHTML=`
-<div class="field">
-<label>Display Name</label>
-<input id="editDisplay" value="${escapeAttr(currentProfile.display_name||"")}">
-</div>
-<div class="field">
-<label>Bio</label>
-<textarea id="editBio" rows="3" maxlength="250">${escapeHTML(currentProfile.bio||"")}</textarea>
-</div>
-<div class="field">
-<label>Profile Picture — Maximum 200 KB</label>
-<input id="avatarFile" type="file" accept="image/*">
-</div>
-<button class="primary" onclick="saveProfile()">Save Profile</button>`;
-}
 
 async function saveProfile(){
 
-const displayName=document.getElementById("editDisplay").value.trim();
-const bio=document.getElementById("editBio").value.trim();
-const file=document.getElementById("avatarFile").files[0];
+  if(anonymous){
 
-if(file&&file.size>200*1024){
-alert("Profile picture 200 KB se zyada nahi honi chahiye.");
-return;
+    showToast(
+      "Anonymous profiles cannot be saved.",
+      false
+    );
+
+    return;
+  }
+
+  const displayName =
+    $("profileDisplayName").value.trim();
+
+  const bio =
+    $("profileBio").value.trim();
+
+  let avatarUrl =
+    currentProfile.avatar_url || null;
+
+
+  /* IMAGE */
+
+  const file =
+    $("avatarFile").files[0];
+
+  if(file){
+
+    if(file.size > 200 * 1024){
+
+      showToast(
+        "Image must be 200 KB or smaller.",
+        false
+      );
+
+      return;
+    }
+
+    const path =
+      currentUser.id + ".avatar";
+
+    const {error:uploadError} =
+      await supabaseClient
+        .storage
+        .from("avatars")
+        .upload(
+          path,
+          file,
+          {
+            upsert:true,
+            contentType:file.type
+          }
+        );
+
+    if(uploadError){
+
+      showToast(
+        "Image upload failed: " +
+        uploadError.message,
+        false
+      );
+
+      return;
+    }
+
+    const {data:urlData} =
+      supabaseClient
+        .storage
+        .from("avatars")
+        .getPublicUrl(path);
+
+    avatarUrl =
+      urlData.publicUrl +
+      "?v=" + Date.now();
+  }
+
+
+  const {data,error} =
+    await supabaseClient
+      .from("profiles")
+      .update({
+        display_name:
+          displayName ||
+          currentProfile.username,
+        bio,
+        avatar_url:avatarUrl
+      })
+      .eq("id",currentUser.id)
+      .select()
+      .single();
+
+  if(error){
+
+    showToast(
+      error.message,
+      false
+    );
+
+    return;
+  }
+
+  currentProfile = data;
+
+  updateMiniProfile();
+
+  closeProfile();
+
+  showToast(
+    "Profile updated."
+  );
+
+  if(currentRoom === "public"){
+
+    await loadMessages();
+
+  }
+
 }
 
-let avatarUrl=currentProfile.avatar_url;
 
-try{
+/* =========================================================
+   VOICE ROOM
+========================================================= */
 
-if(file){
+async function openVoiceRoom(){
 
-const ext=file.name.split(".").pop().toLowerCase();
-const path=currentUser.id+"."+ext;
+  if(voiceActive) return;
 
-const {error}=await supabaseClient.storage.from("avatars").upload(path,file,{
-upsert:true,contentType:file.type
-});
+  try{
 
-if(error)throw error;
+    voiceStream =
+      await navigator.mediaDevices.getUserMedia({
+        audio:{
+          echoCancellation:true,
+          noiseSuppression:true,
+          autoGainControl:true
+        },
+        video:false
+      });
 
-avatarUrl=supabaseClient.storage.from("avatars").getPublicUrl(path).data.publicUrl+"?v="+Date.now();
+  }catch(error){
+
+    showToast(
+      "Microphone permission required.",
+      false
+    );
+
+    return;
+  }
+
+  voiceActive = true;
+
+  $("voicePanel")
+    .classList.remove("hidden");
+
+  await renderVoiceUsers();
+
+  const users =
+    await getCurrentVoiceUsers();
+
+  /* announce */
+
+  await sendVoiceSignal({
+    type:"voice_join"
+  });
+
+  /* create offers only for users with smaller ID */
+
+  for(const user of users){
+
+    if(user.id === currentUser.id){
+      continue;
+    }
+
+    if(String(currentUser.id) <
+       String(user.id)){
+
+      await createVoiceOffer(
+        user.id
+      );
+
+    }
+
+  }
+
+  showToast(
+    "You joined the voice room."
+  );
 }
 
-const {data,error}=await supabaseClient.from("profiles").update({
-display_name:displayName||currentProfile.username,
-bio,
-avatar_url:avatarUrl
-}).eq("id",currentUser.id).select().single();
 
-if(error)throw error;
+async function getCurrentVoiceUsers(){
 
-currentProfile=data;
-profilesCache[currentUser.id]=data;
+  const {data} =
+    await supabaseClient
+      .from("chat_users")
+      .select("*");
 
-closeModal();
-showToast("✅ Profile updated.");
-
-}catch(e){
-alert(e.message||"Profile update failed.");
-}
+  return data || [];
 }
 
-/* ================= MODAL / HELPERS ================= */
 
-function closeModal(){
-modalBg.classList.add("hidden");
+async function renderVoiceUsers(){
+
+  const users =
+    await getCurrentVoiceUsers();
+
+  $("voiceUsers").innerHTML =
+    users.map(u=>`
+
+      <div class="voiceUser">
+
+        <div class="onlineDot"></div>
+
+        <span>
+          ${escapeHtml(u.nickname)}
+        </span>
+
+        ${
+          u.id === currentUser.id
+          ? "<small style='color:#8aa0b1'>(You)</small>"
+          : ""
+        }
+
+      </div>
+
+    `).join("");
 }
 
-function createAvatarHTML(url,name){
-if(url)return `<div class="avatar"><img src="${escapeAttr(url)}"></div>`;
-return `<div class="avatar">${escapeHTML((name||"U").charAt(0).toUpperCase())}</div>`;
+
+async function createVoicePeer(remoteId){
+
+  if(voicePeers[remoteId]){
+    return voicePeers[remoteId];
+  }
+
+  const pc =
+    new RTCPeerConnection({
+      iceServers:[
+        {
+          urls:"stun:stun.l.google.com:19302"
+        },
+        {
+          urls:"stun:stun1.l.google.com:19302"
+        }
+      ]
+    });
+
+  voicePeers[remoteId] = pc;
+
+  if(voiceStream){
+
+    voiceStream
+      .getTracks()
+      .forEach(track=>{
+        pc.addTrack(
+          track,
+          voiceStream
+        );
+      });
+
+  }
+
+  pc.onicecandidate =
+    async event => {
+
+      if(event.candidate){
+
+        await sendVoiceSignal({
+          type:"voice_ice",
+          target:remoteId,
+          candidate:event.candidate
+        });
+
+      }
+
+    };
+
+
+  pc.ontrack =
+    event => {
+
+      const stream =
+        event.streams[0];
+
+      if(!stream) return;
+
+      let audio =
+        document.getElementById(
+          "voice-audio-" + remoteId
+        );
+
+      if(!audio){
+
+        audio =
+          document.createElement("audio");
+
+        audio.id =
+          "voice-audio-" + remoteId;
+
+        audio.autoplay = true;
+
+        audio.playsInline = true;
+
+        document.body.appendChild(audio);
+      }
+
+      audio.srcObject = stream;
+
+      audio.play().catch(()=>{});
+
+    };
+
+
+  pc.onconnectionstatechange =
+    () => {
+
+      if([
+        "failed",
+        "closed",
+        "disconnected"
+      ].includes(pc.connectionState)){
+
+        closeVoicePeer(remoteId);
+      }
+
+    };
+
+  return pc;
 }
 
-function formatTime(d){
-return new Date(d).toLocaleTimeString([],{
-hour:"2-digit",minute:"2-digit"
-});
+
+async function createVoiceOffer(remoteId){
+
+  const pc =
+    await createVoicePeer(remoteId);
+
+  const offer =
+    await pc.createOffer();
+
+  await pc.setLocalDescription(offer);
+
+  await sendVoiceSignal({
+    type:"voice_offer",
+    target:remoteId,
+    offer
+  });
 }
 
-function escapeHTML(v){
-return String(v??"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#039;");
+
+async function sendVoiceSignal(signal){
+
+  const nickname =
+    currentProfile?.display_name ||
+    currentProfile?.username ||
+    "Anonymous";
+
+  await supabaseClient
+    .from("messages")
+    .insert({
+      room:"voice",
+      sender_id:currentUser.id,
+      receiver_id:
+        signal.target || null,
+      nickname,
+      message:JSON.stringify(signal),
+      message_type:"voice_signal"
+    });
 }
 
-function escapeAttr(v){
-return escapeHTML(v);
+
+async function handleVoiceSignal(m){
+
+  if(!voiceActive){
+    return;
+  }
+
+  if(
+    m.receiver_id &&
+    m.receiver_id !== currentUser.id
+  ){
+    return;
+  }
+
+  let signal;
+
+  try{
+    signal =
+      JSON.parse(m.message);
+  }catch{
+    return;
+  }
+
+  const remoteId =
+    m.sender_id;
+
+  if(remoteId === currentUser.id){
+    return;
+  }
+
+  if(signal.type === "voice_join"){
+
+    if(
+      String(currentUser.id) <
+      String(remoteId)
+    ){
+
+      await createVoiceOffer(remoteId);
+    }
+
+    return;
+  }
+
+
+  const pc =
+    await createVoicePeer(remoteId);
+
+
+  if(signal.type === "voice_offer"){
+
+    await pc.setRemoteDescription(
+      new RTCSessionDescription(
+        signal.offer
+      )
+    );
+
+    await flushVoiceIce(remoteId);
+
+    const answer =
+      await pc.createAnswer();
+
+    await pc.setLocalDescription(answer);
+
+    await sendVoiceSignal({
+      type:"voice_answer",
+      target:remoteId,
+      answer
+    });
+
+    return;
+  }
+
+
+  if(signal.type === "voice_answer"){
+
+    await pc.setRemoteDescription(
+      new RTCSessionDescription(
+        signal.answer
+      )
+    );
+
+    await flushVoiceIce(remoteId);
+
+    return;
+  }
+
+
+  if(signal.type === "voice_ice"){
+
+    if(pc.remoteDescription){
+
+      try{
+
+        await pc.addIceCandidate(
+          new RTCIceCandidate(
+            signal.candidate
+          )
+        );
+
+      }catch(e){
+
+        console.log(e);
+
+      }
+
+    }else{
+
+      if(!voiceIceQueue[remoteId]){
+        voiceIceQueue[remoteId] = [];
+      }
+
+      voiceIceQueue[remoteId]
+        .push(signal.candidate);
+
+    }
+
+  }
+
 }
 
-function scrollBottom(){
-setTimeout(()=>messages.scrollTop=messages.scrollHeight,50);
+
+async function flushVoiceIce(remoteId){
+
+  const pc =
+    voicePeers[remoteId];
+
+  if(!pc) return;
+
+  const queue =
+    voiceIceQueue[remoteId] || [];
+
+  for(const candidate of queue){
+
+    try{
+
+      await pc.addIceCandidate(
+        new RTCIceCandidate(candidate)
+      );
+
+    }catch(e){
+
+      console.log(e);
+
+    }
+
+  }
+
+  delete voiceIceQueue[remoteId];
 }
 
-function showToast(text){
-const t=document.createElement("div");
-t.className="toast";
-t.innerHTML=text;
-document.body.appendChild(t);
-setTimeout(()=>t.remove(),4000);
+
+function closeVoicePeer(remoteId){
+
+  const pc =
+    voicePeers[remoteId];
+
+  if(pc){
+
+    try{
+      pc.close();
+    }catch{}
+
+  }
+
+  delete voicePeers[remoteId];
+
+  const audio =
+    document.getElementById(
+      "voice-audio-" + remoteId
+    );
+
+  if(audio){
+    audio.remove();
+  }
+
 }
 
-function showApp(){
-authScreen.classList.add("hidden");
-app.classList.remove("hidden");
+
+async function closeVoiceRoom(){
+
+  voiceActive = false;
+
+  Object.keys(voicePeers)
+    .forEach(closeVoicePeer);
+
+  voicePeers = {};
+
+  voiceIceQueue = {};
+
+  if(voiceStream){
+
+    voiceStream
+      .getTracks()
+      .forEach(track=>track.stop());
+
+    voiceStream = null;
+  }
+
+  $("voicePanel")
+    .classList.add("hidden");
+
+  showToast(
+    "You left the voice room."
+  );
 }
 
-function logout(){
-if(anonymous){
-removeOnlineUser();
-location.reload();
-return;
+
+function toggleMute(){
+
+  if(!voiceStream) return;
+
+  const track =
+    voiceStream.getAudioTracks()[0];
+
+  if(!track) return;
+
+  track.enabled =
+    !track.enabled;
+
+  $("muteVoiceBtn").textContent =
+    track.enabled
+      ? "🎙 Mute"
+      : "🔇 Unmute";
 }
-removeOnlineUser().finally(async()=>{
-await supabaseClient.auth.signOut();
-location.reload();
-});
+
+
+/* =========================================================
+   PRIVATE VOICE CALL
+========================================================= */
+
+function callRoomId(a,b){
+
+  return "call_" +
+    [a,b]
+      .sort()
+      .join("_");
 }
 
-async function removeOnlineUser(){
-if(!currentUser)return;
-await supabaseClient.from("chat_users").delete().eq("id",currentUser.id);
+
+async function startPrivateCall(friendId){
+
+  if(anonymous){
+
+    showToast(
+      "Login required for private calls.",
+      false
+    );
+
+    return;
+  }
+
+  if(!(await isFriend(friendId))){
+
+    showToast(
+      "You can only call accepted friends.",
+      false
+    );
+
+    return;
+  }
+
+  if(callState.active){
+
+    showToast(
+      "You are already in a call.",
+      false
+    );
+
+    return;
+  }
+
+  const profile =
+    await getProfile(friendId);
+
+  if(!profile) return;
+
+  callState = {
+    active:true,
+    incoming:false,
+    remoteId:friendId,
+    remoteName:
+      profile.display_name ||
+      profile.username ||
+      "User",
+    pc:null,
+    localStream:null,
+    role:"caller"
+  };
+
+  $("activeCallName").textContent =
+    callState.remoteName;
+
+  $("callStatus").textContent =
+    "Calling...";
+
+  $("activeCallPanel")
+    .classList.remove("hidden");
+
+  await sendCallSignal({
+    type:"ring",
+    target:friendId
+  });
+
+  showToast(
+    "Calling " +
+    callState.remoteName
+  );
+
+  /* ring timeout */
+
+  setTimeout(()=>{
+
+    if(
+      callState.active &&
+      callState.role === "caller" &&
+      callState.calling === true
+    ){
+
+      hangupCall();
+
+    }
+
+  },45000);
 }
 
-window.addEventListener("beforeunload",()=>{
-if(currentUser){
-supabaseClient.from("chat_users").delete().eq("id",currentUser.id);
+
+async function sendCallSignal(signal){
+
+  const nickname =
+    currentProfile?.display_name ||
+    currentProfile?.username ||
+    "Anonymous";
+
+  await supabaseClient
+    .from("messages")
+    .insert({
+      room:callRoomId(
+        currentUser.id,
+        signal.target ||
+        callState.remoteId
+      ),
+      sender_id:currentUser.id,
+      receiver_id:
+        signal.target ||
+        callState.remoteId ||
+        null,
+      nickname,
+      message:JSON.stringify(signal),
+      message_type:"call_signal"
+    });
 }
-});
 
-loadTheme();
 
-function loadTheme(){}
+async function handleCallSignal(m){
 
-checkSession();
+  if(
+    m.receiver_id &&
+    m.receiver_id !== currentUser.id
+  ){
+    return;
+  }
+
+  if(m.sender_id === currentUser.id){
+    return;
+  }
+
+  let signal;
+
+  try{
+    signal =
+      JSON.parse(m.message);
+  }catch{
+    return;
+  }
+
+
+  /* INCOMING RING */
+
+  if(signal.type === "ring"){
+
+    if(callState.active){
+
+      await sendCallSignal({
+        type:"busy",
+        target:m.sender_id
+      });
+
+      return;
+    }
+
+    const profile =
+      await getProfile(m.sender_id);
+
+    callState = {
+      active:false,
+      incoming:true,
+      remoteId:m.sender_id,
+      remoteName:
+        profile?.display_name ||
+        profile?.username ||
+        m.nickname ||
+        "User",
+      pc:null,
+      localStream:null,
+      role:"callee"
+    };
+
+    $("incomingCallName").textContent =
+      callState.remoteName;
+
+    $("incomingCallModal")
+      .classList.remove("hidden");
+
+    return;
+  }
+
+
+  /* BUSY */
+
+  if(signal.type === "busy"){
+
+    showToast(
+      "User is busy.",
+      false
+    );
+
+    hangupCall();
+
+    return;
+  }
+
+
+  /* ACCEPT */
+
+  if(signal.type === "accept"){
+
+    if(
+      !callState.active ||
+      callState.role !== "caller"
+    ){
+      return;
+    }
+
+    await startCallerWebRTC();
+
+    return;
+  }
+
+
+  /* OFFER */
+
+  if(signal.type === "offer"){
+
+    if(
+      !callState.incoming &&
+      !callState.active
+    ){
+      return;
+    }
+
+    await startCalleeWebRTC(
+      m.sender_id,
+      signal.offer
+    );
+
+    return;
+  }
+
+
+  /* ANSWER */
+
+  if(signal.type === "answer"){
+
+    if(!callState.pc){
+      return;
+    }
+
+    await callState.pc.setRemoteDescription(
+      new RTCSessionDescription(
+        signal.answer
+      )
+    );
+
+    await flushCallIce();
+
+    $("callStatus").textContent =
+      "Connected";
+
+    return;
+  }
+
+
+  /* ICE */
+
+  if(signal.type === "ice"){
+
+    if(
+      callState.pc &&
+      callState.pc.remoteDescription
+    ){
+
+      try{
+
+        await callState.pc.addIceCandidate(
+          new RTCIceCandidate(
+            signal.candidate
+          )
+        );
+
+      }catch(e){
+
+        console.log(e);
+
+      }
+
+    }else{
+
+      callIceQueue.push(
+        signal.candidate
+      );
+
+    }
+
+    return;
+  }
+
+
+  /* HANGUP */
+
+  if(signal.type === "hangup"){
+
+    closeCallLocal();
+
+    showToast(
+      "Call ended."
+    );
+
+  }
+
+}
+
+
+async function acceptCall(){
+
+  if(!callState.incoming){
+    return;
+  }
+
+  callState.active = true;
+  callState.incoming = false;
+
+  $("incomingCallModal")
+    .classList.add("hidden");
+
+  $("activeCallName").textContent =
+    callState.remoteName;
+
+  $("callStatus").textContent =
+    "Connecting...";
+
+  $("activeCallPanel")
+    .classList.remove("hidden");
+
+  try{
+
+    callState.localStream =
+      await navigator.mediaDevices
+        .getUserMedia({
+          audio:{
+            echoCancellation:true,
+            noiseSuppression:true,
+            autoGainControl:true
+          },
+          video:false
+        });
+
+  }catch(error){
+
+    showToast(
+      "Microphone permission denied.",
+      false
+    );
+
+    closeCallLocal();
+
+    return;
+  }
+
+  await sendCallSignal({
+    type:"accept",
+    target:callState.remoteId
+  });
+
+}
+
+
+async function startCallerWebRTC(){
+
+  try{
+
+    callState.localStream =
+      await navigator.mediaDevices
+        .getUserMedia({
+          audio:{
+            echoCancellation:true,
+            noiseSuppression:true,
+            autoGainControl:true
+          },
+          video:false
+        });
+
+  }catch(error){
+
+    showToast(
+      "Microphone permission denied.",
+      false
+    );
+
+    hangupCall();
+
+    return;
+  }
+
+  await createCallPeer();
+
+  const offer =
+    await callState.pc.createOffer();
+
+  await callState.pc.setLocalDescription(
+    offer
+  );
+
+  await sendCallSignal({
+    type:"offer",
+    target:callState.remoteId,
+    offer
+  });
+
+  $("callStatus").textContent =
+    "Connecting...";
+
+}
+
+
+async function createCallPeer(){
+
+  if(callState.pc){
+    return callState.pc;
+  }
+
+  const pc =
+    new RTCPeerConnection({
+      iceServers:[
+        {
+          urls:"stun:stun.l.google.com:19302"
+        },
+        {
+          urls:"stun:stun1.l.google.com:19302"
+        }
+      ]
+    });
+
+  callState.pc = pc;
+
+  if(callState.localStream){
+
+    callState.localStream
+      .getTracks()
+      .forEach(track=>{
+        pc.addTrack(
+          track,
+          callState.localStream
+        );
+      });
+
+  }
+
+  pc.onicecandidate =
+    async event => {
+
+      if(event.candidate){
+
+        await sendCallSignal({
+          type:"ice",
+          target:callState.remoteId,
+          candidate:event.candidate
+        });
+
+      }
+
+    };
+
+
+  pc.ontrack =
+    event => {
+
+      const audio =
+        $("remoteAudio");
+
+      audio.srcObject =
+        event.streams[0];
+
+      audio.play().catch(()=>{});
+
+    };
+
+
+  pc.onconnectionstatechange =
+    () => {
+
+      if(
+        pc.connectionState === "connected"
+      ){
+
+        $("callStatus").textContent =
+          "Connected";
+
+      }
+
+      if([
+        "failed",
+        "closed",
+        "disconnected"
+      ].includes(pc.connectionState)){
+
+        closeCallLocal();
+
+      }
+
+    };
+
+  return pc;
+}
+
+
+async function startCalleeWebRTC(
+  remoteId,
+  offer
+){
+
+  callState.remoteId =
+    remoteId;
+
+  if(!callState.localStream){
+
+    try{
+
+      callState.localStream =
+        await navigator.mediaDevices
+          .getUserMedia({
+            audio:{
+              echoCancellation:true,
+              noiseSuppression:true,
+              autoGainControl:true
+            },
+            video:false
+          });
+
+    }catch(error){
+
+      showToast(
+        "Microphone permission denied.",
+        false
+      );
+
+      closeCallLocal();
+
+      return;
+    }
+
+  }
+
+  await createCallPeer();
+
+  await callState.pc.setRemoteDescription(
+    new RTCSessionDescription(offer)
+  );
+
+  await flushCallIce();
+
+  const answer =
+    await callState.pc.createAnswer();
+
+  await callState.pc.setLocalDescription(
+    answer
+  );
+
+  await sendCallSignal({
+    type:"answer",
+    target:remoteId,
+    answer
+  });
+
+  $("callStatus").textContent =
+    "Connected";
+}
+
+
+async function flushCallIce(){
+
+  if(!callState.pc) return;
+
+  for(
+    const candidate of callIceQueue
+  ){
+
+    try{
+
+      await callState.pc.addIceCandidate(
+        new RTCIceCandidate(candidate)
+      );
+
+    }catch(e){
+
+      console.log(e);
+
+    }
+
+  }
+
+  callIceQueue = [];
+}
+
+
+async function rejectCall(){
+
+  const remote =
+    callState.remoteId;
+
+  $("incomingCallModal")
+    .classList.add("hidden");
+
+  if(remote){
+
+    await sendCallSignal({
+      type:"hangup",
+      target:remote
+    });
+
+  }
+
+  closeCallLocal();
+}
+
+
+async function hangupCall(){
+
+  const remote =
+    callState.remoteId;
+
+  if(remote){
+
+    await sendCallSignal({
+      type:"hangup",
+      target:remote
+    });
+
+  }
+
+  closeCallLocal();
+
+  showToast(
+    "Call ended."
+  );
+}
+
+
+function closeCallLocal(){
+
+  if(callState.pc){
+
+    try{
+      callState.pc.close();
+    }catch{}
+
+  }
+
+  if(callState.localStream){
+
+    callState.localStream
+      .getTracks()
+      .forEach(track=>track.stop());
+
+  }
+
+  callState = {
+    active:false,
+    incoming:false,
+    remoteId:null,
+    remoteName:"",
+    pc:null,
+    localStream:null,
+    role:null
+  };
+
+  callIceQueue = [];
+
+  $("incomingCallModal")
+    .classList.add("hidden");
+
+  $("activeCallPanel")
+    .classList.add("hidden");
+
+  $("remoteAudio").srcObject =
+    null;
+}
+
+
+function toggleCallMute(){
+
+  const stream =
+    callState.localStream;
+
+  if(!stream) return;
+
+  const track =
+    stream.getAudioTracks()[0];
+
+  if(!track) return;
+
+  track.enabled =
+    !track.enabled;
+
+  showToast(
+    track.enabled
+      ? "Microphone unmuted"
+      : "Microphone muted"
+  );
+}
+
+
+/* =========================================================
+   PROFILE IMAGE PREVIEW
+========================================================= */
+
+$("avatarFile")
+  .addEventListener("change",function(){
+
+    const file =
+      this.files[0];
+
+    if(!file) return;
+
+    if(file.size > 200 * 1024){
+
+      showToast(
+        "Image must be 200 KB or smaller.",
+        false
+      );
+
+      this.value = "";
+
+      return;
+    }
+
+    const url =
+      URL.createObjectURL(file);
+
+    $("profileAvatarPreview").src =
+      url;
+
+  });
+
+
+/* =========================================================
+   LOGOUT
+========================================================= */
+
+async function logout(){
+
+  try{
+
+    if(currentUser){
+
+      await supabaseClient
+        .from("chat_users")
+        .delete()
+        .eq("id",currentUser.id);
+
+    }
+
+  }catch(e){
+    console.log(e);
+  }
+
+  closeVoiceLocal();
+
+  await closeVoiceRoomSilent();
+
+  if(messagesChannel){
+    await supabaseClient
+      .removeChannel(messagesChannel);
+  }
+
+  if(usersChannel){
+    await supabaseClient
+      .removeChannel(usersChannel);
+  }
+
+  if(friendsChannel){
+    await supabaseClient
+      .removeChannel(friendsChannel);
+  }
+
+  if(!anonymous){
+
+    await supabaseClient.auth.signOut();
+
+  }
+
+  location.reload();
+}
+
+
+async function closeVoiceRoomSilent(){
+
+  voiceActive = false;
+
+  Object.keys(voicePeers)
+    .forEach(closeVoicePeer);
+
+  voicePeers = {};
+
+  if(voiceStream){
+
+    voiceStream
+      .getTracks()
+      .forEach(track=>track.stop());
+
+    voiceStream = null;
+  }
+
+}
+
+
+/* =========================================================
+   STARTUP
+========================================================= */
+
+async function boot(){
+
+  try{
+
+    const {
+      data:{session}
+    } =
+      await supabaseClient.auth.getSession();
+
+    if(session?.user){
+
+      currentUser =
+        session.user;
+
+      await startApp();
+
+    }else{
+
+      $("authScreen")
+        .classList.remove("hidden");
+
+      $("app")
+        .classList.add("hidden");
+
+    }
+
+  }catch(error){
+
+    console.error(error);
+
+    $("authScreen")
+      .classList.remove("hidden");
+
+    $("app")
+      .classList.add("hidden");
+
+    setAuthMessage(
+      "Please refresh the page and try again.",
+      true
+    );
+
+  }
+}
+
+
+boot();
+
+
+/* =========================================================
+   CLEANUP
+========================================================= */
+
+window.addEventListener(
+  "beforeunload",
+  ()=>{
+
+    if(currentUser){
+
+      supabaseClient
+        .from("chat_users")
+        .delete()
+        .eq("id",currentUser.id);
+
+    }
+
+  }
+);
+
 </script>
 
 </body>
