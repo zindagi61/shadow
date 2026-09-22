@@ -1,0 +1,1455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Shadow Chat Daanians</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+--bg:#f4faff;--panel:#fff;--panel2:#eaf7ff;--text:#123047;
+--muted:#6b8495;--accent:#38aee8;--accent2:#168bd0;
+--border:#d9edf8;--bubble:#eaf7ff;--danger:#ef4444;--success:#20a463
+}
+body{
+font-family:Inter,Segoe UI,Arial,sans-serif;background:linear-gradient(135deg,#f8fdff,#eaf7ff);
+color:var(--text);min-height:100vh;overflow:hidden
+}
+button,input,textarea{font:inherit}
+button{cursor:pointer}
+.hidden{display:none!important}
+
+/* AUTH */
+#authScreen{height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+.auth-card{
+width:100%;max-width:440px;background:#fff;border:1px solid var(--border);
+border-radius:28px;padding:32px;box-shadow:0 25px 70px #2b9bd322;animation:pop .5s
+}
+.logo{text-align:center;margin-bottom:25px}
+.logo-icon,.brand-icon{
+display:flex;align-items:center;justify-content:center;
+background:linear-gradient(135deg,var(--accent),var(--accent2));color:white
+}
+.logo-icon{width:76px;height:76px;border-radius:24px;margin:auto;font-size:35px}
+.logo h1{margin-top:15px;font-size:26px}
+.logo p{color:var(--muted);margin-top:7px}
+.tabs{display:flex;background:var(--panel2);padding:4px;border-radius:14px;margin-bottom:18px}
+.tabs button{flex:1;border:0;padding:11px;border-radius:11px;background:transparent;color:var(--muted)}
+.tabs button.active{color:white;background:linear-gradient(135deg,var(--accent),var(--accent2))}
+.field{margin-bottom:13px}
+.field label{display:block;color:var(--muted);font-size:13px;margin-bottom:6px}
+.field input,.field textarea{
+width:100%;border:1px solid var(--border);background:#f8fcff;color:var(--text);
+padding:13px 14px;border-radius:13px;outline:none
+}
+.field input:focus,.field textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px #38aee81c}
+.primary{
+width:100%;border:0;border-radius:14px;padding:14px;color:white;font-weight:700;
+background:linear-gradient(135deg,var(--accent),var(--accent2));transition:.2s
+}
+.primary:hover{transform:translateY(-2px)}
+.anonymous,.secondary{
+width:100%;padding:13px;border-radius:14px;background:#fff;
+border:1px solid var(--border);color:var(--text)
+}
+.anonymous{margin-top:10px}
+.auth-msg{color:#e04444;font-size:13px;margin-top:12px;min-height:18px}
+
+/* APP */
+#app{height:100vh;display:flex;flex-direction:column}
+.topbar{
+height:68px;display:flex;align-items:center;justify-content:space-between;padding:0 20px;
+border-bottom:1px solid var(--border);background:#ffffffed;backdrop-filter:blur(20px);z-index:5
+}
+.brand{display:flex;align-items:center;gap:10px}
+.brand-icon{width:40px;height:40px;border-radius:12px}
+.brand-text strong{display:block}.brand-text small{color:var(--muted)}
+.top-actions{display:flex;gap:8px}
+.icon-btn{
+width:40px;height:40px;border-radius:12px;border:1px solid var(--border);
+background:white;color:var(--text)
+}
+.layout{flex:1;min-height:0;display:grid;grid-template-columns:250px 1fr 270px}
+.sidebar,.rightbar{
+background:#ffffffc9;padding:15px;overflow:auto;border-right:1px solid var(--border)
+}
+.rightbar{border-right:0;border-left:1px solid var(--border)}
+.side-title{
+color:var(--muted);text-transform:uppercase;font-size:11px;letter-spacing:1.5px;margin:10px 8px
+}
+.nav-btn{
+width:100%;display:flex;align-items:center;gap:10px;padding:12px;margin-bottom:7px;
+border:1px solid transparent;border-radius:13px;background:transparent;color:#456276;text-align:left
+}
+.nav-btn:hover,.nav-btn.active{color:var(--accent2);background:var(--panel2);border-color:var(--border)}
+.online-count{
+margin-left:auto;background:#20a46318;color:#159052;padding:3px 7px;border-radius:10px;font-size:11px
+}
+
+/* CHAT */
+.chat{min-width:0;display:flex;flex-direction:column}
+.chat-head{
+min-height:65px;padding:12px 18px;display:flex;align-items:center;gap:12px;
+border-bottom:1px solid var(--border);background:#ffffffaa
+}
+.chat-title{font-weight:700}.chat-sub{color:var(--muted);font-size:12px;margin-top:2px}
+.messages{flex:1;overflow-y:auto;padding:20px}
+.empty{height:100%;display:flex;align-items:center;justify-content:center;color:var(--muted);text-align:center}
+.message{display:flex;gap:10px;margin-bottom:15px;animation:messageIn .25s}
+.message.mine{flex-direction:row-reverse}
+.avatar{
+width:40px;height:40px;flex:0 0 40px;border-radius:50%;object-fit:cover;
+background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;
+align-items:center;justify-content:center;font-weight:700;color:white;overflow:hidden
+}
+.avatar img{width:100%;height:100%;object-fit:cover}
+.msg-body{max-width:min(72%,600px)}.mine .msg-body{text-align:right}
+.msg-name{color:var(--accent2);font-size:12px;font-weight:700;margin-bottom:4px}
+.bubble{
+display:inline-block;padding:10px 13px;border-radius:16px;background:var(--bubble);
+border:1px solid var(--border);text-align:left;word-break:break-word
+}
+.mine .bubble{background:linear-gradient(135deg,var(--accent),var(--accent2));color:white;border:0}
+.msg-time{color:var(--muted);font-size:10px;margin-top:4px}
+.composer{
+padding:13px 16px;border-top:1px solid var(--border);background:#ffffffdd;display:flex;gap:9px
+}
+.composer input{
+flex:1;min-width:0;background:#f8fcff;border:1px solid var(--border);
+border-radius:14px;padding:13px 15px;color:var(--text);outline:none
+}
+.send-btn{
+width:50px;border:0;border-radius:14px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:white
+}
+
+/* USERS */
+.search{
+width:100%;padding:10px;border:1px solid var(--border);border-radius:12px;
+background:#f8fcff;outline:none;margin-bottom:10px;color:var(--text)
+}
+.user-card{
+display:flex;align-items:center;gap:10px;padding:10px;border-radius:13px;cursor:pointer
+}
+.user-card:hover{background:var(--panel2)}
+.user-info{min-width:0;flex:1}.user-info strong{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:13px}
+.user-info small{color:#20a463;font-size:11px}
+.status-dot{width:8px;height:8px;border-radius:50%;background:#20a463}
+
+/* MODAL */
+.modal-bg{
+position:fixed;inset:0;background:#12304766;backdrop-filter:blur(7px);
+display:flex;align-items:center;justify-content:center;z-index:50;padding:20px
+}
+.modal{
+width:100%;max-width:450px;max-height:90vh;overflow:auto;background:white;
+border:1px solid var(--border);border-radius:25px;padding:25px;animation:pop .3s
+}
+.modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px}
+.close{width:35px;height:35px;border:1px solid var(--border);border-radius:10px;background:white}
+.profile-big{text-align:center}.profile-big .avatar{width:100px;height:100px;margin:auto;font-size:30px}
+.profile-big h2{margin-top:12px}.profile-big p{color:var(--muted);margin-top:5px}
+.profile-actions{margin-top:20px;display:grid;gap:9px}
+.action-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:15px}
+.danger{background:#fff0f0!important;color:#dc3d3d!important;border-color:#ffd0d0!important}
+
+/* FRIENDS */
+.friend-item{
+display:flex;align-items:center;justify-content:space-between;gap:8px;
+padding:10px;border:1px solid var(--border);border-radius:13px;margin-bottom:8px
+}
+.friend-item small{display:block;color:var(--muted)}
+.mini-btn{
+border:1px solid var(--border);background:white;border-radius:9px;padding:7px 9px;color:var(--text)
+}
+
+/* VOICE */
+.voice-panel{text-align:center;padding-top:50px}
+.voice-circle{
+width:125px;height:125px;margin:20px auto;border-radius:50%;display:flex;
+align-items:center;justify-content:center;font-size:45px;
+background:linear-gradient(135deg,var(--accent),var(--accent2));color:white;animation:pulse 2s infinite
+}
+.voice-status{color:var(--muted);margin-bottom:18px}
+
+/* TOAST */
+.toast{
+position:fixed;top:82px;right:20px;z-index:100;padding:13px 17px;border-radius:15px;
+background:white;border:1px solid var(--border);box-shadow:0 15px 45px #267fa522;animation:toastIn .4s
+}
+
+/* CALL */
+.call-box{text-align:center}
+.call-avatar{width:110px;height:110px;margin:15px auto}
+.call-buttons{display:flex;justify-content:center;gap:10px;margin-top:20px}
+.call-btn{width:55px;height:55px;border:0;border-radius:50%;color:white;font-size:20px}
+.accept{background:#20a463}.reject{background:#ef4444}
+
+/* ANIMATION */
+@keyframes pop{from{opacity:0;transform:scale(.9) translateY(15px)}to{opacity:1;transform:scale(1) translateY(0)}}
+@keyframes messageIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+@keyframes toastIn{from{opacity:0;transform:translateX(40px)}to{opacity:1;transform:translateX(0)}}
+@keyframes pulse{50%{box-shadow:0 0 45px #38aee866}}
+
+@media(max-width:900px){
+.layout{grid-template-columns:1fr}.sidebar,.rightbar{display:none}.msg-body{max-width:78%}
+}
+@media(max-width:500px){
+.auth-card{padding:22px}.topbar{padding:0 12px}.messages{padding:14px}
+.composer{padding:10px}.msg-body{max-width:80%}.brand-text small{display:none}
+}
+</style>
+</head>
+
+<body>
+
+<section id="authScreen">
+<div class="auth-card">
+<div class="logo">
+<div class="logo-icon">👻</div>
+<h1>Shadow Chat Daanians</h1>
+<p>Real-time • Friends • Private Chat</p>
+</div>
+
+<div class="tabs">
+<button id="loginTab" class="active" onclick="showAuth('login')">Login</button>
+<button id="signupTab" onclick="showAuth('signup')">Create Account</button>
+</div>
+
+<div class="field">
+<label>Email</label>
+<input id="email" type="email" placeholder="your@email.com">
+</div>
+
+<div class="field">
+<label>Password</label>
+<input id="password" type="password" placeholder="Password">
+</div>
+
+<div id="signupFields" class="hidden">
+<div class="field">
+<label>Username / User ID</label>
+<input id="username" placeholder="your_username">
+</div>
+<div class="field">
+<label>Display Name</label>
+<input id="displayName" placeholder="Your Name">
+</div>
+</div>
+
+<button class="primary" id="authButton" onclick="submitAuth()">Login</button>
+<button class="anonymous" onclick="continueAnonymous()">👻 Continue as Anonymous</button>
+<div id="authMsg" class="auth-msg"></div>
+</div>
+</section>
+
+<section id="app" class="hidden">
+
+<header class="topbar">
+<div class="brand">
+<div class="brand-icon">👻</div>
+<div class="brand-text">
+<strong>Shadow Chat Daanians</strong>
+<small>Private • Real-time • Connected</small>
+</div>
+</div>
+<div class="top-actions">
+<button class="icon-btn" onclick="openSearch()">🔎</button>
+<button class="icon-btn" onclick="openProfile()">👤</button>
+<button class="icon-btn" onclick="logout()">↪</button>
+</div>
+</header>
+
+<div class="layout">
+
+<aside class="sidebar">
+<div class="side-title">Chat</div>
+
+<button class="nav-btn active" id="publicBtn" onclick="openPublic()">🌐 <span>Public Chat</span></button>
+<button class="nav-btn" onclick="openFriends()">🤝 <span>Friends</span></button>
+<button class="nav-btn" onclick="openRequests()">🔔 <span>Requests</span></button>
+<button class="nav-btn" onclick="openVoice()">🎤 <span>Voice Room</span></button>
+
+<div class="side-title">Account</div>
+<button class="nav-btn" onclick="openProfile()">👤 <span>My Profile</span></button>
+<button class="nav-btn" onclick="openSearch()">🔎 <span>Find Users</span></button>
+</aside>
+
+<main class="chat">
+
+<div class="chat-head">
+<div class="avatar" id="roomAvatar">🌐</div>
+<div>
+<div class="chat-title" id="roomTitle">Public Chat</div>
+<div class="chat-sub" id="roomSub">Messages disappear after 5 minutes</div>
+</div>
+<div style="margin-left:auto" id="callAction"></div>
+</div>
+
+<div id="messages" class="messages">
+<div class="empty"><div><div style="font-size:40px">💬</div><p>Start the conversation</p></div></div>
+</div>
+
+<div class="composer">
+<input id="messageInput" maxlength="1000" placeholder="Write a message..." onkeydown="handleEnter(event)">
+<button class="send-btn" onclick="sendMessage()">➤</button>
+</div>
+
+</main>
+
+<aside class="rightbar">
+<div class="side-title">Online Users <span id="onlineCount" class="online-count">0</span></div>
+<div id="usersList"></div>
+</aside>
+
+</div>
+
+<div style="position:fixed;bottom:5px;left:50%;transform:translateX(-50%);color:#6b8495;font-size:9px;pointer-events:none">
+Developer Cherry — From Danish School Mailsi
+</div>
+</section>
+
+<div id="modalBg" class="modal-bg hidden">
+<div class="modal">
+<div class="modal-head">
+<strong id="modalTitle">Profile</strong>
+<button class="close" onclick="closeModal()">×</button>
+</div>
+<div id="modalContent"></div>
+</div>
+</div>
+
+<script>
+/* ================= SUPABASE ================= */
+
+const SUPABASE_URL="https://vqpjdhbdmcxhkcpghsrp.supabase.co";
+const SUPABASE_KEY="sb_publishable_4wZB1Cg1UJpOGpeegkDVWA_ddtCQ9FZ";
+
+const supabaseClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+
+/* ================= STATE ================= */
+
+let currentUser=null;
+let currentProfile=null;
+let anonymous=false;
+let currentRoom="public";
+let onlineUsers=[];
+let profilesCache={};
+let realtimeChannel=null;
+let usersChannel=null;
+let appSubscription=null;
+
+let callPeer=null;
+let callStream=null;
+let callTarget=null;
+let callMode=false;
+
+/* ================= AUTH ================= */
+
+let authMode="login";
+
+function showAuth(mode){
+authMode=mode;
+loginTab.classList.toggle("active",mode==="login");
+signupTab.classList.toggle("active",mode==="signup");
+signupFields.classList.toggle("hidden",mode!=="signup");
+authButton.textContent=mode==="login"?"Login":"Create Account";
+authMsg.textContent="";
+}
+
+async function submitAuth(){
+const email=document.getElementById("email").value.trim();
+const password=document.getElementById("password").value;
+authMsg.textContent="";
+
+if(!email||!password){
+authMsg.textContent="Email aur password enter karo.";
+return;
+}
+
+try{
+if(authMode==="login"){
+const {data,error}=await supabaseClient.auth.signInWithPassword({email,password});
+if(error)throw error;
+currentUser=data.user;
+await startApp();
+}else{
+const username=document.getElementById("username").value.trim().toLowerCase();
+const displayName=document.getElementById("displayName").value.trim()||username;
+
+if(!/^[a-z0-9_]{3,30}$/.test(username)){
+authMsg.textContent="Username 3-30 characters ka ho aur sirf a-z, 0-9, _ use karo.";
+return;
+}
+
+const existing=await supabaseClient.from("profiles").select("id").eq("username",username).maybeSingle();
+if(existing.data){
+authMsg.textContent="Ye username already taken hai.";
+return;
+}
+
+const {data,error}=await supabaseClient.auth.signUp({
+email,password,options:{data:{username,display_name:displayName}}
+});
+if(error)throw error;
+
+if(data.session){
+currentUser=data.user;
+await ensureProfile(username,displayName);
+await startApp();
+}else{
+authMsg.textContent="Account create ho gaya. Email confirmation ke baad login karo.";
+}
+}
+}catch(e){
+authMsg.textContent=e.message||"Authentication error.";
+}
+}
+
+/* ================= ANONYMOUS ================= */
+
+async function continueAnonymous(){
+anonymous=true;
+currentUser={id:crypto.randomUUID()};
+currentProfile={
+id:currentUser.id,
+username:"Anonymous_"+Math.floor(1000+Math.random()*9000),
+display_name:"Anonymous",
+avatar_url:null,
+bio:"Anonymous Shadow Chat user"
+};
+await registerOnlineUser();
+showApp();
+subscribeRealtime();
+await loadMessages();
+await loadUsers();
+showToast("👋 Anonymous user joined Shadow Chat");
+}
+
+async function checkSession(){
+const {data}=await supabaseClient.auth.getSession();
+if(data.session){
+currentUser=data.session.user;
+anonymous=false;
+await startApp();
+}
+}
+
+async function startApp(){
+if(!currentUser)return;
+anonymous=false;
+await loadProfile();
+
+if(!currentProfile){
+await ensureProfile("User_"+currentUser.id.substring(0,8),"New User");
+await loadProfile();
+}
+
+await registerOnlineUser();
+showApp();
+subscribeRealtime();
+await loadMessages();
+await loadUsers();
+showToast("👋 Welcome back, "+(currentProfile.display_name||currentProfile.username));
+}
+
+/* ================= PROFILE ================= */
+
+async function loadProfile(){
+if(!currentUser||anonymous)return;
+const {data}=await supabaseClient.from("profiles").select("*").eq("id",currentUser.id).maybeSingle();
+if(data)currentProfile=data;
+}
+
+async function ensureProfile(username,displayName){
+if(!currentUser||anonymous)return;
+const {data,error}=await supabaseClient.from("profiles").upsert({
+id:currentUser.id,username,display_name:displayName
+},{onConflict:"id"}).select().single();
+if(!error)currentProfile=data;
+}
+
+/* ================= ONLINE ================= */
+
+async function registerOnlineUser(){
+if(!currentUser||!currentProfile)return;
+await supabaseClient.from("chat_users").upsert({
+id:currentUser.id,
+nickname:currentProfile.display_name||currentProfile.username||"Anonymous"
+},{onConflict:"id"});
+}
+
+async function loadUsers(){
+const {data}=await supabaseClient.from("chat_users").select("*").order("created_at",{ascending:true});
+onlineUsers=data||[];
+renderUsers();
+}
+
+function renderUsers(){
+const box=document.getElementById("usersList");
+box.innerHTML="";
+onlineCount.textContent=onlineUsers.length;
+
+onlineUsers.forEach(u=>{
+const div=document.createElement("div");
+div.className="user-card";
+const p=profilesCache[u.id];
+
+div.innerHTML=`
+${createAvatarHTML(p?.avatar_url,u.nickname)}
+<div class="user-info">
+<strong>${escapeHTML(p?.display_name||u.nickname)}</strong>
+<small>● Online</small>
+</div>`;
+
+div.onclick=()=>openUserProfile(u.id);
+box.appendChild(div);
+
+if(!profilesCache[u.id])loadProfileForUser(u.id);
+});
+}
+
+async function loadProfileForUser(id){
+if(profilesCache[id])return;
+const {data}=await supabaseClient.from("profiles").select("*").eq("id",id).maybeSingle();
+if(data){
+profilesCache[id]=data;
+renderUsers();
+}
+}
+
+/* ================= REALTIME ================= */
+
+function subscribeRealtime(){
+
+if(realtimeChannel)supabaseClient.removeChannel(realtimeChannel);
+if(usersChannel)supabaseClient.removeChannel(usersChannel);
+
+realtimeChannel=supabaseClient.channel("shadow-main-"+Math.random())
+.on("postgres_changes",{
+event:"INSERT",schema:"public",table:"messages"
+},async payload=>{
+
+const m=payload.new;
+
+if(m.message_type==="chat"){
+if(Date.now()-new Date(m.created_at).getTime()>300000)return;
+
+if(m.room===currentRoom){
+await addMessageToScreen(m,true);
+}
+}
+
+if(m.message_type==="call_signal"){
+handleCallSignal(m);
+}
+
+}).subscribe();
+
+usersChannel=supabaseClient.channel("shadow-users-"+Math.random())
+.on("postgres_changes",{
+event:"*",
+schema:"public",table:"chat_users"
+},async payload=>{
+await loadUsers();
+if(payload.eventType==="INSERT"&&payload.new?.id!==currentUser?.id){
+showToast("👋 "+(payload.new.nickname||"Someone")+" joined Shadow Chat");
+}
+}).subscribe();
+
+}
+
+/* ================= MESSAGES ================= */
+
+async function loadMessages(){
+
+const box=document.getElementById("messages");
+box.innerHTML="";
+
+if(currentRoom==="voice")return;
+
+const since=new Date(Date.now()-300000).toISOString();
+
+const {data,error}=await supabaseClient
+.from("messages")
+.select("*")
+.eq("room",currentRoom)
+.eq("message_type","chat")
+.gte("created_at",since)
+.order("created_at",{ascending:true});
+
+if(error){
+box.innerHTML='<div class="empty">Unable to load messages.</div>';
+return;
+}
+
+if(!data?.length){
+box.innerHTML='<div class="empty"><div><div style="font-size:40px">💬</div><p>No recent messages</p></div></div>';
+return;
+}
+
+for(const m of data)await addMessageToScreen(m,false);
+scrollBottom();
+}
+
+async function sendMessage(){
+
+const input=document.getElementById("messageInput");
+const text=input.value.trim();
+
+if(!text||!currentUser)return;
+
+input.value="";
+
+let receiver=null;
+
+if(currentRoom.startsWith("private_")){
+receiver=currentRoom.replace("private_","").split("_").find(x=>x!==currentUser.id)||null;
+}
+
+const {data,error}=await supabaseClient.from("messages").insert({
+room:currentRoom,
+sender_id:currentUser.id,
+receiver_id:receiver,
+nickname:currentProfile?.display_name||currentProfile?.username||"Anonymous",
+message:text,
+message_type:"chat"
+}).select().single();
+
+if(error){
+console.error(error);
+showToast("Message send nahi hua.");
+return;
+}
+
+if(data)await addMessageToScreen(data,true);
+}
+
+function handleEnter(e){
+if(e.key==="Enter"){
+e.preventDefault();
+sendMessage();
+}
+}
+
+async function addMessageToScreen(m,scroll=true){
+
+if(document.querySelector(`[data-message-id="${m.id}"]`))return;
+
+if(Date.now()-new Date(m.created_at).getTime()>300000)return;
+
+const box=document.getElementById("messages");
+box.querySelector(".empty")?.remove();
+
+let p=profilesCache[m.sender_id];
+
+if(!p){
+const {data}=await supabaseClient.from("profiles").select("*").eq("id",m.sender_id).maybeSingle();
+p=data;
+if(data)profilesCache[m.sender_id]=data;
+}
+
+const mine=m.sender_id===currentUser?.id;
+const name=p?.display_name||m.nickname||"Anonymous";
+
+const row=document.createElement("div");
+row.className="message"+(mine?" mine":"");
+row.dataset.messageId=m.id;
+row.innerHTML=`
+${createAvatarHTML(p?.avatar_url,name)}
+<div class="msg-body">
+<div class="msg-name">${escapeHTML(name)}</div>
+<div class="bubble">${escapeHTML(m.message)}</div>
+<div class="msg-time">${formatTime(m.created_at)}</div>
+</div>`;
+
+box.appendChild(row);
+
+const delay=Math.max(100,new Date(m.created_at).getTime()+300000-Date.now());
+setTimeout(()=>row.remove(),delay);
+
+if(scroll)scrollBottom();
+}
+
+/* ================= PUBLIC ================= */
+
+async function openPublic(){
+currentRoom="public";
+roomTitle.textContent="Public Chat";
+roomSub.textContent="Everyone online • Messages disappear after 5 minutes";
+roomAvatar.textContent="🌐";
+callAction.innerHTML="";
+publicBtn.classList.add("active");
+await loadMessages();
+}
+
+/* ================= USER SEARCH ================= */
+
+async function openSearch(){
+
+document.getElementById("modalTitle").textContent="Find Users";
+
+document.getElementById("modalContent").innerHTML=`
+<div class="field">
+<label>Search by username / User ID</label>
+<input id="userSearchInput" placeholder="example: cherry_123" oninput="searchUsers()">
+</div>
+<div id="searchResults"></div>`;
+
+document.getElementById("modalBg").classList.remove("hidden");
+}
+
+let searchTimer=null;
+
+function searchUsers(){
+clearTimeout(searchTimer);
+searchTimer=setTimeout(doSearchUsers,300);
+}
+
+async function doSearchUsers(){
+
+const q=document.getElementById("userSearchInput")?.value.trim().toLowerCase();
+const box=document.getElementById("searchResults");
+if(!box)return;
+
+if(!q){
+box.innerHTML='<p style="color:var(--muted)">Username type karo.</p>';
+return;
+}
+
+const {data,error}=await supabaseClient
+.from("profiles")
+.select("*")
+.ilike("username","%"+q+"%")
+.limit(15);
+
+if(error){
+box.innerHTML="Search error.";
+return;
+}
+
+if(!data?.length){
+box.innerHTML='<p style="color:var(--muted)">No users found.</p>';
+return;
+}
+
+box.innerHTML=data.map(p=>`
+<div class="friend-item">
+<div style="display:flex;align-items:center;gap:9px">
+${createAvatarHTML(p.avatar_url,p.display_name)}
+<div>
+<strong>${escapeHTML(p.display_name||p.username)}</strong>
+<small>@${escapeHTML(p.username)}</small>
+</div>
+</div>
+<button class="mini-btn" onclick="viewFoundUser('${p.id}')">View</button>
+</div>`).join("");
+}
+
+async function viewFoundUser(id){
+closeModal();
+await openUserProfile(id);
+}
+
+/* ================= FRIEND SYSTEM ================= */
+
+async function openUserProfile(id){
+
+if(id===currentUser?.id){
+openProfile();
+return;
+}
+
+const {data:p}=await supabaseClient.from("profiles").select("*").eq("id",id).maybeSingle();
+
+if(!p)return;
+
+const {data:friend}=await getFriendship(id);
+
+const {data:sent}=await supabaseClient.from("friend_requests")
+.select("*")
+.eq("sender_id",currentUser.id)
+.eq("receiver_id",id)
+.eq("status","pending")
+.maybeSingle();
+
+const {data:received}=await supabaseClient.from("friend_requests")
+.select("*")
+.eq("sender_id",id)
+.eq("receiver_id",currentUser.id)
+.eq("status","pending")
+.maybeSingle();
+
+const {data:block}=await supabaseClient.from("blocks")
+.select("*")
+.eq("blocker_id",currentUser.id)
+.eq("blocked_id",id)
+.maybeSingle();
+
+modalTitle.textContent="User Profile";
+
+modalContent.innerHTML=`
+<div class="profile-big">
+${createAvatarHTML(p.avatar_url,p.display_name)}
+<h2>${escapeHTML(p.display_name||p.username)}</h2>
+<p>@${escapeHTML(p.username)}</p>
+<p style="margin-top:15px">${escapeHTML(p.bio||"No bio yet.")}</p>
+
+<div class="profile-actions">
+
+${friend?`
+<button class="primary" onclick="startPrivate('${id}')">💬 Private Chat</button>
+<button class="primary" onclick="startCall('${id}')">📞 Voice Call</button>
+`:""}
+
+${!friend&&!sent&&!received?`
+<button class="secondary" onclick="sendFriendRequest('${id}')">🤝 Send Friend Request</button>
+`:""}
+
+${received?`
+<button class="primary" onclick="acceptRequest('${received.id}','${id}')">✅ Accept Request</button>
+<button class="secondary" onclick="rejectRequest('${received.id}')">❌ Reject</button>
+`:""}
+
+${sent?`<button class="secondary" disabled>⏳ Request Sent</button>`:""}
+
+${block?
+`<button class="secondary" onclick="unblockUser('${id}')">🔓 Unblock</button>`:
+`<button class="secondary danger" onclick="blockUser('${id}')">🚫 Block User</button>`}
+
+</div>
+</div>`;
+
+modalBg.classList.remove("hidden");
+}
+
+async function getFriendship(id){
+
+const {data}=await supabaseClient.from("friendships")
+.select("*")
+.or(`and(user_id.eq.${currentUser.id},friend_id.eq.${id}),and(user_id.eq.${id},friend_id.eq.${currentUser.id})`)
+.maybeSingle();
+
+return {data};
+}
+
+async function sendFriendRequest(id){
+
+const {error}=await supabaseClient.from("friend_requests").insert({
+sender_id:currentUser.id,
+receiver_id:id,
+status:"pending"
+});
+
+if(error){
+showToast(error.message.includes("duplicate")?"Request already exists.":"Request send failed.");
+return;
+}
+
+closeModal();
+showToast("🤝 Friend request sent.");
+}
+
+async function openRequests(){
+
+modalTitle.textContent="Friend Requests";
+
+const {data,error}=await supabaseClient.from("friend_requests")
+.select("*")
+.eq("receiver_id",currentUser.id)
+.eq("status","pending")
+.order("created_at",{ascending:false});
+
+if(error){
+modalContent.innerHTML="<p>Unable to load requests.</p>";
+modalBg.classList.remove("hidden");
+return;
+}
+
+if(!data?.length){
+modalContent.innerHTML='<p style="color:var(--muted);text-align:center">No pending requests.</p>';
+modalBg.classList.remove("hidden");
+return;
+}
+
+let html="";
+
+for(const r of data){
+
+const {data:p}=await supabaseClient.from("profiles").select("*").eq("id",r.sender_id).maybeSingle();
+
+html+=`
+<div class="friend-item">
+<div style="display:flex;align-items:center;gap:9px">
+${createAvatarHTML(p?.avatar_url,p?.display_name)}
+<div>
+<strong>${escapeHTML(p?.display_name||"User")}</strong>
+<small>@${escapeHTML(p?.username||"unknown")}</small>
+</div>
+</div>
+<div>
+<button class="mini-btn" onclick="acceptRequest('${r.id}','${r.sender_id}')">✅</button>
+<button class="mini-btn" onclick="rejectRequest('${r.id}')">❌</button>
+</div>
+</div>`;
+}
+
+modalContent.innerHTML=html;
+modalBg.classList.remove("hidden");
+}
+
+async function acceptRequest(requestId,friendId){
+
+const {error}=await supabaseClient.from("friend_requests")
+.update({status:"accepted"})
+.eq("id",requestId)
+.eq("receiver_id",currentUser.id);
+
+if(error){
+showToast(error.message);
+return;
+}
+
+await supabaseClient.from("friendships").insert({
+user_id:currentUser.id,
+friend_id:friendId
+});
+
+closeModal();
+showToast("✅ Friend added.");
+}
+
+async function rejectRequest(id){
+
+await supabaseClient.from("friend_requests")
+.update({status:"rejected"})
+.eq("id",id)
+.eq("receiver_id",currentUser.id);
+
+closeModal();
+showToast("Request rejected.");
+}
+
+async function openFriends(){
+
+modalTitle.textContent="My Friends";
+
+const {data,error}=await supabaseClient.from("friendships")
+.select("*")
+.or(`user_id.eq.${currentUser.id},friend_id.eq.${currentUser.id}`);
+
+if(error){
+modalContent.innerHTML="<p>Friend system table/policy check karo.</p>";
+modalBg.classList.remove("hidden");
+return;
+}
+
+const ids=(data||[]).map(x=>x.user_id===currentUser.id?x.friend_id:x.user_id);
+
+if(!ids.length){
+modalContent.innerHTML='<p style="color:var(--muted);text-align:center">Abhi koi friend nahi.</p>';
+modalBg.classList.remove("hidden");
+return;
+}
+
+let html="";
+
+for(const id of ids){
+const {data:p}=await supabaseClient.from("profiles").select("*").eq("id",id).maybeSingle();
+
+html+=`
+<div class="friend-item">
+<div style="display:flex;align-items:center;gap:9px">
+${createAvatarHTML(p?.avatar_url,p?.display_name)}
+<div><strong>${escapeHTML(p?.display_name||"Friend")}</strong>
+<small>@${escapeHTML(p?.username||"")}</small></div>
+</div>
+<button class="mini-btn" onclick="startPrivate('${id}')">💬</button>
+</div>`;
+}
+
+modalContent.innerHTML=html;
+modalBg.classList.remove("hidden");
+}
+
+async function blockUser(id){
+
+const {error}=await supabaseClient.from("blocks").insert({
+blocker_id:currentUser.id,
+blocked_id:id
+});
+
+if(error){
+showToast(error.message);
+return;
+}
+
+await supabaseClient.from("friendships")
+.delete()
+.or(`and(user_id.eq.${currentUser.id},friend_id.eq.${id}),and(user_id.eq.${id},friend_id.eq.${currentUser.id})`);
+
+closeModal();
+showToast("🚫 User blocked.");
+}
+
+async function unblockUser(id){
+
+await supabaseClient.from("blocks")
+.delete()
+.eq("blocker_id",currentUser.id)
+.eq("blocked_id",id);
+
+closeModal();
+showToast("🔓 User unblocked.");
+}
+
+/* ================= PRIVATE CHAT ================= */
+
+async function startPrivate(id){
+
+const {data:friend}=await getFriendship(id);
+
+if(!friend){
+showToast("Private chat sirf friends ke saath available hai.");
+return;
+}
+
+closeModal();
+
+const ids=[currentUser.id,id].sort();
+currentRoom="private_"+ids.join("_");
+
+const p=profilesCache[id]||(
+await supabaseClient.from("profiles").select("*").eq("id",id).maybeSingle()
+).data;
+
+roomTitle.textContent=p?.display_name||"Private Chat";
+roomSub.textContent="🔒 Friend-only private chat • 5 minute messages";
+roomAvatar.innerHTML=createAvatarHTML(p?.avatar_url,p?.display_name||"U");
+
+callAction.innerHTML=`<button class="icon-btn" onclick="startCall('${id}')">📞</button>`;
+
+await loadMessages();
+}
+
+/* ================= CALLING ================= */
+
+function callRoom(a,b){
+return "call_"+[a,b].sort().join("_");
+}
+
+async function sendCallSignal(receiverId,obj){
+
+await supabaseClient.from("messages").insert({
+room:callRoom(currentUser.id,receiverId),
+sender_id:currentUser.id,
+receiver_id:receiverId,
+nickname:currentProfile?.display_name||"User",
+message:JSON.stringify(obj),
+message_type:"call_signal"
+});
+}
+
+async function startCall(id){
+
+const {data:friend}=await getFriendship(id);
+
+if(!friend){
+showToast("Voice call sirf friends ke saath available hai.");
+return;
+}
+
+closeModal();
+
+callTarget=id;
+
+try{
+callStream=await navigator.mediaDevices.getUserMedia({audio:true,video:false});
+callMode=true;
+
+showCallScreen("Calling...");
+
+callPeer=makePeer(id);
+
+const offer=await callPeer.createOffer();
+await callPeer.setLocalDescription(offer);
+
+await sendCallSignal(id,{type:"offer",offer});
+}catch(e){
+console.error(e);
+showToast("Microphone permission allow karo.");
+}
+}
+
+function makePeer(remoteId){
+
+const pc=new RTCPeerConnection({
+iceServers:[{urls:"stun:stun.l.google.com:19302"}]
+});
+
+callStream?.getTracks().forEach(t=>pc.addTrack(t,callStream));
+
+pc.onicecandidate=e=>{
+if(e.candidate){
+sendCallSignal(remoteId,{type:"ice",candidate:e.candidate});
+}
+};
+
+pc.ontrack=e=>{
+let audio=document.getElementById("remoteAudio");
+if(!audio){
+audio=document.createElement("audio");
+audio.id="remoteAudio";
+audio.autoplay=true;
+document.body.appendChild(audio);
+}
+audio.srcObject=e.streams[0];
+};
+
+pc.onconnectionstatechange=()=>{
+if(pc.connectionState==="connected"){
+showCallScreen("Connected 📞");
+}
+if(["failed","disconnected","closed"].includes(pc.connectionState)){
+endCall(false);
+}
+};
+
+return pc;
+}
+
+async function handleCallSignal(m){
+
+if(m.receiver_id!==currentUser.id)return;
+
+let s;
+try{s=JSON.parse(m.message)}catch{return}
+
+const from=m.sender_id;
+
+if(s.type==="offer"){
+
+callTarget=from;
+
+const {data:p}=await supabaseClient.from("profiles").select("*").eq("id",from).maybeSingle();
+
+showIncomingCall(p);
+
+return;
+}
+
+if(!callMode)return;
+
+if(s.type==="answer"&&callPeer){
+await callPeer.setRemoteDescription(new RTCSessionDescription(s.answer));
+}
+
+if(s.type==="ice"&&callPeer){
+try{await callPeer.addIceCandidate(s.candidate)}catch(e){}
+}
+}
+
+async function acceptCall(){
+
+if(!callTarget)return;
+
+try{
+callStream=await navigator.mediaDevices.getUserMedia({audio:true,video:false});
+callMode=true;
+
+callPeer=makePeer(callTarget);
+
+await callPeer.setRemoteDescription(new RTCSessionDescription(window.pendingOffer));
+
+const answer=await callPeer.createAnswer();
+await callPeer.setLocalDescription(answer);
+
+await sendCallSignal(callTarget,{type:"answer",answer});
+
+showCallScreen("Connecting...");
+}catch(e){
+showToast("Microphone permission allow karo.");
+}
+}
+
+function showIncomingCall(p){
+
+window.pendingOffer=window.pendingOffer||null;
+
+modalTitle.textContent="Incoming Voice Call";
+
+modalContent.innerHTML=`
+<div class="call-box">
+<div class="call-avatar">${createAvatarHTML(p?.avatar_url,p?.display_name||"User")}</div>
+<h2>${escapeHTML(p?.display_name||"Someone")}</h2>
+<p style="color:var(--muted);margin-top:7px">Incoming voice call...</p>
+<div class="call-buttons">
+<button class="call-btn accept" onclick="acceptIncoming()">✓</button>
+<button class="call-btn reject" onclick="rejectIncoming()">✕</button>
+</div>
+</div>`;
+
+modalBg.classList.remove("hidden");
+
+async function acceptIncoming(){
+const {data}=await supabaseClient.from("messages")
+.select("*")
+.eq("sender_id",callTarget)
+.eq("receiver_id",currentUser.id)
+.eq("message_type","call_signal")
+.order("created_at",{ascending:false})
+.limit(1)
+.maybeSingle();
+
+try{
+const s=JSON.parse(data.message);
+window.pendingOffer=s.offer;
+}catch{}
+
+closeModal();
+await acceptCall();
+}
+window.acceptIncoming=acceptIncoming;
+
+function rejectIncoming(){
+closeModal();
+sendCallSignal(callTarget,{type:"reject"});
+}
+window.rejectIncoming=rejectIncoming;
+}
+
+function showCallScreen(status){
+
+modalTitle.textContent="Voice Call";
+
+modalContent.innerHTML=`
+<div class="call-box">
+<div class="voice-circle">📞</div>
+<h2>${escapeHTML(status)}</h2>
+<p style="color:var(--muted);margin-top:8px">Shadow Chat Voice Call</p>
+<div class="call-buttons">
+<button class="call-btn reject" onclick="endCall(true)">✕</button>
+</div>
+</div>`;
+
+modalBg.classList.remove("hidden");
+}
+
+async function endCall(sendSignal=true){
+
+if(sendSignal&&callTarget){
+await sendCallSignal(callTarget,{type:"hangup"});
+}
+
+callPeer?.close();
+callPeer=null;
+
+callStream?.getTracks().forEach(t=>t.stop());
+callStream=null;
+
+document.getElementById("remoteAudio")?.remove();
+
+callMode=false;
+callTarget=null;
+
+closeModal();
+}
+
+/* ================= VOICE ROOM ================= */
+
+async function openVoice(){
+
+currentRoom="voice";
+roomTitle.textContent="Shadow Voice Room";
+roomSub.textContent="Live community voice room";
+roomAvatar.textContent="🎤";
+callAction.innerHTML="";
+
+messages.innerHTML=`
+<div class="voice-panel">
+<div class="voice-circle">🎤</div>
+<h2>Shadow Voice Room</h2>
+<p class="voice-status" id="voiceStatus">Microphone se join karo.</p>
+<button class="primary" style="max-width:280px" onclick="joinVoiceRoom()">🎤 Join Voice Room</button>
+</div>`;
+}
+
+async function joinVoiceRoom(){
+
+try{
+const stream=await navigator.mediaDevices.getUserMedia({audio:true});
+stream.getTracks().forEach(t=>t.stop());
+
+document.getElementById("voiceStatus").textContent="You joined the voice room 🎤";
+showToast("🎤 Voice room joined.");
+}catch(e){
+showToast("Microphone permission allow karo.");
+}
+}
+
+/* ================= PROFILE ================= */
+
+function openProfile(){
+
+modalTitle.textContent="My Profile";
+
+modalContent.innerHTML=`
+<div class="profile-big">
+${createAvatarHTML(currentProfile?.avatar_url,currentProfile?.display_name||"User")}
+<h2>${escapeHTML(currentProfile?.display_name||currentProfile?.username||"Anonymous")}</h2>
+<p>@${escapeHTML(currentProfile?.username||"Anonymous")}</p>
+<p style="margin-top:15px">${escapeHTML(currentProfile?.bio||"No bio yet.")}</p>
+
+<div class="profile-actions">
+${anonymous?
+`<button class="primary" onclick="closeModal();showAuth('signup');authScreen.classList.remove('hidden');app.classList.add('hidden')">🔐 Create Permanent Account</button>`:
+`<button class="secondary" onclick="editProfile()">✏️ Edit Profile</button>`}
+</div>
+</div>`;
+
+modalBg.classList.remove("hidden");
+}
+
+function editProfile(){
+
+modalTitle.textContent="Edit Profile";
+
+modalContent.innerHTML=`
+<div class="field">
+<label>Display Name</label>
+<input id="editDisplay" value="${escapeAttr(currentProfile.display_name||"")}">
+</div>
+<div class="field">
+<label>Bio</label>
+<textarea id="editBio" rows="3" maxlength="250">${escapeHTML(currentProfile.bio||"")}</textarea>
+</div>
+<div class="field">
+<label>Profile Picture — Maximum 200 KB</label>
+<input id="avatarFile" type="file" accept="image/*">
+</div>
+<button class="primary" onclick="saveProfile()">Save Profile</button>`;
+}
+
+async function saveProfile(){
+
+const displayName=document.getElementById("editDisplay").value.trim();
+const bio=document.getElementById("editBio").value.trim();
+const file=document.getElementById("avatarFile").files[0];
+
+if(file&&file.size>200*1024){
+alert("Profile picture 200 KB se zyada nahi honi chahiye.");
+return;
+}
+
+let avatarUrl=currentProfile.avatar_url;
+
+try{
+
+if(file){
+
+const ext=file.name.split(".").pop().toLowerCase();
+const path=currentUser.id+"."+ext;
+
+const {error}=await supabaseClient.storage.from("avatars").upload(path,file,{
+upsert:true,contentType:file.type
+});
+
+if(error)throw error;
+
+avatarUrl=supabaseClient.storage.from("avatars").getPublicUrl(path).data.publicUrl+"?v="+Date.now();
+}
+
+const {data,error}=await supabaseClient.from("profiles").update({
+display_name:displayName||currentProfile.username,
+bio,
+avatar_url:avatarUrl
+}).eq("id",currentUser.id).select().single();
+
+if(error)throw error;
+
+currentProfile=data;
+profilesCache[currentUser.id]=data;
+
+closeModal();
+showToast("✅ Profile updated.");
+
+}catch(e){
+alert(e.message||"Profile update failed.");
+}
+}
+
+/* ================= MODAL / HELPERS ================= */
+
+function closeModal(){
+modalBg.classList.add("hidden");
+}
+
+function createAvatarHTML(url,name){
+if(url)return `<div class="avatar"><img src="${escapeAttr(url)}"></div>`;
+return `<div class="avatar">${escapeHTML((name||"U").charAt(0).toUpperCase())}</div>`;
+}
+
+function formatTime(d){
+return new Date(d).toLocaleTimeString([],{
+hour:"2-digit",minute:"2-digit"
+});
+}
+
+function escapeHTML(v){
+return String(v??"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#039;");
+}
+
+function escapeAttr(v){
+return escapeHTML(v);
+}
+
+function scrollBottom(){
+setTimeout(()=>messages.scrollTop=messages.scrollHeight,50);
+}
+
+function showToast(text){
+const t=document.createElement("div");
+t.className="toast";
+t.innerHTML=text;
+document.body.appendChild(t);
+setTimeout(()=>t.remove(),4000);
+}
+
+function showApp(){
+authScreen.classList.add("hidden");
+app.classList.remove("hidden");
+}
+
+function logout(){
+if(anonymous){
+removeOnlineUser();
+location.reload();
+return;
+}
+removeOnlineUser().finally(async()=>{
+await supabaseClient.auth.signOut();
+location.reload();
+});
+}
+
+async function removeOnlineUser(){
+if(!currentUser)return;
+await supabaseClient.from("chat_users").delete().eq("id",currentUser.id);
+}
+
+window.addEventListener("beforeunload",()=>{
+if(currentUser){
+supabaseClient.from("chat_users").delete().eq("id",currentUser.id);
+}
+});
+
+loadTheme();
+
+function loadTheme(){}
+
+checkSession();
+</script>
+
+</body>
+</html>
