@@ -1298,13 +1298,49 @@ button{
         </button>
 
         <button
+            id="forgotBtn"
             class="secondary-btn"
-            onclick="continueAnonymous()">
-            👻 Continue as Anonymous
+            onclick="forgotPassword()">
+            🔑 Forgot Password?
+        </button>
+
+        <button
+            id="resendBtn"
+            class="secondary-btn hidden"
+            onclick="resendVerification()">
+            📩 Resend Verification Email
         </button>
 
         <div id="authMessage"
              class="auth-message"></div>
+
+        <div id="resetBox" class="hidden" style="margin-top:16px;">
+
+            <div class="field">
+                <label>New Password</label>
+                <input
+                    id="newPassword"
+                    type="password"
+                    autocomplete="new-password"
+                    placeholder="New password">
+            </div>
+
+            <div class="field">
+                <label>Confirm New Password</label>
+                <input
+                    id="confirmNewPassword"
+                    type="password"
+                    autocomplete="new-password"
+                    placeholder="Confirm new password">
+            </div>
+
+            <button
+                class="primary-btn"
+                onclick="updatePassword()">
+                🔒 Update Password
+            </button>
+
+        </div>
 
     </div>
 
@@ -1955,6 +1991,9 @@ const SUPABASE_URL =
 const SUPABASE_KEY =
 "sb_publishable_4wZB1Cg1UJpOGpeegkDVWA_ddtCQ9FZ";
 
+const AUTH_REDIRECT_URL =
+"https://shadow-eta-three.vercel.app/";
+
 const sb = supabase.createClient(
     SUPABASE_URL,
     SUPABASE_KEY,
@@ -1988,6 +2027,8 @@ let voiceChannel = null;
 let voiceJoined = false;
 let voiceMuted = false;
 let voiceStream = null;
+let voicePeers = {};
+let voiceIceQueues = {};
 
 let callChannel = null;
 let callPeer = null;
@@ -2116,27 +2157,42 @@ function showAuthMode(mode){
     const btn =
         document.getElementById("authMainBtn");
 
+    const forgotBtn =
+        document.getElementById("forgotBtn");
+
+    const resendBtn =
+        document.getElementById("resendBtn");
+
+    const resetBox =
+        document.getElementById("resetBox");
+
+    document.getElementById("authMainBtn").classList.remove("hidden");
+    document.getElementById("loginTab").classList.remove("hidden");
+    document.getElementById("signupTab").classList.remove("hidden");
+
     if(mode === "login"){
 
         loginTab.classList.add("active");
         signupTab.classList.remove("active");
-
         signupFields.classList.add("hidden");
-
         btn.textContent = "Sign In";
+        forgotBtn.classList.remove("hidden");
 
     }else{
 
         signupTab.classList.add("active");
         loginTab.classList.remove("active");
-
         signupFields.classList.remove("hidden");
-
         btn.textContent = "Create Account";
+        forgotBtn.classList.add("hidden");
     }
 
-    document.getElementById("authMessage")
-        .textContent = "";
+    resendBtn.classList.add("hidden");
+    resetBox.classList.add("hidden");
+
+    const msg = document.getElementById("authMessage");
+    msg.style.color = "#ef4444";
+    msg.textContent = "";
 }
 
 
@@ -2144,7 +2200,8 @@ async function handleAuth(){
 
     const email =
         document.getElementById("authEmail")
-        .value.trim();
+        .value.trim()
+        .toLowerCase();
 
     const password =
         document.getElementById("authPassword")
@@ -2153,16 +2210,28 @@ async function handleAuth(){
     const msg =
         document.getElementById("authMessage");
 
+    const resendBtn =
+        document.getElementById("resendBtn");
+
     if(!email || !password){
 
+        msg.style.color = "#ef4444";
         msg.textContent =
             "Email aur password enter karo.";
+        return;
+    }
 
+    if(password.length < 6){
+
+        msg.style.color = "#ef4444";
+        msg.textContent =
+            "Password kam az kam 6 characters ka hona chahiye.";
         return;
     }
 
     msg.style.color = "#0284c7";
     msg.textContent = "Please wait...";
+    resendBtn.classList.add("hidden");
 
     if(authMode === "login"){
 
@@ -2174,14 +2243,29 @@ async function handleAuth(){
 
         if(error){
 
-            msg.style.color="#ef4444";
-            msg.textContent=error.message;
+            msg.style.color = "#ef4444";
+            msg.textContent = error.message;
+
+            if(
+                /email.*confirm|confirm.*email|not confirmed/i.test(error.message)
+            ){
+                resendBtn.classList.remove("hidden");
+            }
             return;
         }
 
-        currentUser =
-            data.user;
+        if(!data.user?.email_confirmed_at){
 
+            await sb.auth.signOut();
+            currentUser = null;
+            msg.style.color = "#ef4444";
+            msg.textContent =
+                "Pehle email verify karo. Verification email inbox/spam mein check karo.";
+            resendBtn.classList.remove("hidden");
+            return;
+        }
+
+        currentUser = data.user;
         await enterApp();
 
     }else{
@@ -2199,7 +2283,14 @@ async function handleAuth(){
             msg.style.color="#ef4444";
             msg.textContent =
                 "Username enter karo.";
+            return;
+        }
 
+        if(username.length < 3){
+
+            msg.style.color="#ef4444";
+            msg.textContent =
+                "Username kam az kam 3 characters ka hona chahiye.";
             return;
         }
 
@@ -2208,6 +2299,7 @@ async function handleAuth(){
                 email,
                 password,
                 options:{
+                    emailRedirectTo: AUTH_REDIRECT_URL,
                     data:{
                         username,
                         display_name:
@@ -2223,47 +2315,153 @@ async function handleAuth(){
             return;
         }
 
-        currentUser =
-            data.user;
+        currentUser = data.user;
 
-        if(data.session){
+        if(data.session && data.user?.email_confirmed_at){
 
             await enterApp();
 
         }else{
 
+            currentUser = null;
             msg.style.color="#0284c7";
             msg.textContent =
-                "Account create ho gaya. Agar email confirmation on hai to email verify karo.";
+                "Account create ho gaya. Apni email verify karo, phir Sign In karo.";
+            resendBtn.classList.remove("hidden");
         }
     }
 }
 
 
-async function continueAnonymous(){
+async function resendVerification(){
+
+    const email =
+        document.getElementById("authEmail")
+        .value.trim()
+        .toLowerCase();
 
     const msg =
         document.getElementById("authMessage");
 
-    msg.style.color="#0284c7";
-    msg.textContent="Joining...";
-
-    const {data,error} =
-        await sb.auth.signInAnonymously();
-
-    if(error){
-
+    if(!email){
         msg.style.color="#ef4444";
-        msg.textContent =
-            "Anonymous login available nahi hai. Supabase Auth mein Anonymous Sign-In enable karo.";
-
+        msg.textContent="Pehle email enter karo.";
         return;
     }
 
-    currentUser =
-        data.user;
+    msg.style.color="#0284c7";
+    msg.textContent="Verification email bheji ja rahi hai...";
 
-    await enterApp();
+    const {error} = await sb.auth.resend({
+        type: "signup",
+        email,
+        options:{
+            emailRedirectTo: AUTH_REDIRECT_URL
+        }
+    });
+
+    if(error){
+        msg.style.color="#ef4444";
+        msg.textContent=error.message;
+        return;
+    }
+
+    msg.style.color="#16a34a";
+    msg.textContent=
+        "Verification email dobara bhej di gayi hai. Inbox aur Spam/Junk check karo.";
+}
+
+
+async function forgotPassword(){
+
+    const email =
+        document.getElementById("authEmail")
+        .value.trim()
+        .toLowerCase();
+
+    const msg =
+        document.getElementById("authMessage");
+
+    if(!email){
+        msg.style.color="#ef4444";
+        msg.textContent="Password reset ke liye apni email enter karo.";
+        return;
+    }
+
+    msg.style.color="#0284c7";
+    msg.textContent="Password reset email bheji ja rahi hai...";
+
+    const {error} = await sb.auth.resetPasswordForEmail(email, {
+        redirectTo: AUTH_REDIRECT_URL
+    });
+
+    if(error){
+        msg.style.color="#ef4444";
+        msg.textContent=error.message;
+        return;
+    }
+
+    msg.style.color="#16a34a";
+    msg.textContent=
+        "Agar is email ka account hai to password reset link bhej diya gaya hai. Inbox/Spam check karo.";
+}
+
+
+async function updatePassword(){
+
+    const newPassword =
+        document.getElementById("newPassword")
+        .value;
+
+    const confirmPassword =
+        document.getElementById("confirmNewPassword")
+        .value;
+
+    const msg =
+        document.getElementById("authMessage");
+
+    if(!newPassword || !confirmPassword){
+        msg.style.color="#ef4444";
+        msg.textContent="Dono password fields fill karo.";
+        return;
+    }
+
+    if(newPassword.length < 6){
+        msg.style.color="#ef4444";
+        msg.textContent="Password kam az kam 6 characters ka hona chahiye.";
+        return;
+    }
+
+    if(newPassword !== confirmPassword){
+        msg.style.color="#ef4444";
+        msg.textContent="Dono passwords match nahi kar rahe.";
+        return;
+    }
+
+    msg.style.color="#0284c7";
+    msg.textContent="Password update ho raha hai...";
+
+    const {error} = await sb.auth.updateUser({
+        password:newPassword
+    });
+
+    if(error){
+        msg.style.color="#ef4444";
+        msg.textContent=error.message;
+        return;
+    }
+
+    await sb.auth.signOut();
+    currentUser = null;
+
+    document.getElementById("resetBox")
+        .classList.add("hidden");
+
+    msg.style.color="#16a34a";
+    msg.textContent=
+        "Password successfully update ho gaya. Ab new password se Sign In karo.";
+
+    document.getElementById("authPassword").value = "";
 }
 
 
@@ -2284,47 +2482,99 @@ async function logout(){
 
 async function boot(){
 
-    const {
-        data:{
-            session
+    const showAuth = ()=>{
+        document.getElementById("authScreen")
+            .classList.remove("hidden");
+        document.getElementById("app")
+            .classList.add("hidden");
+    };
+
+    const handleSession = async (session)=>{
+
+        if(!session?.user){
+            currentUser = null;
+            showAuth();
+            return;
         }
-    } =
-    await sb.auth.getSession();
+
+        const user = session.user;
+
+        if(!user.email_confirmed_at){
+            await sb.auth.signOut();
+            currentUser = null;
+            showAuth();
+
+            const msg = document.getElementById("authMessage");
+            msg.style.color = "#ef4444";
+            msg.textContent =
+                "Pehle email verify karo, phir Sign In karo.";
+            document.getElementById("resendBtn")
+                .classList.remove("hidden");
+            return;
+        }
+
+        currentUser = user;
+        await enterApp();
+    };
+
+    sb.auth.onAuthStateChange((event, session)=>{
+
+        if(event === "PASSWORD_RECOVERY"){
+
+            setTimeout(()=>{
+
+                currentUser = session?.user || null;
+
+                document.getElementById("authScreen")
+                    .classList.remove("hidden");
+
+                document.getElementById("app")
+                    .classList.add("hidden");
+
+                document.getElementById("resetBox")
+                    .classList.remove("hidden");
+
+                document.getElementById("forgotBtn")
+                    .classList.add("hidden");
+
+                document.getElementById("resendBtn")
+                    .classList.add("hidden");
+
+                document.getElementById("authMainBtn")
+                    .classList.add("hidden");
+
+                document.getElementById("loginTab")
+                    .classList.add("hidden");
+
+                document.getElementById("signupTab")
+                    .classList.add("hidden");
+
+                document.getElementById("signupFields")
+                    .classList.add("hidden");
+
+                const msg = document.getElementById("authMessage");
+                msg.style.color="#0284c7";
+                msg.textContent="New password set karo.";
+
+            },0);
+
+            return;
+        }
+
+        if(event === "SIGNED_OUT"){
+            currentUser = null;
+            showAuth();
+        }
+    });
+
+    const {data:{session}} =
+        await sb.auth.getSession();
 
     if(session?.user){
-
-        currentUser =
-            session.user;
-
-        await enterApp();
-
+        await handleSession(session);
     }else{
-
-        document
-            .getElementById("authScreen")
-            .classList.remove("hidden");
-
-        document
-            .getElementById("app")
-            .classList.add("hidden");
+        showAuth();
     }
-
-
-    sb.auth.onAuthStateChange(
-        async (event,session)=>{
-
-            if(
-                session?.user &&
-                !currentUser
-            ){
-
-                currentUser =
-                    session.user;
-
-                await enterApp();
-            }
-        }
-    );
 }
 
 
@@ -2335,6 +2585,12 @@ async function boot(){
 async function enterApp(){
 
     if(!currentUser) return;
+
+    if(!currentUser.email_confirmed_at){
+        await sb.auth.signOut();
+        currentUser = null;
+        return;
+    }
 
     document
         .getElementById("authScreen")
@@ -3984,185 +4240,344 @@ function openFriendProfile(){
 
 
 /* =========================================================
-   VOICE ROOM
+   VOICE ROOM - MULTI USER WEBRTC
 ========================================================= */
 
-async function joinVoiceRoom(){
+function voiceRtcConfig(){
+    return {
+        iceServers:[
+            { urls:"stun:stun.l.google.com:19302" },
+            { urls:"stun:stun1.l.google.com:19302" }
+        ]
+    };
+}
 
-    if(voiceJoined)
-        return;
+function voicePeerIsInitiator(remoteId){
+    return String(currentUser.id) < String(remoteId);
+}
 
-    try{
+function voiceUserFromPresence(remoteId){
+    if(!voiceChannel) return null;
+    const state = voiceChannel.presenceState();
+    const users = Object.values(state).flat();
+    return users.find(u => u.user_id === remoteId) || null;
+}
 
-        voiceStream =
-            await navigator.mediaDevices
-            .getUserMedia({
-                audio:true,
-                video:false
+function removeVoicePeer(remoteId){
+    const peer = voicePeers[remoteId];
+    if(peer){
+        try{ peer.close(); }catch(e){}
+        delete voicePeers[remoteId];
+    }
+
+    delete voiceIceQueues[remoteId];
+
+    const audio = document.getElementById("voice-audio-" + remoteId);
+    if(audio) audio.remove();
+}
+
+function addRemoteVoiceAudio(remoteId, stream){
+    let audio = document.getElementById("voice-audio-" + remoteId);
+
+    if(!audio){
+        audio = document.createElement("audio");
+        audio.id = "voice-audio-" + remoteId;
+        audio.autoplay = true;
+        audio.playsInline = true;
+        audio.style.display = "none";
+        document.body.appendChild(audio);
+    }
+
+    audio.srcObject = stream;
+    audio.play().catch(()=>{});
+}
+
+async function flushVoiceIce(remoteId){
+    const peer = voicePeers[remoteId];
+    const queue = voiceIceQueues[remoteId] || [];
+
+    if(!peer || !queue.length) return;
+
+    voiceIceQueues[remoteId] = [];
+
+    for(const candidate of queue){
+        try{
+            await peer.addIceCandidate(candidate);
+        }catch(e){}
+    }
+}
+
+async function createVoicePeer(remoteId, makeOffer=false){
+    if(!voiceJoined || !voiceStream || !voiceChannel) return null;
+    if(remoteId === currentUser.id) return null;
+
+    if(voicePeers[remoteId]){
+        if(makeOffer && voicePeers[remoteId].signalingState === "stable"){
+            try{
+                const offer = await voicePeers[remoteId].createOffer();
+                await voicePeers[remoteId].setLocalDescription(offer);
+                await voiceChannel.send({
+                    type:"broadcast",
+                    event:"voice-signal",
+                    payload:{
+                        kind:"offer",
+                        from:currentUser.id,
+                        to:remoteId,
+                        description:voicePeers[remoteId].localDescription
+                    }
+                });
+            }catch(e){}
+        }
+        return voicePeers[remoteId];
+    }
+
+    const peer = new RTCPeerConnection(voiceRtcConfig());
+    voicePeers[remoteId] = peer;
+    voiceIceQueues[remoteId] = voiceIceQueues[remoteId] || [];
+
+    voiceStream.getAudioTracks().forEach(track=>{
+        peer.addTrack(track, voiceStream);
+    });
+
+    peer.onicecandidate = async event=>{
+        if(!event.candidate || !voiceChannel) return;
+        try{
+            await voiceChannel.send({
+                type:"broadcast",
+                event:"voice-signal",
+                payload:{
+                    kind:"candidate",
+                    from:currentUser.id,
+                    to:remoteId,
+                    candidate:event.candidate
+                }
             });
+        }catch(e){}
+    };
 
-    }catch(error){
+    peer.ontrack = event=>{
+        const stream = event.streams && event.streams[0];
+        if(stream) addRemoteVoiceAudio(remoteId, stream);
+    };
 
-        toast(
-            "Microphone permission required."
-        );
+    peer.onconnectionstatechange = ()=>{
+        if(["failed","closed","disconnected"].includes(peer.connectionState)){
+            removeVoicePeer(remoteId);
+        }
+    };
 
+    if(makeOffer){
+        try{
+            const offer = await peer.createOffer();
+            await peer.setLocalDescription(offer);
+            await voiceChannel.send({
+                type:"broadcast",
+                event:"voice-signal",
+                payload:{
+                    kind:"offer",
+                    from:currentUser.id,
+                    to:remoteId,
+                    description:peer.localDescription
+                }
+            });
+        }catch(error){
+            removeVoicePeer(remoteId);
+        }
+    }
+
+    return peer;
+}
+
+async function handleVoiceSignal(payload){
+    if(!voiceJoined || !payload) return;
+    if(payload.to !== currentUser.id) return;
+    if(!payload.from || payload.from === currentUser.id) return;
+
+    const remoteId = payload.from;
+
+    if(payload.kind === "offer"){
+        const peer = await createVoicePeer(remoteId, false);
+        if(!peer) return;
+
+        try{
+            await peer.setRemoteDescription(new RTCSessionDescription(payload.description));
+            await flushVoiceIce(remoteId);
+
+            const answer = await peer.createAnswer();
+            await peer.setLocalDescription(answer);
+
+            await voiceChannel.send({
+                type:"broadcast",
+                event:"voice-signal",
+                payload:{
+                    kind:"answer",
+                    from:currentUser.id,
+                    to:remoteId,
+                    description:peer.localDescription
+                }
+            });
+        }catch(error){
+            removeVoicePeer(remoteId);
+        }
         return;
     }
 
-    voiceJoined=true;
-    voiceMuted=false;
+    if(payload.kind === "answer"){
+        const peer = voicePeers[remoteId];
+        if(!peer) return;
 
-    document
-        .getElementById("joinVoiceBtn")
-        .classList.add("hidden");
+        try{
+            await peer.setRemoteDescription(new RTCSessionDescription(payload.description));
+            await flushVoiceIce(remoteId);
+        }catch(error){}
+        return;
+    }
 
-    document
-        .getElementById("muteVoiceBtn")
-        .classList.remove("hidden");
+    if(payload.kind === "candidate"){
+        const peer = voicePeers[remoteId];
 
-    document
-        .getElementById("leaveVoiceBtn")
-        .classList.remove("hidden");
+        if(!peer || !peer.remoteDescription){
+            voiceIceQueues[remoteId] = voiceIceQueues[remoteId] || [];
+            voiceIceQueues[remoteId].push(payload.candidate);
+            return;
+        }
 
-    voiceChannel =
-        sb.channel(
-            "shadow-voice-room",
-            {
-                config:{
-                    presence:{
-                        key:currentUser.id
-                    }
-                }
-            }
-        );
+        try{
+            await peer.addIceCandidate(payload.candidate);
+        }catch(error){}
+    }
+}
+
+async function connectVoicePeers(){
+    if(!voiceChannel || !voiceJoined) return;
+
+    const state = voiceChannel.presenceState();
+    const users = Object.values(state).flat();
+
+    for(const user of users){
+        if(!user.user_id || user.user_id === currentUser.id) continue;
+
+        // Deterministic initiator prevents both users creating offers at once.
+        if(voicePeerIsInitiator(user.user_id)){
+            await createVoicePeer(user.user_id, true);
+        }else{
+            await createVoicePeer(user.user_id, false);
+        }
+    }
+}
+
+async function joinVoiceRoom(){
+    if(voiceJoined) return;
+
+    if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){
+        toast("Microphone requires HTTPS or localhost.");
+        return;
+    }
+
+    try{
+        voiceStream = await navigator.mediaDevices.getUserMedia({
+            audio:{
+                echoCancellation:true,
+                noiseSuppression:true,
+                autoGainControl:true
+            },
+            video:false
+        });
+    }catch(error){
+        toast("Microphone permission required.");
+        return;
+    }
+
+    voiceJoined = true;
+    voiceMuted = false;
+    voicePeers = {};
+    voiceIceQueues = {};
+
+    document.getElementById("joinVoiceBtn").classList.add("hidden");
+    document.getElementById("muteVoiceBtn").classList.remove("hidden");
+    document.getElementById("leaveVoiceBtn").classList.remove("hidden");
+
+    voiceChannel = sb.channel("shadow-voice-room",{
+        config:{
+            presence:{key:currentUser.id}
+        }
+    });
 
     voiceChannel
-        .on(
-            "presence",
-            {
-                event:"sync"
-            },
-            renderVoiceUsers
-        )
-        .subscribe(
-            async status=>{
-
-                if(status === "SUBSCRIBED"){
-
-                    await voiceChannel.track({
-                        user_id:currentUser.id,
-                        username:
-                            currentProfile?.username,
-                        display_name:
-                            currentProfile?.display_name,
-                        avatar_url:
-                            currentProfile?.avatar_url,
-                        mic:true
-                    });
-
-                    renderVoiceUsers();
-                }
+        .on("presence",{event:"sync"},()=>{
+            renderVoiceUsers();
+            connectVoicePeers();
+        })
+        .on("presence",{event:"join"},payload=>{
+            renderVoiceUsers();
+            const user = payload.newPresences?.[0];
+            if(user && user.user_id && voicePeerIsInitiator(user.user_id)){
+                createVoicePeer(user.user_id,true);
             }
-        );
+        })
+        .on("presence",{event:"leave"},payload=>{
+            renderVoiceUsers();
+            const user = payload.leftPresences?.[0];
+            if(user?.user_id) removeVoicePeer(user.user_id);
+        })
+        .on("broadcast",{event:"voice-signal"},payload=>{
+            handleVoiceSignal(payload.payload);
+        })
+        .subscribe(async status=>{
+            if(status !== "SUBSCRIBED") return;
+
+            await voiceChannel.track({
+                user_id:currentUser.id,
+                username:currentProfile?.username,
+                display_name:currentProfile?.display_name,
+                avatar_url:currentProfile?.avatar_url,
+                mic:true
+            });
+
+            renderVoiceUsers();
+            await new Promise(resolve=>setTimeout(resolve,250));
+            await connectVoicePeers();
+        });
 
     toast("You joined Voice Room 🎤");
 }
 
-
 function renderVoiceUsers(){
-
-    const box =
-        document.getElementById(
-            "voiceRoom"
-        );
-
+    const box = document.getElementById("voiceRoom");
     box.innerHTML="";
+    if(!voiceChannel) return;
 
-    if(!voiceChannel)
-        return;
+    const state = voiceChannel.presenceState();
 
-    const state =
-        voiceChannel.presenceState();
+    Object.values(state).flat().forEach(user=>{
+        const item = document.createElement("div");
+        item.className = "voice-user " + (user.mic ? "mic-on" : "");
 
-    Object.values(state)
-        .flat()
-        .forEach(user=>{
+        item.innerHTML=`
+            <div class="avatar">
+                ${user.avatar_url
+                    ? `<img src="${escapeHtml(user.avatar_url)}">`
+                    : escapeHtml(initials(user.display_name || user.username))}
+            </div>
+            <span>${escapeHtml(user.display_name || user.username || "User")}</span>
+            <span>${user.mic ? "🎤" : "🔇"}</span>
+        `;
 
-            const item =
-                document.createElement("div");
-
-            item.className =
-                "voice-user " +
-                (
-                    user.mic
-                    ? "mic-on"
-                    : ""
-                );
-
-            item.innerHTML=`
-
-                <div class="avatar">
-
-                    ${
-                        user.avatar_url
-                        ?
-                        `<img src="${escapeHtml(user.avatar_url)}">`
-                        :
-                        escapeHtml(
-                            initials(
-                                user.display_name ||
-                                user.username
-                            )
-                        )
-                    }
-
-                </div>
-
-                <span>
-                    ${escapeHtml(
-                        user.display_name ||
-                        user.username ||
-                        "User"
-                    )}
-                </span>
-
-                <span>
-                    ${user.mic ? "🎤" : "🔇"}
-                </span>
-
-            `;
-
-            box.appendChild(item);
-        });
+        box.appendChild(item);
+    });
 }
 
-
 async function toggleVoiceMute(){
+    if(!voiceStream || !voiceChannel) return;
 
-    if(!voiceStream || !voiceChannel)
-        return;
+    voiceMuted = !voiceMuted;
 
-    voiceMuted =
-        !voiceMuted;
+    voiceStream.getAudioTracks().forEach(track=>{
+        track.enabled = !voiceMuted;
+    });
 
-    voiceStream
-        .getAudioTracks()
-        .forEach(
-            track =>
-            track.enabled =
-                !voiceMuted
-        );
-
-    const btn =
-        document.getElementById(
-            "muteVoiceBtn"
-        );
-
-    btn.textContent =
-        voiceMuted
-        ? "🎤 Unmute"
-        : "🔇 Mute";
+    const btn = document.getElementById("muteVoiceBtn");
+    btn.textContent = voiceMuted ? "🎤 Unmute" : "🔇 Mute";
 
     await voiceChannel.track({
         user_id:currentUser.id,
@@ -4173,50 +4588,35 @@ async function toggleVoiceMute(){
     });
 }
 
-
 async function leaveVoiceRoom(){
+    Object.keys(voicePeers).forEach(removeVoicePeer);
 
     if(voiceStream){
-
-        voiceStream
-            .getTracks()
-            .forEach(t=>t.stop());
-
+        voiceStream.getTracks().forEach(t=>t.stop());
         voiceStream=null;
     }
 
     if(voiceChannel){
-
-        await voiceChannel.untrack();
-
-        sb.removeChannel(
-            voiceChannel
-        );
-
+        try{ await voiceChannel.untrack(); }catch(e){}
+        sb.removeChannel(voiceChannel);
         voiceChannel=null;
     }
 
+    document.querySelectorAll("audio[id^='voice-audio-']").forEach(a=>a.remove());
+
+    voicePeers = {};
+    voiceIceQueues = {};
     voiceJoined=false;
+    voiceMuted=false;
 
-    document
-        .getElementById("joinVoiceBtn")
-        .classList.remove("hidden");
-
-    document
-        .getElementById("muteVoiceBtn")
-        .classList.add("hidden");
-
-    document
-        .getElementById("leaveVoiceBtn")
-        .classList.add("hidden");
-
-    document
-        .getElementById("voiceRoom")
-        .innerHTML="";
+    document.getElementById("joinVoiceBtn").classList.remove("hidden");
+    document.getElementById("muteVoiceBtn").classList.add("hidden");
+    document.getElementById("leaveVoiceBtn").classList.add("hidden");
+    document.getElementById("muteVoiceBtn").textContent="🔇 Mute";
+    document.getElementById("voiceRoom").innerHTML="";
 
     toast("You left the room.");
 }
-
 
 /* =========================================================
    WEBRTC CALL
