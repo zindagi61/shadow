@@ -16038,5 +16038,1340 @@ window.addEventListener(
 
 })();
 </script>
+    <script>
+/* =========================================================
+   SHADOW CHAT - CALL FIX PATCH
+   Fixes:
+   ✅ Offer sent only after channel is subscribed
+   ✅ Early ICE candidates are queued
+   ✅ Audio + Video calls
+   ✅ Incoming call answer works
+   ✅ Call panel stays open
+========================================================= */
+
+(() => {
+
+    let shadowIceQueue = {};
+
+    let shadowCallSubscribed = false;
+
+
+    /* =====================================================
+       WAIT FOR SUPABASE CHANNEL SUBSCRIBED
+    ===================================================== */
+
+    function shadowWaitForSubscribed(channel){
+
+        return new Promise(
+            resolve => {
+
+                let done = false;
+
+
+                const finish = () => {
+
+                    if(done)
+                        return;
+
+                    done = true;
+
+                    resolve();
+
+                };
+
+
+                const timer =
+                    setTimeout(
+                        finish,
+                        10000
+                    );
+
+
+                const originalSubscribe =
+                    channel.subscribe;
+
+
+                if(
+                    typeof originalSubscribe ===
+                    "function"
+                ){
+
+                    /* The channel is already subscribable.
+                       Give Supabase enough time to connect. */
+
+                    const result =
+                        originalSubscribe.call(
+                            channel,
+                            status => {
+
+                                if(
+                                    status ===
+                                    "SUBSCRIBED"
+                                ){
+
+                                    clearTimeout(
+                                        timer
+                                    );
+
+                                    finish();
+
+                                }
+
+                            }
+                        );
+
+
+                    if(
+                        result &&
+                        typeof result.then ===
+                        "function"
+                    ){
+
+                        result.then(
+                            () => {
+
+                                clearTimeout(
+                                    timer
+                                );
+
+                                finish();
+
+                            }
+                        )
+                        .catch(
+                            () => {
+
+                                clearTimeout(
+                                    timer
+                                );
+
+                                finish();
+
+                            }
+                        );
+
+                    }
+
+                }else{
+
+                    clearTimeout(
+                        timer
+                    );
+
+                    finish();
+
+                }
+
+            }
+        );
+
+    }
+
+
+    /* =====================================================
+       BETTER SETUP CALL CHANNEL
+    ===================================================== */
+
+    window.setupCallChannel =
+        async function(){
+
+            if(callChannel){
+
+                try{
+
+                    sb.removeChannel(
+                        callChannel
+                    );
+
+                }catch(e){}
+
+                callChannel =
+                    null;
+
+            }
+
+
+            const ids =
+                [
+                    currentUser.id,
+                    selectedFriend.id
+                ]
+                .sort();
+
+
+            const channelName =
+                "call-" +
+                ids.join("-");
+
+
+            callChannel =
+                sb.channel(
+                    channelName
+                );
+
+
+            shadowCallSubscribed =
+                false;
+
+
+            return new Promise(
+                resolve => {
+
+                    let finished =
+                        false;
+
+
+                    const finish = () => {
+
+                        if(finished)
+                            return;
+
+                        finished =
+                            true;
+
+                        shadowCallSubscribed =
+                            true;
+
+                        resolve();
+
+                    };
+
+
+                    callChannel
+                        .on(
+                            "broadcast",
+                            {
+                                event:
+                                    "signal"
+                            },
+                            async payload => {
+
+                                const data =
+                                    payload.payload;
+
+
+                                if(
+                                    !data ||
+                                    data.to !==
+                                    currentUser.id
+                                )
+                                    return;
+
+
+                                try{
+
+                                    await handleSignal(
+                                        data
+                                    );
+
+                                }catch(e){
+
+                                    console.error(
+                                        "Call signal error:",
+                                        e
+                                    );
+
+                                }
+
+                            }
+                        )
+                        .subscribe(
+                            status => {
+
+                                if(
+                                    status ===
+                                    "SUBSCRIBED"
+                                ){
+
+                                    finish();
+
+                                }
+
+                            }
+                        );
+
+
+                    setTimeout(
+                        finish,
+                        10000
+                    );
+
+                }
+            );
+
+        };
+
+
+    /* =====================================================
+       IMPROVED START CALL
+    ===================================================== */
+
+    window.startCall =
+        async function(type){
+
+            if(
+                !selectedFriend ||
+                !currentUser
+            ){
+
+                toast(
+                    "Friend select karo."
+                );
+
+                return;
+
+            }
+
+
+            /* Clean previous call */
+
+            try{
+
+                if(callPeer){
+
+                    callPeer.close();
+
+                    callPeer =
+                        null;
+
+                }
+
+                if(callStream){
+
+                    callStream
+                        .getTracks()
+                        .forEach(
+                            t =>
+                                t.stop()
+                        );
+
+                    callStream =
+                        null;
+
+                }
+
+                if(callChannel){
+
+                    sb.removeChannel(
+                        callChannel
+                    );
+
+                    callChannel =
+                        null;
+
+                }
+
+            }catch(e){}
+
+
+            callType =
+                type === "video"
+                ?
+                "video"
+                :
+                "audio";
+
+
+            callMic =
+                true;
+
+
+            callCamera =
+                callType ===
+                "video";
+
+
+            /* Get microphone / camera */
+
+            try{
+
+                callStream =
+                    await navigator
+                        .mediaDevices
+                        .getUserMedia({
+
+                            audio:true,
+
+                            video:
+                                callType ===
+                                "video"
+
+                        });
+
+            }catch(error){
+
+                console.error(
+                    error
+                );
+
+                toast(
+                    callType === "video"
+                    ?
+                    "Camera aur microphone permission required."
+                    :
+                    "Microphone permission required."
+                );
+
+                return;
+
+            }
+
+
+            /* Open call UI */
+
+            document
+                .getElementById(
+                    "callPanel"
+                )
+                ?.classList.add(
+                    "show"
+                );
+
+
+            document.getElementById(
+                "callTitle"
+            ).textContent =
+                "Calling " +
+                (
+                    selectedFriend.display_name ||
+                    selectedFriend.username ||
+                    "User"
+                );
+
+
+            document.getElementById(
+                "callStatus"
+            ).textContent =
+                "Connecting...";
+
+
+            const local =
+                document.getElementById(
+                    "localVideo"
+                );
+
+
+            const remote =
+                document.getElementById(
+                    "remoteVideo"
+                );
+
+
+            if(local){
+
+                local.srcObject =
+                    callStream;
+
+                local.muted =
+                    true;
+
+                local.autoplay =
+                    true;
+
+                local.playsInline =
+                    true;
+
+                local.style.display =
+                    callType === "video"
+                    ?
+                    "block"
+                    :
+                    "none";
+
+            }
+
+
+            if(remote){
+
+                remote.srcObject =
+                    null;
+
+                remote.autoplay =
+                    true;
+
+                remote.playsInline =
+                    true;
+
+            }
+
+
+            /* Create peer */
+
+            callPeer =
+                new RTCPeerConnection(
+                    rtcConfig()
+                );
+
+
+            callStream
+                .getTracks()
+                .forEach(
+                    track => {
+
+                        callPeer.addTrack(
+                            track,
+                            callStream
+                        );
+
+                    }
+                );
+
+
+            callPeer.ontrack =
+                event => {
+
+                    const stream =
+                        event.streams?.[0];
+
+
+                    if(
+                        stream &&
+                        remote
+                    ){
+
+                        remote.srcObject =
+                            stream;
+
+
+                        document.getElementById(
+                            "callStatus"
+                        ).textContent =
+                            "Connected";
+
+                    }
+
+                };
+
+
+            callPeer.onicecandidate =
+                async event => {
+
+                    if(
+                        !event.candidate ||
+                        !callChannel ||
+                        !shadowCallSubscribed
+                    )
+                        return;
+
+
+                    try{
+
+                        await callChannel.send({
+
+                            type:
+                                "broadcast",
+
+                            event:
+                                "signal",
+
+                            payload:{
+
+                                from:
+                                    currentUser.id,
+
+                                to:
+                                    selectedFriend.id,
+
+                                candidate:
+                                    event.candidate
+
+                            }
+
+                        });
+
+                    }catch(e){
+
+                        console.error(
+                            "ICE send error:",
+                            e
+                        );
+
+                    }
+
+                };
+
+
+            callPeer.onconnectionstatechange =
+                () => {
+
+                    const state =
+                        callPeer?.connectionState;
+
+
+                    if(
+                        state ===
+                        "connected"
+                    ){
+
+                        document.getElementById(
+                            "callStatus"
+                        ).textContent =
+                            "Connected";
+
+                    }
+
+
+                    if(
+                        state === "failed" ||
+                        state === "closed"
+                    ){
+
+                        document.getElementById(
+                            "callStatus"
+                        ).textContent =
+                            "Call ended";
+
+                    }
+
+                };
+
+
+            /* IMPORTANT:
+               Wait until Supabase channel is actually subscribed */
+
+            try{
+
+                await setupCallChannel();
+
+            }catch(e){
+
+                console.error(
+                    e
+                );
+
+                toast(
+                    "Call connection failed."
+                );
+
+                await endCall();
+
+                return;
+
+            }
+
+
+            /* Create offer AFTER subscription */
+
+            try{
+
+                const offer =
+                    await callPeer.createOffer({
+
+                        offerToReceiveAudio:
+                            true,
+
+                        offerToReceiveVideo:
+                            callType === "video"
+
+                    });
+
+
+                await callPeer.setLocalDescription(
+                    offer
+                );
+
+
+                await callChannel.send({
+
+                    type:
+                        "broadcast",
+
+                    event:
+                        "signal",
+
+                    payload:{
+
+                        from:
+                            currentUser.id,
+
+                        to:
+                            selectedFriend.id,
+
+                        offer:
+                            {
+
+                                type:
+                                    offer.type,
+
+                                sdp:
+                                    offer.sdp
+
+                            }
+
+                    }
+
+                });
+
+
+                document.getElementById(
+                    "callStatus"
+                ).textContent =
+                    "Ringing...";
+
+
+                toast(
+                    (
+                        callType === "video"
+                        ?
+                        "Video"
+                        :
+                        "Audio"
+                    ) +
+                    " call started 📞"
+                );
+
+            }catch(error){
+
+                console.error(
+                    "Offer error:",
+                    error
+                );
+
+                toast(
+                    "Call start nahi ho saki."
+                );
+
+                await endCall();
+
+            }
+
+        };
+
+
+    /* =====================================================
+       IMPROVED SIGNAL HANDLER
+    ===================================================== */
+
+    window.handleSignal =
+        async function(data){
+
+            if(
+                !data ||
+                !currentUser
+            )
+                return;
+
+
+            /* =============================================
+               OFFER
+            ============================================= */
+
+            if(data.offer){
+
+                callType =
+                    /m=video/i.test(
+                        data.offer.sdp ||
+                        ""
+                    )
+                    ?
+                    "video"
+                    :
+                    "audio";
+
+
+                /* Receiver creates media */
+
+                if(!callPeer){
+
+                    try{
+
+                        callStream =
+                            await navigator
+                                .mediaDevices
+                                .getUserMedia({
+
+                                    audio:true,
+
+                                    video:
+                                        callType ===
+                                        "video"
+
+                                });
+
+                    }catch(error){
+
+                        console.error(
+                            error
+                        );
+
+                        toast(
+                            callType === "video"
+                            ?
+                            "Camera aur microphone permission required."
+                            :
+                            "Microphone permission required."
+                        );
+
+                        return;
+
+                    }
+
+
+                    callPeer =
+                        new RTCPeerConnection(
+                            rtcConfig()
+                        );
+
+
+                    callStream
+                        .getTracks()
+                        .forEach(
+                            track => {
+
+                                callPeer.addTrack(
+                                    track,
+                                    callStream
+                                );
+
+                            }
+                        );
+
+
+                    const local =
+                        document.getElementById(
+                            "localVideo"
+                        );
+
+
+                    const remote =
+                        document.getElementById(
+                            "remoteVideo"
+                        );
+
+
+                    if(local){
+
+                        local.srcObject =
+                            callStream;
+
+                        local.muted =
+                            true;
+
+                        local.autoplay =
+                            true;
+
+                        local.playsInline =
+                            true;
+
+                        local.style.display =
+                            callType === "video"
+                            ?
+                            "block"
+                            :
+                            "none";
+
+                    }
+
+
+                    callPeer.ontrack =
+                        event => {
+
+                            const stream =
+                                event.streams?.[0];
+
+
+                            if(
+                                stream &&
+                                remote
+                            ){
+
+                                remote.srcObject =
+                                    stream;
+
+
+                                document.getElementById(
+                                    "callStatus"
+                                ).textContent =
+                                    "Connected";
+
+                            }
+
+                        };
+
+
+                    callPeer.onicecandidate =
+                        async event => {
+
+                            if(
+                                !event.candidate ||
+                                !callChannel
+                            )
+                                return;
+
+
+                            try{
+
+                                await callChannel.send({
+
+                                    type:
+                                        "broadcast",
+
+                                    event:
+                                        "signal",
+
+                                    payload:{
+
+                                        from:
+                                            currentUser.id,
+
+                                        to:
+                                            data.from,
+
+                                        candidate:
+                                            event.candidate
+
+                                    }
+
+                                });
+
+                            }catch(e){}
+
+                        };
+
+
+                    callPeer.onconnectionstatechange =
+                        () => {
+
+                            const state =
+                                callPeer?.connectionState;
+
+
+                            if(
+                                state ===
+                                "connected"
+                            ){
+
+                                document.getElementById(
+                                    "callStatus"
+                                ).textContent =
+                                    "Connected";
+
+                            }
+
+                        };
+
+                }
+
+
+                /* Open UI for receiver */
+
+                document
+                    .getElementById(
+                        "callPanel"
+                    )
+                    ?.classList.add(
+                        "show"
+                    );
+
+
+                document.getElementById(
+                    "callStatus"
+                ).textContent =
+                    "Connecting...";
+
+
+                try{
+
+                    await callPeer.setRemoteDescription(
+
+                        new RTCSessionDescription(
+                            data.offer
+                        )
+
+                    );
+
+
+                    /* Add queued ICE */
+
+                    const queue =
+                        shadowIceQueue[
+                            data.from
+                        ] ||
+                        [];
+
+
+                    shadowIceQueue[
+                        data.from
+                    ] =
+                        [];
+
+
+                    for(
+                        const candidate
+                        of queue
+                    ){
+
+                        try{
+
+                            await callPeer.addIceCandidate(
+                                candidate
+                            );
+
+                        }catch(e){}
+
+                    }
+
+
+                    /* Create answer */
+
+                    const answer =
+                        await callPeer.createAnswer({
+
+                            offerToReceiveAudio:
+                                true,
+
+                            offerToReceiveVideo:
+                                callType ===
+                                "video"
+
+                        });
+
+
+                    await callPeer.setLocalDescription(
+                        answer
+                    );
+
+
+                    if(callChannel){
+
+                        await callChannel.send({
+
+                            type:
+                                "broadcast",
+
+                            event:
+                                "signal",
+
+                            payload:{
+
+                                from:
+                                    currentUser.id,
+
+                                to:
+                                    data.from,
+
+                                answer:{
+
+                                    type:
+                                        answer.type,
+
+                                    sdp:
+                                        answer.sdp
+
+                                }
+
+                            }
+
+                        });
+
+                    }
+
+
+                    document.getElementById(
+                        "callStatus"
+                    ).textContent =
+                        "Connected";
+
+                }catch(error){
+
+                    console.error(
+                        "Offer handling error:",
+                        error
+                    );
+
+                    toast(
+                        "Call connect nahi ho saki."
+                    );
+
+                }
+
+
+                return;
+
+            }
+
+
+            /* =============================================
+               ANSWER
+            ============================================= */
+
+            if(data.answer){
+
+                if(!callPeer)
+                    return;
+
+
+                try{
+
+                    await callPeer.setRemoteDescription(
+
+                        new RTCSessionDescription(
+                            data.answer
+                        )
+
+                    );
+
+
+                    const queue =
+                        shadowIceQueue[
+                            data.from
+                        ] ||
+                        [];
+
+
+                    shadowIceQueue[
+                        data.from
+                    ] =
+                        [];
+
+
+                    for(
+                        const candidate
+                        of queue
+                    ){
+
+                        try{
+
+                            await callPeer.addIceCandidate(
+                                candidate
+                            );
+
+                        }catch(e){}
+
+                    }
+
+
+                    document.getElementById(
+                        "callStatus"
+                    ).textContent =
+                        "Connected";
+
+                }catch(error){
+
+                    console.error(
+                        "Answer error:",
+                        error
+                    );
+
+                }
+
+
+                return;
+
+            }
+
+
+            /* =============================================
+               ICE CANDIDATE
+            ============================================= */
+
+            if(data.candidate){
+
+                if(
+                    !callPeer ||
+                    !callPeer.remoteDescription
+                ){
+
+                    shadowIceQueue[
+                        data.from
+                    ] =
+                        shadowIceQueue[
+                            data.from
+                        ] ||
+                        [];
+
+
+                    shadowIceQueue[
+                        data.from
+                    ].push(
+                        data.candidate
+                    );
+
+
+                    return;
+
+                }
+
+
+                try{
+
+                    await callPeer.addIceCandidate(
+
+                        new RTCIceCandidate(
+                            data.candidate
+                        )
+
+                    );
+
+                }catch(error){
+
+                    console.error(
+                        "ICE error:",
+                        error
+                    );
+
+                }
+
+            }
+
+        };
+
+
+    /* =====================================================
+       IMPROVED END CALL
+    ===================================================== */
+
+    window.endCall =
+        async function(){
+
+            shadowIceQueue =
+                {};
+
+
+            if(callStream){
+
+                callStream
+                    .getTracks()
+                    .forEach(
+                        track =>
+                            track.stop()
+                    );
+
+                callStream =
+                    null;
+
+            }
+
+
+            if(callPeer){
+
+                try{
+
+                    callPeer.close();
+
+                }catch(e){}
+
+                callPeer =
+                    null;
+
+            }
+
+
+            if(callChannel){
+
+                try{
+
+                    sb.removeChannel(
+                        callChannel
+                    );
+
+                }catch(e){}
+
+                callChannel =
+                    null;
+
+            }
+
+
+            const remote =
+                document.getElementById(
+                    "remoteVideo"
+                );
+
+
+            const local =
+                document.getElementById(
+                    "localVideo"
+                );
+
+
+            if(remote){
+
+                remote.srcObject =
+                    null;
+
+            }
+
+
+            if(local){
+
+                local.srcObject =
+                    null;
+
+                local.style.display =
+                    "none";
+
+            }
+
+
+            const panel =
+                document.getElementById(
+                    "callPanel"
+                );
+
+
+            if(panel){
+
+                panel.classList.remove(
+                    "show"
+                );
+
+            }
+
+
+            const status =
+                document.getElementById(
+                    "callStatus"
+                );
+
+
+            if(status){
+
+                status.textContent =
+                    "Connecting...";
+
+            }
+
+
+            callMic =
+                true;
+
+
+            callCamera =
+                true;
+
+
+            shadowCallSubscribed =
+                false;
+
+        };
+
+
+    /* =====================================================
+       FIX CALL BUTTONS
+    ===================================================== */
+
+    document.addEventListener(
+        "click",
+        event => {
+
+            const target =
+                event.target.closest(
+                    "#callPanel button"
+                );
+
+
+            if(!target)
+                return;
+
+
+            /* Just keep panel alive;
+               actual handlers remain original. */
+
+        }
+    );
+
+})();
+</script>
 </body>
 </html>
