@@ -11907,6 +11907,791 @@ window.addEventListener(
 );
 
 </script>
+    /* =========================================================
+   NOTIFICATION SYSTEM - FRONTEND
+========================================================= */
+
+let notificationChannel = null;
+let notificationItems = [];
+let notificationAudioContext = null;
+
+
+/* =========================
+   SOUND
+========================= */
+
+function playNotificationSound(){
+
+    try{
+
+        if(!notificationAudioContext){
+
+            notificationAudioContext =
+                new (
+                    window.AudioContext ||
+                    window.webkitAudioContext
+                )();
+
+        }
+
+        const ctx =
+            notificationAudioContext;
+
+        if(ctx.state === "suspended"){
+            ctx.resume();
+        }
+
+        const oscillator =
+            ctx.createOscillator();
+
+        const gain =
+            ctx.createGain();
+
+        oscillator.type = "sine";
+
+        oscillator.frequency.setValueAtTime(
+            880,
+            ctx.currentTime
+        );
+
+        oscillator.frequency.exponentialRampToValueAtTime(
+            520,
+            ctx.currentTime + 0.18
+        );
+
+        gain.gain.setValueAtTime(
+            0.0001,
+            ctx.currentTime
+        );
+
+        gain.gain.exponentialRampToValueAtTime(
+            0.12,
+            ctx.currentTime + 0.02
+        );
+
+        gain.gain.exponentialRampToValueAtTime(
+            0.0001,
+            ctx.currentTime + 0.22
+        );
+
+        oscillator.connect(gain);
+
+        gain.connect(ctx.destination);
+
+        oscillator.start();
+
+        oscillator.stop(
+            ctx.currentTime + 0.24
+        );
+
+    }catch(e){}
+
+}
+
+
+/* =========================
+   LOAD NOTIFICATIONS
+========================= */
+
+async function loadNotifications(){
+
+    if(!currentUser)
+        return;
+
+
+    const {
+        data,
+        error
+    } =
+        await sb
+            .from("notifications")
+            .select(`
+                id,
+                recipient_id,
+                actor_id,
+                type,
+                message,
+                post_id,
+                comment_id,
+                created_at,
+                read
+            `)
+            .eq(
+                "recipient_id",
+                currentUser.id
+            )
+            .order(
+                "created_at",
+                {
+                    ascending:false
+                }
+            )
+            .limit(100);
+
+
+    if(error){
+
+        console.error(
+            "Notification load error:",
+            error
+        );
+
+        return;
+    }
+
+
+    notificationItems =
+        data || [];
+
+
+    updateNotificationDot();
+
+}
+
+
+/* =========================
+   NOTIFICATION DOT
+========================= */
+
+function updateNotificationDot(){
+
+    const dots =
+        document.querySelectorAll(
+            ".notification-dot"
+        );
+
+
+    const unread =
+        notificationItems.filter(
+            n => !n.read
+        ).length;
+
+
+    dots.forEach(
+        dot=>{
+            dot.style.display =
+                unread > 0
+                ?
+                "block"
+                :
+                "none";
+        }
+    );
+
+}
+
+
+/* =========================
+   OPEN NOTIFICATION PANEL
+========================= */
+
+function openNotificationPanel(){
+
+    let old =
+        document.getElementById(
+            "notificationPanel"
+        );
+
+    if(old){
+
+        old.remove();
+
+        return;
+
+    }
+
+
+    const panel =
+        document.createElement(
+            "div"
+        );
+
+
+    panel.id =
+        "notificationPanel";
+
+
+    panel.style.cssText = `
+        position:fixed;
+        top:70px;
+        right:20px;
+        width:min(390px,calc(100vw - 30px));
+        max-height:70vh;
+        overflow-y:auto;
+        background:#fff;
+        border:1px solid var(--border);
+        border-radius:20px;
+        box-shadow:0 25px 70px rgba(7,17,31,.22);
+        z-index:500;
+        padding:12px;
+    `;
+
+
+    const unread =
+        notificationItems.filter(
+            n=>!n.read
+        ).length;
+
+
+    panel.innerHTML = `
+
+        <div
+            style="
+                display:flex;
+                justify-content:space-between;
+                align-items:center;
+                gap:8px;
+                margin-bottom:10px;
+            ">
+
+            <strong
+                style="font-size:16px;color:#075985">
+
+                Notifications
+
+            </strong>
+
+
+            ${
+                unread
+                ?
+                `
+                <button
+                    id="markAllNotifications"
+                    style="
+                        border:0;
+                        background:#eaf8ff;
+                        color:#0284c7;
+                        padding:7px 9px;
+                        border-radius:9px;
+                        font-size:10px;
+                        font-weight:800;
+                    ">
+
+                    Mark all read
+
+                </button>
+                `
+                :
+                ""
+            }
+
+        </div>
+
+
+        <div id="notificationList"></div>
+
+    `;
+
+
+    document.body.appendChild(
+        panel
+    );
+
+
+    const list =
+        panel.querySelector(
+            "#notificationList"
+        );
+
+
+    if(!notificationItems.length){
+
+        list.innerHTML = `
+            <div
+                style="
+                    text-align:center;
+                    padding:30px 10px;
+                    color:var(--muted);
+                    font-size:12px;
+                ">
+
+                No notifications yet 👻
+
+            </div>
+        `;
+
+    }else{
+
+        notificationItems.forEach(
+            notification=>{
+
+                const item =
+                    document.createElement(
+                        "button"
+                    );
+
+
+                item.style.cssText = `
+                    width:100%;
+                    border:0;
+                    border-bottom:1px solid #edf5fa;
+                    background:${
+                        notification.read
+                        ?
+                        "#fff"
+                        :
+                        "#f0faff"
+                    };
+                    padding:12px 8px;
+                    text-align:left;
+                    display:flex;
+                    gap:10px;
+                    align-items:flex-start;
+                    cursor:pointer;
+                `;
+
+
+                item.innerHTML = `
+
+                    <div
+                        style="
+                            width:10px;
+                            height:10px;
+                            flex:0 0 10px;
+                            margin-top:5px;
+                            border-radius:50%;
+                            background:${
+                                notification.read
+                                ?
+                                "#d6e3eb"
+                                :
+                                "#0ea5e9"
+                            };
+                        ">
+                    </div>
+
+
+                    <div style="flex:1">
+
+                        <div
+                            style="
+                                color:#16384d;
+                                font-size:12px;
+                                line-height:1.5;
+                            ">
+
+                            ${escapeHtml(
+                                notification.message ||
+                                "New notification"
+                            )}
+
+                        </div>
+
+
+                        <div
+                            style="
+                                color:#91a3b1;
+                                font-size:9px;
+                                margin-top:4px;
+                            ">
+
+                            ${formatTime(
+                                notification.created_at
+                            )}
+
+                        </div>
+
+                    </div>
+
+                `;
+
+
+                item.onclick =
+                    async ()=>{
+                    
+                        await markNotificationRead(
+                            notification.id
+                        );
+
+
+                        if(
+                            notification.post_id
+                        ){
+
+                            panel.remove();
+
+
+                            const {
+                                data:post
+                            } =
+                                await sb
+                                    .from("posts")
+                                    .select("*")
+                                    .eq(
+                                        "id",
+                                        notification.post_id
+                                    )
+                                    .maybeSingle();
+
+
+                            if(post){
+
+                                const {
+                                    data:profile
+                                } =
+                                    await sb
+                                        .from("profiles")
+                                        .select("*")
+                                        .eq(
+                                            "id",
+                                            post.user_id
+                                        )
+                                        .maybeSingle();
+
+
+                                if(profile){
+
+                                    openProfilePostDetail(
+                                        post,
+                                        profile
+                                    );
+
+                                }
+
+                            }
+
+                        }
+
+                    };
+
+
+                list.appendChild(
+                    item
+                );
+
+            }
+        );
+
+    }
+
+
+    const markAll =
+        document.getElementById(
+            "markAllNotifications"
+        );
+
+
+    if(markAll){
+
+        markAll.onclick =
+            async event=>{
+
+                event.stopPropagation();
+
+
+                await markAllNotificationsRead();
+
+                panel.remove();
+
+                openNotificationPanel();
+
+            };
+
+    }
+
+
+    setTimeout(
+        ()=>{
+            document.addEventListener(
+                "click",
+                function outsideClick(e){
+
+                    const p =
+                        document.getElementById(
+                            "notificationPanel"
+                        );
+
+                    if(
+                        p &&
+                        !p.contains(e.target) &&
+                        !e.target.closest(".notification-btn") &&
+                        !e.target.closest("#notificationBellButton")
+                    ){
+
+                        p.remove();
+
+                        document.removeEventListener(
+                            "click",
+                            outsideClick
+                        );
+
+                    }
+
+                }
+            );
+        },
+        0
+    );
+
+}
+
+
+/* =========================
+   MARK ONE READ
+========================= */
+
+async function markNotificationRead(
+    id
+){
+
+    if(!currentUser)
+        return;
+
+
+    await sb
+        .from("notifications")
+        .update({
+            read:true,
+            read_at:new Date().toISOString()
+        })
+        .eq(
+            "id",
+            id
+        )
+        .eq(
+            "recipient_id",
+            currentUser.id
+        );
+
+
+    const item =
+        notificationItems.find(
+            n=>n.id === id
+        );
+
+
+    if(item)
+        item.read = true;
+
+
+    updateNotificationDot();
+
+}
+
+
+/* =========================
+   MARK ALL READ
+========================= */
+
+async function markAllNotificationsRead(){
+
+    if(!currentUser)
+        return;
+
+
+    await sb
+        .from("notifications")
+        .update({
+            read:true,
+            read_at:new Date().toISOString()
+        })
+        .eq(
+            "recipient_id",
+            currentUser.id
+        )
+        .eq(
+            "read",
+            false
+        );
+
+
+    notificationItems.forEach(
+        n=>{
+            n.read = true;
+        }
+    );
+
+
+    updateNotificationDot();
+
+}
+
+
+/* =========================
+   REALTIME
+========================= */
+
+function subscribeNotifications(){
+
+    if(notificationChannel){
+
+        try{
+            sb.removeChannel(
+                notificationChannel
+            );
+        }catch(e){}
+
+    }
+
+
+    if(!currentUser)
+        return;
+
+
+    notificationChannel =
+        sb
+            .channel(
+                "notifications-" +
+                currentUser.id
+            )
+            .on(
+                "postgres_changes",
+                {
+                    event:"INSERT",
+                    schema:"public",
+                    table:"notifications",
+                    filter:
+                        `recipient_id=eq.${currentUser.id}`
+                },
+                payload=>{
+
+                    const notification =
+                        payload.new;
+
+
+                    notificationItems.unshift(
+                        notification
+                    );
+
+
+                    notificationItems =
+                        notificationItems.slice(
+                            0,
+                            100
+                        );
+
+
+                    updateNotificationDot();
+
+                    playNotificationSound();
+
+
+                    toast(
+                        notification.message ||
+                        "New notification 🔔"
+                    );
+
+
+                    if(
+                        "Notification" in window &&
+                        Notification.permission ===
+                        "granted" &&
+                        document.hidden
+                    ){
+
+                        try{
+
+                            new Notification(
+                                "Shadow Chat 🔔",
+                                {
+                                    body:
+                                        notification.message ||
+                                        "New notification"
+                                }
+                            );
+
+                        }catch(e){}
+
+                    }
+
+                }
+            )
+            .subscribe();
+
+}
+
+
+/* =========================
+   REPLACE OLD BELL ACTION
+========================= */
+
+function setupNotificationButton(){
+
+    const buttons =
+        document.querySelectorAll(
+            ".notification-btn"
+        );
+
+
+    buttons.forEach(
+        button=>{
+
+            button.id =
+                "notificationBellButton";
+
+
+            button.onclick =
+                event=>{
+
+                    event.stopPropagation();
+
+                    openNotificationPanel();
+
+                };
+
+        }
+    );
+
+}
+
+
+/* =========================
+   START NOTIFICATIONS
+========================= */
+
+async function startNotificationSystem(){
+
+    await loadNotifications();
+
+    subscribeNotifications();
+
+    setupNotificationButton();
+
+}
+
+
+const oldEnterApp =
+    window.enterApp;
+
+
+window.enterApp =
+    async function(){
+
+        await oldEnterApp();
+
+        if(currentUser){
+
+            await startNotificationSystem();
+
+        }
+
+    };
+
+
+/* =========================
+   ALSO START AFTER LOAD
+========================= */
+
+window.addEventListener(
+    "load",
+    ()=>{
+        
+        setTimeout(
+            ()=>{
+
+                if(currentUser){
+
+                    startNotificationSystem();
+
+                }
+
+            },
+            1500
+        );
+
+    }
+);
 
 </body>
 </html>
