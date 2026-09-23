@@ -11907,6 +11907,4136 @@ window.addEventListener(
 );
 
 </script>
-  
+    <script>
+/* =========================================================
+   SHADOW CHAT - END ONLY SAFE UPGRADE
+   Paste this ONE block before </body>.
+   It keeps the existing app and adds features on top.
+========================================================= */
+(() => {
+
+    if (window.__shadowEndOnlyUpgradeLoaded) return;
+    window.__shadowEndOnlyUpgradeLoaded = true;
+
+    /* =====================================================
+       SMALL HELPERS
+    ===================================================== */
+
+    const wait = ms => new Promise(resolve => setTimeout(resolve, ms));
+
+    function esc(v){
+        return typeof escapeHtml === "function"
+            ? escapeHtml(v)
+            : String(v ?? "")
+                .replace(/&/g,"&amp;")
+                .replace(/</g,"&lt;")
+                .replace(/>/g,"&gt;")
+                .replace(/"/g,"&quot;")
+                .replace(/'/g,"&#039;");
+    }
+
+    function say(msg){
+        if (typeof toast === "function") toast(msg);
+    }
+
+    /* =====================================================
+       1) NORMAL + TOPBAR USER SEARCH
+    ===================================================== */
+
+    function addFriendsSearchButton(){
+        const box = document.querySelector("#page-friends .search-box");
+        const input = document.getElementById("userSearch");
+
+        if(
+            !box ||
+            !input ||
+            document.getElementById("shadowNormalSearchBtn")
+        ) return;
+
+        box.style.display = "flex";
+        box.style.gap = "8px";
+
+        input.style.flex = "1";
+        input.style.minWidth = "0";
+
+        const button = document.createElement("button");
+
+        button.id =
+            "shadowNormalSearchBtn";
+
+        button.className =
+            "blue-action";
+
+        button.type =
+            "button";
+
+        button.textContent =
+            "🔎 Search";
+
+        button.style.cssText =
+            "padding:12px 14px;border-radius:14px;white-space:nowrap;";
+
+        button.onclick =
+            () => searchUsers();
+
+        box.appendChild(
+            button
+        );
+
+        input.addEventListener(
+            "keydown",
+            e => {
+
+                if(e.key === "Enter"){
+
+                    e.preventDefault();
+
+                    searchUsers();
+
+                }
+
+            }
+        );
+
+    }
+
+
+    function openGlobalSearch(){
+
+        document
+            .getElementById(
+                "shadowGlobalSearch"
+            )
+            ?.remove();
+
+
+        const modal =
+            document.createElement(
+                "div"
+            );
+
+
+        modal.id =
+            "shadowGlobalSearch";
+
+        modal.className =
+            "modal";
+
+        modal.style.display =
+            "flex";
+
+
+        modal.innerHTML = `
+
+            <div
+                style="
+                    width:100%;
+                    max-width:620px;
+                    max-height:85vh;
+                    background:#fff;
+                    border-radius:24px;
+                    padding:18px;
+                    box-shadow:0 30px 80px rgba(0,0,0,.3);
+                    overflow:hidden;
+                ">
+
+                <div
+                    style="
+                        display:flex;
+                        align-items:center;
+                        justify-content:space-between;
+                        gap:10px;
+                        margin-bottom:12px;
+                    ">
+
+                    <h2
+                        style="
+                            font-size:19px;
+                            color:#075985;
+                        ">
+
+                        🔎 Search Users
+
+                    </h2>
+
+
+                    <button
+                        class="close-modal"
+                        id="shadowGlobalSearchClose">
+
+                        ✕
+
+                    </button>
+
+                </div>
+
+
+                <div
+                    style="
+                        display:flex;
+                        gap:8px;
+                        margin-bottom:12px;
+                    ">
+
+                    <input
+                        id="shadowGlobalSearchInput"
+                        class="search-input"
+                        style="flex:1;"
+                        placeholder="Username or name..."
+                        autocomplete="off">
+
+
+                    <button
+                        id="shadowGlobalSearchBtn"
+                        class="blue-action"
+                        style="
+                            padding:11px 14px;
+                            border-radius:14px;
+                        ">
+
+                        Search
+
+                    </button>
+
+                </div>
+
+
+                <div
+                    id="shadowGlobalSearchResults"
+                    style="
+                        max-height:58vh;
+                        overflow-y:auto;
+                    ">
+                </div>
+
+            </div>
+        `;
+
+
+        document.body.appendChild(
+            modal
+        );
+
+
+        const input =
+            document.getElementById(
+                "shadowGlobalSearchInput"
+            );
+
+
+        const results =
+            document.getElementById(
+                "shadowGlobalSearchResults"
+            );
+
+
+        async function run(){
+
+            const q =
+                input.value.trim();
+
+
+            if(!q){
+
+                results.innerHTML =
+                    `
+                    <div
+                        style="
+                            padding:25px;
+                            text-align:center;
+                            color:#7890a2;
+                            font-size:12px;
+                        ">
+
+                        Username ya name enter karo.
+
+                    </div>
+                    `;
+
+                return;
+
+            }
+
+
+            results.innerHTML =
+                `
+                <div
+                    style="
+                        padding:25px;
+                        text-align:center;
+                        color:#7890a2;
+                        font-size:12px;
+                    ">
+
+                    Searching...
+
+                </div>
+                `;
+
+
+            const [
+                usernameResult,
+                displayResult
+            ] =
+                await Promise.all([
+
+                    sb
+                        .from("profiles")
+                        .select("*")
+                        .ilike(
+                            "username",
+                            `%${q}%`
+                        )
+                        .neq(
+                            "id",
+                            currentUser.id
+                        )
+                        .limit(
+                            20
+                        ),
+
+                    sb
+                        .from("profiles")
+                        .select("*")
+                        .ilike(
+                            "display_name",
+                            `%${q}%`
+                        )
+                        .neq(
+                            "id",
+                            currentUser.id
+                        )
+                        .limit(
+                            20
+                        )
+
+                ]);
+
+
+            if(
+                usernameResult.error ||
+                displayResult.error
+            ){
+
+                results.innerHTML =
+                    `
+                    <div
+                        style="
+                            padding:20px;
+                            color:#ef4444;
+                            font-size:12px;
+                        ">
+
+                        Search failed.
+
+                    </div>
+                    `;
+
+                return;
+
+            }
+
+
+            const map =
+                new Map();
+
+
+            [
+                ...(usernameResult.data || []),
+                ...(displayResult.data || [])
+            ]
+            .forEach(
+                p => {
+
+                    if(
+                        !map.has(
+                            p.id
+                        )
+                    ){
+
+                        map.set(
+                            p.id,
+                            p
+                        );
+
+                    }
+
+                }
+            );
+
+
+            const users =
+                [
+                    ...map.values()
+                ];
+
+
+            if(!users.length){
+
+                results.innerHTML =
+                    `
+                    <div
+                        style="
+                            padding:25px;
+                            text-align:center;
+                            color:#7890a2;
+                            font-size:12px;
+                        ">
+
+                        No user found 👻
+
+                    </div>
+                    `;
+
+                return;
+
+            }
+
+
+            results.innerHTML =
+                "";
+
+
+            users.forEach(
+                user => {
+
+                    const item =
+                        document.createElement(
+                            "div"
+                        );
+
+
+                    item.style.cssText =
+                        `
+                        display:flex;
+                        align-items:center;
+                        gap:10px;
+                        padding:11px;
+                        border:1px solid #d9edf8;
+                        border-radius:15px;
+                        margin-bottom:8px;
+                        background:#fbfeff;
+                        `;
+
+
+                    item.innerHTML = `
+
+                        <button
+                            data-shadow-profile="${esc(user.id)}"
+                            style="
+                                border:0;
+                                background:none;
+                                padding:0;
+                                cursor:pointer;
+                            ">
+
+                            ${
+                                typeof avatarHtml ===
+                                "function"
+                                ?
+                                avatarHtml(user)
+                                :
+                                "👻"
+                            }
+
+                        </button>
+
+
+                        <div
+                            style="
+                                flex:1;
+                                min-width:0;
+                            ">
+
+                            <div
+                                style="
+                                    font-weight:800;
+                                    font-size:13px;
+                                ">
+
+                                ${
+                                    typeof verifiedName ===
+                                    "function"
+                                    ?
+                                    verifiedName(user)
+                                    :
+                                    esc(
+                                        user.display_name ||
+                                        user.username
+                                    )
+                                }
+
+                            </div>
+
+
+                            <div
+                                style="
+                                    font-size:10px;
+                                    color:#7890a2;
+                                ">
+
+                                @${esc(
+                                    user.username ||
+                                    "user"
+                                )}
+
+                            </div>
+
+                        </div>
+
+
+                        <button
+                            data-shadow-profile="${esc(user.id)}"
+                            class="blue-action"
+                            style="
+                                padding:8px 10px;
+                                border-radius:10px;
+                            ">
+
+                            Profile
+
+                        </button>
+
+                    `;
+
+
+                    item
+                        .querySelectorAll(
+                            "[data-shadow-profile]"
+                        )
+                        .forEach(
+                            b => {
+
+                                b.onclick =
+                                    () => {
+
+                                        modal.remove();
+
+                                        openUserProfile(
+                                            user.id
+                                        );
+
+                                    };
+
+                            }
+                        );
+
+
+                    results.appendChild(
+                        item
+                    );
+
+                }
+            );
+
+        }
+
+
+        document
+            .getElementById(
+                "shadowGlobalSearchBtn"
+            )
+            .onclick =
+                run;
+
+
+        document
+            .getElementById(
+                "shadowGlobalSearchClose"
+            )
+            .onclick =
+                () => modal.remove();
+
+
+        input.addEventListener(
+            "keydown",
+            e => {
+
+                if(e.key === "Enter"){
+
+                    e.preventDefault();
+
+                    run();
+
+                }
+
+            }
+        );
+
+
+        modal.onclick =
+            e => {
+
+                if(
+                    e.target ===
+                    modal
+                ){
+
+                    modal.remove();
+
+                }
+
+            };
+
+
+        input.focus();
+
+    }
+
+
+    function addTopbarSearch(){
+
+        const actions =
+            document.querySelector(
+                ".topbar-actions"
+            );
+
+
+        if(
+            !actions ||
+            document.getElementById(
+                "shadowTopSearchBtn"
+            )
+        ) return;
+
+
+        const b =
+            document.createElement(
+                "button"
+            );
+
+
+        b.id =
+            "shadowTopSearchBtn";
+
+        b.className =
+            "icon-btn";
+
+        b.type =
+            "button";
+
+        b.title =
+            "Search Users";
+
+        b.textContent =
+            "🔎";
+
+        b.onclick =
+            openGlobalSearch;
+
+
+        actions.insertBefore(
+            b,
+            actions.firstChild
+        );
+
+    }
+
+
+    /* =====================================================
+       2) NOTIFICATIONS + SOUND
+    ===================================================== */
+
+    let notificationChannel =
+        null;
+
+    let notificationRows =
+        [];
+
+    let audioCtx =
+        null;
+
+    let notificationsStarted =
+        false;
+
+
+    function unlockSound(){
+
+        try{
+
+            if(!audioCtx){
+
+                audioCtx =
+                    new (
+                        window.AudioContext ||
+                        window.webkitAudioContext
+                    )();
+
+            }
+
+
+            if(
+                audioCtx.state ===
+                "suspended"
+            ){
+
+                audioCtx.resume();
+
+            }
+
+        }catch(e){}
+
+    }
+
+
+    document.addEventListener(
+        "pointerdown",
+        unlockSound,
+        {
+            passive:true
+        }
+    );
+
+
+    function notificationSound(){
+
+        try{
+
+            unlockSound();
+
+
+            if(!audioCtx)
+                return;
+
+
+            const o =
+                audioCtx.createOscillator();
+
+
+            const g =
+                audioCtx.createGain();
+
+
+            o.type =
+                "sine";
+
+
+            o.frequency.setValueAtTime(
+                900,
+                audioCtx.currentTime
+            );
+
+
+            o.frequency.exponentialRampToValueAtTime(
+                600,
+                audioCtx.currentTime + 0.18
+            );
+
+
+            g.gain.setValueAtTime(
+                0.0001,
+                audioCtx.currentTime
+            );
+
+
+            g.gain.exponentialRampToValueAtTime(
+                0.13,
+                audioCtx.currentTime + 0.02
+            );
+
+
+            g.gain.exponentialRampToValueAtTime(
+                0.0001,
+                audioCtx.currentTime + 0.23
+            );
+
+
+            o.connect(g);
+
+            g.connect(
+                audioCtx.destination
+            );
+
+
+            o.start();
+
+
+            o.stop(
+                audioCtx.currentTime + 0.24
+            );
+
+        }catch(e){}
+
+    }
+
+
+    async function loadNotificationRows(){
+
+        if(!currentUser)
+            return;
+
+
+        const {
+            data,
+            error
+        } =
+            await sb
+                .from("notifications")
+                .select(
+                    `
+                    id,
+                    recipient_id,
+                    actor_id,
+                    type,
+                    message,
+                    post_id,
+                    comment_id,
+                    created_at,
+                    read,
+                    read_at
+                    `
+                )
+                .eq(
+                    "recipient_id",
+                    currentUser.id
+                )
+                .order(
+                    "created_at",
+                    {
+                        ascending:false
+                    }
+                )
+                .limit(
+                    100
+                );
+
+
+        if(error){
+
+            console.error(
+                "Notifications:",
+                error
+            );
+
+            return;
+
+        }
+
+
+        notificationRows =
+            data || [];
+
+
+        updateNotificationDot();
+
+    }
+
+
+    function updateNotificationDot(){
+
+        const count =
+            notificationRows.filter(
+                n => !n.read
+            ).length;
+
+
+        document
+            .querySelectorAll(
+                ".notification-dot"
+            )
+            .forEach(
+                dot => {
+
+                    dot.style.display =
+                        count
+                        ?
+                        "block"
+                        :
+                        "none";
+
+                }
+            );
+
+    }
+
+
+    async function markOneNotification(
+        id
+    ){
+
+        if(!currentUser)
+            return;
+
+
+        await sb
+            .from("notifications")
+            .update({
+
+                read:true,
+
+                read_at:
+                    new Date()
+                        .toISOString()
+
+            })
+            .eq(
+                "id",
+                id
+            )
+            .eq(
+                "recipient_id",
+                currentUser.id
+            );
+
+
+        const n =
+            notificationRows.find(
+                x =>
+                    x.id ===
+                    id
+            );
+
+
+        if(n)
+            n.read =
+                true;
+
+
+        updateNotificationDot();
+
+    }
+
+
+    async function markAllNotifications(){
+
+        if(!currentUser)
+            return;
+
+
+        await sb
+            .from("notifications")
+            .update({
+
+                read:true,
+
+                read_at:
+                    new Date()
+                        .toISOString()
+
+            })
+            .eq(
+                "recipient_id",
+                currentUser.id
+            )
+            .eq(
+                "read",
+                false
+            );
+
+
+        notificationRows.forEach(
+            n => {
+
+                n.read =
+                    true;
+
+            }
+        );
+
+
+        updateNotificationDot();
+
+    }
+
+
+    function openNotifications(){
+
+        const old =
+            document.getElementById(
+                "shadowNotificationPanel"
+            );
+
+
+        if(old){
+
+            old.remove();
+
+            return;
+
+        }
+
+
+        const panel =
+            document.createElement(
+                "div"
+            );
+
+
+        panel.id =
+            "shadowNotificationPanel";
+
+
+        panel.style.cssText =
+            `
+            position:fixed;
+            top:70px;
+            right:18px;
+            width:min(390px,calc(100vw - 24px));
+            max-height:72vh;
+            overflow-y:auto;
+            background:#fff;
+            border:1px solid #d9edf8;
+            border-radius:20px;
+            padding:12px;
+            z-index:99999;
+            box-shadow:0 25px 70px rgba(7,17,31,.25);
+            `;
+
+
+        panel.innerHTML = `
+
+            <div
+                style="
+                    display:flex;
+                    align-items:center;
+                    justify-content:space-between;
+                    gap:8px;
+                    margin-bottom:10px;
+                ">
+
+                <strong
+                    style="
+                        font-size:16px;
+                        color:#075985;
+                    ">
+
+                    🔔 Notifications
+
+                </strong>
+
+
+                <button
+                    id="shadowMarkAll"
+                    class="blue-action"
+                    style="
+                        padding:7px 9px;
+                        border-radius:9px;
+                        font-size:9px;
+                    ">
+
+                    Mark all read
+
+                </button>
+
+            </div>
+
+
+            <div
+                id="shadowNotificationList">
+            </div>
+
+        `;
+
+
+        document.body.appendChild(
+            panel
+        );
+
+
+        const list =
+            panel.querySelector(
+                "#shadowNotificationList"
+            );
+
+
+        if(
+            !notificationRows.length
+        ){
+
+            list.innerHTML =
+                `
+                <div
+                    style="
+                        padding:30px;
+                        text-align:center;
+                        color:#7890a2;
+                        font-size:12px;
+                    ">
+
+                    No notifications yet 👻
+
+                </div>
+                `;
+
+        }else{
+
+            notificationRows.forEach(
+                n => {
+
+                    const row =
+                        document.createElement(
+                            "div"
+                        );
+
+
+                    row.style.cssText =
+                        `
+                        display:flex;
+                        gap:9px;
+                        padding:11px 7px;
+                        border-bottom:1px solid #edf5fa;
+                        border-radius:10px;
+                        background:${n.read ? "#fff" : "#f0faff"};
+                        cursor:pointer;
+                        `;
+
+
+                    row.innerHTML =
+                        `
+
+                        <span
+                            style="
+                                width:9px;
+                                height:9px;
+                                flex:0 0 9px;
+                                margin-top:5px;
+                                border-radius:50%;
+                                background:${
+                                    n.read
+                                    ?
+                                    "#d7e3eb"
+                                    :
+                                    "#0ea5e9"
+                                };
+                            ">
+                        </span>
+
+
+                        <div
+                            style="
+                                min-width:0;
+                                flex:1;
+                            ">
+
+                            <div
+                                style="
+                                    font-size:12px;
+                                    line-height:1.5;
+                                    color:#17384d;
+                                ">
+
+                                ${esc(
+                                    n.message ||
+                                    "New notification"
+                                )}
+
+                            </div>
+
+
+                            <div
+                                style="
+                                    font-size:9px;
+                                    color:#8ca0ae;
+                                    margin-top:4px;
+                                ">
+
+                                ${
+                                    typeof formatDate ===
+                                    "function"
+                                    ?
+                                    formatDate(
+                                        n.created_at
+                                    )
+                                    :
+                                    ""
+                                }
+
+                                ·
+
+                                ${
+                                    typeof formatTime ===
+                                    "function"
+                                    ?
+                                    formatTime(
+                                        n.created_at
+                                    )
+                                    :
+                                    ""
+                                }
+
+                            </div>
+
+                        </div>
+
+                    `;
+
+
+                    row.onclick =
+                        async () => {
+
+                            await markOneNotification(
+                                n.id
+                            );
+
+
+                            panel.remove();
+
+
+                            if(
+                                n.post_id
+                            ){
+
+                                const {
+                                    data:post
+                                } =
+                                    await sb
+                                        .from("posts")
+                                        .select("*")
+                                        .eq(
+                                            "id",
+                                            n.post_id
+                                        )
+                                        .maybeSingle();
+
+
+                                if(post){
+
+                                    const {
+                                        data:profile
+                                    } =
+                                        await sb
+                                            .from("profiles")
+                                            .select("*")
+                                            .eq(
+                                                "id",
+                                                post.user_id
+                                            )
+                                            .maybeSingle();
+
+
+                                    if(
+                                        profile &&
+                                        typeof openProfilePostDetail ===
+                                        "function"
+                                    ){
+
+                                        openProfilePostDetail(
+                                            post,
+                                            profile
+                                        );
+
+                                    }
+
+                                }
+
+                            }else if(
+                                n.actor_id
+                            ){
+
+                                openUserProfile(
+                                    n.actor_id
+                                );
+
+                            }
+
+                        };
+
+
+                    list.appendChild(
+                        row
+                    );
+
+                }
+            );
+
+        }
+
+
+        panel
+            .querySelector(
+                "#shadowMarkAll"
+            )
+            .onclick =
+                async e => {
+
+                    e.stopPropagation();
+
+
+                    await markAllNotifications();
+
+
+                    panel.remove();
+
+
+                    openNotifications();
+
+                };
+
+
+        setTimeout(
+            () => {
+
+                document.addEventListener(
+                    "click",
+                    function outside(e){
+
+                        const p =
+                            document.getElementById(
+                                "shadowNotificationPanel"
+                            );
+
+
+                        if(!p){
+
+                            document.removeEventListener(
+                                "click",
+                                outside
+                            );
+
+                            return;
+
+                        }
+
+
+                        if(
+                            !p.contains(e.target) &&
+                            !e.target.closest(
+                                ".notification-btn"
+                            ) &&
+                            !e.target.closest(
+                                "#shadowNotificationBell"
+                            )
+                        ){
+
+                            p.remove();
+
+                            document.removeEventListener(
+                                "click",
+                                outside
+                            );
+
+                        }
+
+                    },
+                    {
+                        once:false
+                    }
+                );
+
+            },
+            0
+        );
+
+    }
+
+
+    function setupNotificationBell(){
+
+        let bell =
+            document.querySelector(
+                ".topbar-actions .icon-btn[onclick*='openPage']"
+            );
+
+
+        if(!bell){
+
+            const icons =
+                [
+                    ...document.querySelectorAll(
+                        ".topbar-actions .icon-btn"
+                    )
+                ];
+
+
+            bell =
+                icons.find(
+                    b =>
+                        (
+                            b.textContent ||
+                            ""
+                        )
+                        .includes(
+                            "🔔"
+                        )
+                );
+
+        }
+
+
+        if(!bell)
+            return;
+
+
+        bell.classList.add(
+            "notification-btn"
+        );
+
+
+        bell.id =
+            "shadowNotificationBell";
+
+
+        bell.removeAttribute(
+            "onclick"
+        );
+
+
+        bell.onclick =
+            e => {
+
+                e.stopPropagation();
+
+                openNotifications();
+
+            };
+
+    }
+
+
+    function subscribeNotifications(){
+
+        if(
+            !currentUser ||
+            notificationChannel
+        )
+            return;
+
+
+        notificationChannel =
+            sb
+                .channel(
+                    "shadow-notify-" +
+                    currentUser.id
+                )
+                .on(
+                    "postgres_changes",
+                    {
+                        event:
+                            "INSERT",
+
+                        schema:
+                            "public",
+
+                        table:
+                            "notifications",
+
+                        filter:
+                            `recipient_id=eq.${currentUser.id}`
+
+                    },
+                    payload => {
+
+                        const n =
+                            payload.new;
+
+
+                        if(!n)
+                            return;
+
+
+                        notificationRows.unshift(
+                            n
+                        );
+
+
+                        notificationRows =
+                            notificationRows.slice(
+                                0,
+                                100
+                            );
+
+
+                        updateNotificationDot();
+
+
+                        notificationSound();
+
+
+                        say(
+                            n.message ||
+                            "New notification 🔔"
+                        );
+
+
+                        if(
+                            document.hidden &&
+                            "Notification" in window &&
+                            Notification.permission ===
+                            "granted"
+                        ){
+
+                            try{
+
+                                new Notification(
+                                    "Shadow Chat 🔔",
+                                    {
+                                        body:
+                                            n.message ||
+                                            "New notification"
+                                    }
+                                );
+
+                            }catch(e){}
+
+                        }
+
+                    }
+                )
+                .subscribe();
+
+    }
+
+
+    async function startNotifications(){
+
+        if(
+            !currentUser ||
+            notificationsStarted
+        )
+            return;
+
+
+        notificationsStarted =
+            true;
+
+
+        setupNotificationBell();
+
+
+        await loadNotificationRows();
+
+
+        subscribeNotifications();
+
+    }
+
+
+    /* =====================================================
+       3) FRIEND REQUEST = SEND / REQUEST SENT / CANCEL
+    ===================================================== */
+
+    let friendRequestBusy =
+        false;
+
+
+    async function refreshFriendRequestButtons(){
+
+        if(!currentUser)
+            return;
+
+
+        const box =
+            document.getElementById(
+                "searchResults"
+            );
+
+
+        if(!box)
+            return;
+
+
+        const buttons =
+            [
+                ...box.querySelectorAll(
+                    "button"
+                )
+            ]
+            .filter(
+                b => {
+
+                    const text =
+                        (
+                            b.textContent ||
+                            ""
+                        ).trim();
+
+
+                    const click =
+                        b.getAttribute(
+                            "onclick"
+                        ) ||
+                        "";
+
+
+                    return (
+                        /Add Friend/i.test(
+                            text
+                        ) &&
+                        click.includes(
+                            "sendFriendRequest"
+                        )
+                    );
+
+                }
+            );
+
+
+        const ids =
+            buttons
+                .map(
+                    b => {
+
+                        const m =
+                            (
+                                b.getAttribute(
+                                    "onclick"
+                                ) ||
+                                ""
+                            )
+                            .match(
+                                /sendFriendRequest\(['"]([^'"]+)/
+                            );
+
+
+                        return m
+                            ?
+                            m[1]
+                            :
+                            null;
+
+                    }
+                )
+                .filter(
+                    Boolean
+                );
+
+
+        if(!ids.length)
+            return;
+
+
+        const {
+            data,
+            error
+        } =
+            await sb
+                .from("friend_requests")
+                .select(
+                    "receiver_id,status"
+                )
+                .eq(
+                    "sender_id",
+                    currentUser.id
+                )
+                .eq(
+                    "status",
+                    "pending"
+                )
+                .in(
+                    "receiver_id",
+                    ids
+                );
+
+
+        if(error)
+            return;
+
+
+        const pending =
+            new Set(
+                (
+                    data ||
+                    []
+                )
+                .map(
+                    x =>
+                        x.receiver_id
+                )
+            );
+
+
+        buttons.forEach(
+            button => {
+
+                const m =
+                    (
+                        button.getAttribute(
+                            "onclick"
+                        ) ||
+                        ""
+                    )
+                    .match(
+                        /sendFriendRequest\(['"]([^'"]+)/
+                    );
+
+
+                if(!m)
+                    return;
+
+
+                const id =
+                    m[1];
+
+
+                if(
+                    pending.has(
+                        id
+                    )
+                ){
+
+                    button.textContent =
+                        "Request Sent ✓";
+
+
+                    button.classList.remove(
+                        "green-action"
+                    );
+
+
+                    button.classList.add(
+                        "purple-action"
+                    );
+
+
+                    button.setAttribute(
+                        "onclick",
+                        ""
+                    );
+
+
+                    button.onclick =
+                        () =>
+                            cancelFriendRequest(
+                                id
+                            );
+
+
+                    button.title =
+                        "Click again to cancel request";
+
+                }else{
+
+                    button.textContent =
+                        "Add Friend";
+
+
+                    button.classList.remove(
+                        "purple-action"
+                    );
+
+
+                    button.classList.add(
+                        "green-action"
+                    );
+
+
+                    button.setAttribute(
+                        "onclick",
+                        ""
+                    );
+
+
+                    button.onclick =
+                        () =>
+                            sendFriendRequestSafe(
+                                id
+                            );
+
+                }
+
+            }
+        );
+
+    }
+
+
+    async function sendFriendRequestSafe(
+        receiverId
+    ){
+
+        if(friendRequestBusy)
+            return;
+
+
+        friendRequestBusy =
+            true;
+
+
+        try{
+
+            const {
+                error
+            } =
+                await sb
+                    .from("friend_requests")
+                    .insert({
+
+                        sender_id:
+                            currentUser.id,
+
+                        receiver_id:
+                            receiverId,
+
+                        status:
+                            "pending"
+
+                    });
+
+
+            if(error){
+
+                if(
+                    error.code ===
+                    "23505"
+                ){
+
+                    say(
+                        "Request already sent."
+                    );
+
+                }else{
+
+                    say(
+                        error.message
+                    );
+
+                }
+
+                return;
+
+            }
+
+
+            say(
+                "Request sent ✓"
+            );
+
+
+            if(
+                typeof searchUsers ===
+                "function"
+            ){
+
+                await searchUsers();
+
+            }
+
+        }finally{
+
+            friendRequestBusy =
+                false;
+
+        }
+
+    }
+
+
+    async function cancelFriendRequest(
+        receiverId
+    ){
+
+        const {
+            error
+        } =
+            await sb
+                .from("friend_requests")
+                .delete()
+                .eq(
+                    "sender_id",
+                    currentUser.id
+                )
+                .eq(
+                    "receiver_id",
+                    receiverId
+                )
+                .eq(
+                    "status",
+                    "pending"
+                );
+
+
+        if(error){
+
+            say(
+                "Request cancel nahi hui: " +
+                error.message
+            );
+
+            return;
+
+        }
+
+
+        say(
+            "Friend request cancelled."
+        );
+
+
+        if(
+            typeof searchUsers ===
+            "function"
+        ){
+
+            await searchUsers();
+
+        }
+
+    }
+
+
+    function watchSearchResults(){
+
+        const box =
+            document.getElementById(
+                "searchResults"
+            );
+
+
+        if(
+            !box ||
+            box.__shadowObserved
+        )
+            return;
+
+
+        box.__shadowObserved =
+            true;
+
+
+        const observer =
+            new MutationObserver(
+                () => {
+
+                    clearTimeout(
+                        box.__shadowRequestTimer
+                    );
+
+
+                    box.__shadowRequestTimer =
+                        setTimeout(
+                            refreshFriendRequestButtons,
+                            80
+                        );
+
+                }
+            );
+
+
+        observer.observe(
+            box,
+            {
+                childList:true,
+                subtree:true
+            }
+        );
+
+    }
+
+
+    /* =====================================================
+       4) FOLLOWERS / FOLLOWING PROFILE SECTION
+    ===================================================== */
+
+    async function buildFollowLists(
+        profile
+    ){
+
+        const actions =
+            document.getElementById(
+                "modalProfileActions"
+            );
+
+
+        if(!actions)
+            return;
+
+
+        document
+            .getElementById(
+                "shadowFollowLists"
+            )
+            ?.remove();
+
+
+        const wrap =
+            document.createElement(
+                "div"
+            );
+
+
+        wrap.id =
+            "shadowFollowLists";
+
+
+        wrap.style.cssText =
+            `
+            margin-top:12px;
+            border:1px solid var(--border);
+            border-radius:16px;
+            background:#fbfeff;
+            padding:10px;
+            `;
+
+
+        wrap.innerHTML = `
+
+            <div
+                style="
+                    display:flex;
+                    gap:6px;
+                    margin-bottom:9px;
+                ">
+
+                <button
+                    id="shadowFollowingTab"
+                    class="blue-action"
+                    style="
+                        flex:1;
+                        padding:8px;
+                        border-radius:10px;
+                    ">
+
+                    Following
+
+                </button>
+
+
+                <button
+                    id="shadowFollowersTab"
+                    class="edit-profile-btn"
+                    style="
+                        flex:1;
+                        padding:8px;
+                        border-radius:10px;
+                    ">
+
+                    Followers
+
+                </button>
+
+            </div>
+
+
+            <div
+                id="shadowFollowList">
+            </div>
+
+        `;
+
+
+        actions.insertAdjacentElement(
+            "afterend",
+            wrap
+        );
+
+
+        const {
+            data:profiles,
+            error
+        } =
+            await sb
+                .from("profiles")
+                .select("*");
+
+
+        if(error)
+            return;
+
+
+        const followingIds =
+            Array.isArray(
+                profile.social_following
+            )
+            ?
+            profile.social_following
+            :
+            [];
+
+
+        const followers =
+            (
+                profiles ||
+                []
+            )
+            .filter(
+                p =>
+
+                    Array.isArray(
+                        p.social_following
+                    ) &&
+
+                    p.social_following.includes(
+                        profile.id
+                    )
+
+            );
+
+
+        const following =
+            (
+                profiles ||
+                []
+            )
+            .filter(
+                p =>
+                    followingIds.includes(
+                        p.id
+                    )
+            );
+
+
+        const list =
+            wrap.querySelector(
+                "#shadowFollowList"
+            );
+
+
+        function render(
+            items,
+            title
+        ){
+
+            if(!items.length){
+
+                list.innerHTML =
+                    `
+                    <div
+                        style="
+                            padding:18px;
+                            text-align:center;
+                            color:#7890a2;
+                            font-size:11px;
+                        ">
+
+                        No ${title.toLowerCase()}
+                        yet.
+
+                    </div>
+                    `;
+
+                return;
+
+            }
+
+
+            list.innerHTML =
+                "";
+
+
+            items.forEach(
+                user => {
+
+                    const row =
+                        document.createElement(
+                            "div"
+                        );
+
+
+                    row.style.cssText =
+                        `
+                        display:flex;
+                        align-items:center;
+                        gap:9px;
+                        padding:8px 2px;
+                        border-bottom:1px solid #edf5fa;
+                        `;
+
+
+                    row.innerHTML = `
+
+                        <button
+                            data-follow-profile="${esc(user.id)}"
+                            style="
+                                border:0;
+                                background:none;
+                                padding:0;
+                                cursor:pointer;
+                            ">
+
+                            ${
+                                typeof avatarHtml ===
+                                "function"
+                                ?
+                                avatarHtml(user)
+                                :
+                                "👻"
+                            }
+
+                        </button>
+
+
+                        <div
+                            style="
+                                flex:1;
+                                min-width:0;
+                            ">
+
+                            <div
+                                style="
+                                    font-size:12px;
+                                    font-weight:800;
+                                ">
+
+                                ${
+                                    typeof verifiedName ===
+                                    "function"
+                                    ?
+                                    verifiedName(user)
+                                    :
+                                    esc(
+                                        user.display_name ||
+                                        user.username
+                                    )
+                                }
+
+                            </div>
+
+
+                            <div
+                                style="
+                                    font-size:9px;
+                                    color:#7890a2;
+                                ">
+
+                                @${esc(
+                                    user.username ||
+                                    "user"
+                                )}
+
+                            </div>
+
+                        </div>
+
+
+                        ${
+                            user.id !==
+                            currentUser.id
+                            ?
+                            `
+                            <button
+                                class="blue-action"
+                                data-follow-action="${esc(user.id)}"
+                                style="
+                                    padding:7px 9px;
+                                    border-radius:9px;
+                                    font-size:9px;
+                                ">
+
+                                Follow
+
+                            </button>
+                            `
+                            :
+                            ""
+                        }
+
+                    `;
+
+
+                    row
+                        .querySelector(
+                            "[data-follow-profile]"
+                        )
+                        ?.addEventListener(
+                            "click",
+                            () =>
+                                openUserProfile(
+                                    user.id
+                                )
+                        );
+
+
+                    row
+                        .querySelector(
+                            "[data-follow-action]"
+                        )
+                        ?.addEventListener(
+                            "click",
+                            async e => {
+
+                                e.stopPropagation();
+
+                                await followUser(
+                                    user.id
+                                );
+
+                                await buildFollowLists(
+                                    profile
+                                );
+
+                            }
+                        );
+
+
+                    list.appendChild(
+                        row
+                    );
+
+                }
+            );
+
+        }
+
+
+        wrap
+            .querySelector(
+                "#shadowFollowingTab"
+            )
+            .onclick =
+                () => {
+
+                    wrap
+                        .querySelector(
+                            "#shadowFollowingTab"
+                        )
+                        .className =
+                            "blue-action";
+
+
+                    wrap
+                        .querySelector(
+                            "#shadowFollowersTab"
+                        )
+                        .className =
+                            "edit-profile-btn";
+
+
+                    render(
+                        following,
+                        "Following"
+                    );
+
+                };
+
+
+        wrap
+            .querySelector(
+                "#shadowFollowersTab"
+            )
+            .onclick =
+                () => {
+
+                    wrap
+                        .querySelector(
+                            "#shadowFollowersTab"
+                        )
+                        .className =
+                            "blue-action";
+
+
+                    wrap
+                        .querySelector(
+                            "#shadowFollowingTab"
+                        )
+                        .className =
+                            "edit-profile-btn";
+
+
+                    render(
+                        followers,
+                        "Followers"
+                    );
+
+                };
+
+
+        render(
+            following,
+            "Following"
+        );
+
+    }
+
+
+    function patchUniversalProfile(){
+
+        if(
+            typeof window.renderUniversalProfile !==
+            "function" ||
+            window.renderUniversalProfile.__shadowWrapped
+        )
+            return;
+
+
+        const original =
+            window.renderUniversalProfile;
+
+
+        async function wrapped(
+            profile
+        ){
+
+            await original(
+                profile
+            );
+
+
+            await buildFollowLists(
+                profile
+            );
+
+        }
+
+
+        wrapped.__shadowWrapped =
+            true;
+
+
+        window.renderUniversalProfile =
+            wrapped;
+
+    }
+
+
+    /* =====================================================
+       5) CLICK USER PROFILE FROM COMMENTS + VOICE
+    ===================================================== */
+
+    function patchComments(){
+
+        if(
+            typeof window.renderComments !==
+            "function" ||
+            window.renderComments.__shadowWrapped
+        )
+            return;
+
+
+        const original =
+            window.renderComments;
+
+
+        function wrapped(
+            box,
+            comments
+        ){
+
+            original(
+                box,
+                comments
+            );
+
+
+            if(!box)
+                return;
+
+
+            const sorted =
+                [
+                    ...(comments || [])
+                ]
+                .sort(
+                    (a,b) =>
+                        new Date(
+                            a.created_at
+                        ) -
+                        new Date(
+                            b.created_at
+                        )
+                )
+                .slice(
+                    -10
+                );
+
+
+            [
+                ...box.querySelectorAll(
+                    ".comment-item"
+                )
+            ]
+            .forEach(
+                (
+                    item,
+                    index
+                ) => {
+
+                    const comment =
+                        sorted[index];
+
+
+                    if(
+                        !comment?.user_id
+                    )
+                        return;
+
+
+                    item
+                        .querySelectorAll(
+                            ".avatar, strong"
+                        )
+                        .forEach(
+                            el => {
+
+                                el.style.cursor =
+                                    "pointer";
+
+
+                                el.title =
+                                    "Open profile";
+
+
+                                el.onclick =
+                                    e => {
+
+                                        e.stopPropagation();
+
+                                        openUserProfile(
+                                            comment.user_id
+                                        );
+
+                                    };
+
+                            }
+                        );
+
+                }
+            );
+
+        }
+
+
+        wrapped.__shadowWrapped =
+            true;
+
+
+        window.renderComments =
+            wrapped;
+
+    }
+
+
+    function patchVoiceUsers(){
+
+        if(
+            typeof window.renderVoiceUsers !==
+            "function" ||
+            window.renderVoiceUsers.__shadowWrapped
+        )
+            return;
+
+
+        const original =
+            window.renderVoiceUsers;
+
+
+        function wrapped(){
+
+            original();
+
+
+            const box =
+                document.getElementById(
+                    "voiceRoom"
+                );
+
+
+            if(
+                !box ||
+                !voiceChannel
+            )
+                return;
+
+
+            const users =
+                Object.values(
+                    voiceChannel.presenceState()
+                )
+                .flat();
+
+
+            [
+                ...box.querySelectorAll(
+                    ".voice-user"
+                )
+            ]
+            .forEach(
+                (
+                    item,
+                    index
+                ) => {
+
+                    const user =
+                        users[index];
+
+
+                    if(
+                        !user?.user_id
+                    )
+                        return;
+
+
+                    item
+                        .querySelectorAll(
+                            ".avatar, span"
+                        )
+                        .forEach(
+                            el => {
+
+                                el.style.cursor =
+                                    "pointer";
+
+
+                                el.onclick =
+                                    e => {
+
+                                        e.stopPropagation();
+
+                                        openUserProfile(
+                                            user.user_id
+                                        );
+
+                                    };
+
+                            }
+                        );
+
+                }
+            );
+
+        }
+
+
+        wrapped.__shadowWrapped =
+            true;
+
+
+        window.renderVoiceUsers =
+            wrapped;
+
+    }
+
+
+    /* =====================================================
+       6) PUBLIC + PRIVATE CHAT WALLPAPERS (10 OPTIONS)
+    ===================================================== */
+
+    const wallpapers = [
+
+        {
+            name:
+                "Default",
+
+            css:
+                "#f7fcff"
+        },
+
+        {
+            name:
+                "Sky",
+
+            css:
+                "linear-gradient(135deg,#e0f7ff,#f8fdff)"
+        },
+
+        {
+            name:
+                "Blue Waves",
+
+            css:
+                "radial-gradient(circle at 20% 20%,rgba(14,165,233,.15) 0 12%,transparent 13%),radial-gradient(circle at 80% 80%,rgba(56,189,248,.14) 0 12%,transparent 13%),#f4fbff"
+        },
+
+        {
+            name:
+                "Cloud",
+
+            css:
+                "radial-gradient(circle at 20% 20%,#fff 0 14%,transparent 15%),radial-gradient(circle at 60% 35%,#fff 0 18%,transparent 19%),linear-gradient(135deg,#e8f8ff,#fdfefe)"
+        },
+
+        {
+            name:
+                "Mint",
+
+            css:
+                "linear-gradient(135deg,#effff9,#f6fdff)"
+        },
+
+        {
+            name:
+                "Lavender",
+
+            css:
+                "linear-gradient(135deg,#f4f0ff,#fbfaff)"
+        },
+
+        {
+            name:
+                "Rose",
+
+            css:
+                "linear-gradient(135deg,#fff2f7,#fffafe)"
+        },
+
+        {
+            name:
+                "Dots",
+
+            css:
+                "radial-gradient(#cfeefc 1px,transparent 1px) 0 0/14px 14px,#f8fdff"
+        },
+
+        {
+            name:
+                "Grid",
+
+            css:
+                "linear-gradient(#dff2fb 1px,transparent 1px),linear-gradient(90deg,#dff2fb 1px,transparent 1px) 0 0/24px 24px,#f9fdff"
+        },
+
+        {
+            name:
+                "Night",
+
+            css:
+                "radial-gradient(circle at top right,rgba(56,189,248,.16),transparent 30%),linear-gradient(135deg,#dceaf5,#edf6fb)"
+        }
+
+    ];
+
+
+    function applyWallpaper(
+        scope,
+        index
+    ){
+
+        const target =
+            document.getElementById(
+                scope === "public"
+                    ?
+                    "publicMessages"
+                    :
+                    "privateMessages"
+            );
+
+
+        if(!target)
+            return;
+
+
+        target.style.background =
+            wallpapers[index]?.css ||
+            wallpapers[0].css;
+
+
+        target.dataset.shadowWallpaper =
+            String(index);
+
+
+        localStorage.setItem(
+            "shadowWallpaper_" +
+            scope,
+            String(index)
+        );
+
+    }
+
+
+    function addWallpaperMenu(
+        scope,
+        anchor
+    ){
+
+        document
+            .getElementById(
+                "shadowWallpaperMenu"
+            )
+            ?.remove();
+
+
+        const menu =
+            document.createElement(
+                "div"
+            );
+
+
+        menu.id =
+            "shadowWallpaperMenu";
+
+
+        menu.style.cssText =
+            `
+            position:fixed;
+            width:210px;
+            max-height:320px;
+            overflow-y:auto;
+            background:#fff;
+            border:1px solid #d9edf8;
+            border-radius:15px;
+            padding:8px;
+            z-index:99990;
+            box-shadow:0 20px 50px rgba(7,17,31,.18);
+            `;
+
+
+        wallpapers.forEach(
+            (
+                wallpaper,
+                i
+            ) => {
+
+                const b =
+                    document.createElement(
+                        "button"
+                    );
+
+
+                b.type =
+                    "button";
+
+
+                b.textContent =
+                    (
+                        i + 1
+                    ) +
+                    ". " +
+                    wallpaper.name;
+
+
+                b.style.cssText =
+                    `
+                    width:100%;
+                    text-align:left;
+                    border:0;
+                    border-radius:10px;
+                    padding:9px;
+                    margin-bottom:3px;
+                    background:${wallpaper.css};
+                    color:#17384d;
+                    font-size:11px;
+                    font-weight:700;
+                    `;
+
+
+                b.onclick =
+                    () => {
+
+                        applyWallpaper(
+                            scope,
+                            i
+                        );
+
+
+                        menu.remove();
+
+                    };
+
+
+                menu.appendChild(
+                    b
+                );
+
+            }
+        );
+
+
+        document.body.appendChild(
+            menu
+        );
+
+
+        const r =
+            anchor.getBoundingClientRect();
+
+
+        menu.style.left =
+            Math.max(
+                8,
+                Math.min(
+                    window.innerWidth -
+                    218,
+                    r.right -
+                    210
+                )
+            ) +
+            "px";
+
+
+        menu.style.top =
+            Math.min(
+                window.innerHeight -
+                330,
+                r.bottom +
+                6
+            ) +
+            "px";
+
+
+        setTimeout(
+            () => {
+
+                document.addEventListener(
+                    "click",
+                    function close(e){
+
+                        if(
+                            !menu.contains(
+                                e.target
+                            ) &&
+                            e.target !==
+                            anchor
+                        ){
+
+                            menu.remove();
+
+                            document.removeEventListener(
+                                "click",
+                                close
+                            );
+
+                        }
+
+                    },
+                    {
+                        once:false
+                    }
+                );
+
+            },
+            0
+        );
+
+    }
+
+
+    function setupWallpaper(
+        scope,
+        headerSelector
+    ){
+
+        const header =
+            document.querySelector(
+                headerSelector
+            );
+
+
+        const target =
+            document.getElementById(
+                scope === "public"
+                    ?
+                    "publicMessages"
+                    :
+                    "privateMessages"
+            );
+
+
+        if(
+            !header ||
+            !target ||
+            header.querySelector(
+                "[data-shadow-wallpaper]"
+            )
+        )
+            return;
+
+
+        const b =
+            document.createElement(
+                "button"
+            );
+
+
+        b.className =
+            "icon-btn";
+
+
+        b.type =
+            "button";
+
+
+        b.dataset.shadowWallpaper =
+            "1";
+
+
+        b.title =
+            "Chat wallpaper";
+
+
+        b.textContent =
+            "🎨";
+
+
+        b.onclick =
+            e => {
+
+                e.stopPropagation();
+
+                addWallpaperMenu(
+                    scope,
+                    b
+                );
+
+            };
+
+
+        const actions =
+            header.querySelector(
+                ".chat-header-actions"
+            );
+
+
+        if(actions){
+
+            actions.appendChild(
+                b
+            );
+
+        }else{
+
+            header.appendChild(
+                b
+            );
+
+        }
+
+
+        const saved =
+            parseInt(
+                localStorage.getItem(
+                    "shadowWallpaper_" +
+                    scope
+                ) ||
+                "0",
+                10
+            );
+
+
+        applyWallpaper(
+            scope,
+            Number.isFinite(
+                saved
+            )
+            ?
+            saved
+            :
+            0
+        );
+
+    }
+
+
+    /* =====================================================
+       7) INCOMING AUDIO / VIDEO CALL RING + MISSED CALL
+    ===================================================== */
+
+    const incomingChannels =
+        {};
+
+
+    let ringingCall =
+        null;
+
+
+    let ringTimer =
+        null;
+
+
+    let ringInterval =
+        null;
+
+
+    let incomingRingAudio =
+        null;
+
+
+    function inferCallType(
+        offer
+    ){
+
+        const sdp =
+            offer?.sdp ||
+            "";
+
+
+        return /m=video/i.test(
+            sdp
+        )
+        ?
+        "video"
+        :
+        "audio";
+
+    }
+
+
+    function ringStart(){
+
+        unlockSound();
+
+
+        if(ringInterval)
+            clearInterval(
+                ringInterval
+            );
+
+
+        let on =
+            false;
+
+
+        ringInterval =
+            setInterval(
+                () => {
+
+                    if(!ringingCall)
+                        return;
+
+
+                    on =
+                        !on;
+
+
+                    if(on)
+                        notificationSound();
+
+                },
+                900
+            );
+
+
+        try{
+
+            if(!incomingRingAudio){
+
+                incomingRingAudio =
+                    new Audio();
+
+                incomingRingAudio.loop =
+                    true;
+
+            }
+
+        }catch(e){}
+
+    }
+
+
+    function ringStop(){
+
+        if(ringInterval){
+
+            clearInterval(
+                ringInterval
+            );
+
+            ringInterval =
+                null;
+
+        }
+
+
+        if(
+            incomingRingAudio
+        ){
+
+            try{
+
+                incomingRingAudio.pause();
+
+                incomingRingAudio.currentTime =
+                    0;
+
+            }catch(e){}
+
+        }
+
+    }
+
+
+    function showIncomingCall(
+        caller,
+        data,
+        channel
+    ){
+
+        if(
+            ringingCall ||
+            !currentUser
+        )
+            return;
+
+
+        const callType =
+            inferCallType(
+                data.offer
+            );
+
+
+        ringingCall =
+            {
+                caller,
+                data,
+                channel,
+                callType
+            };
+
+
+        ringStart();
+
+
+        document
+            .getElementById(
+                "shadowIncomingCall"
+            )
+            ?.remove();
+
+
+        const box =
+            document.createElement(
+                "div"
+            );
+
+
+        box.id =
+            "shadowIncomingCall";
+
+
+        box.style.cssText =
+            `
+            position:fixed;
+            inset:0;
+            z-index:100000;
+            background:rgba(2,8,23,.72);
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            padding:18px;
+            backdrop-filter:blur(8px);
+            `;
+
+
+        box.innerHTML = `
+
+            <div
+                style="
+                    width:100%;
+                    max-width:370px;
+                    background:#fff;
+                    border-radius:25px;
+                    padding:24px;
+                    text-align:center;
+                    box-shadow:0 30px 90px rgba(0,0,0,.35);
+                ">
+
+                <div
+                    style="
+                        font-size:42px;
+                        margin-bottom:8px;
+                    ">
+
+                    ${
+                        callType ===
+                        "video"
+                        ?
+                        "📹"
+                        :
+                        "📞"
+                    }
+
+                </div>
+
+
+                <h2
+                    style="
+                        color:#075985;
+                        font-size:21px;
+                    ">
+
+                    Incoming ${callType} call
+
+                </h2>
+
+
+                <p
+                    style="
+                        color:#6b7c93;
+                        font-size:12px;
+                        margin:7px 0 18px;
+                    ">
+
+                    ${
+                        typeof verifiedName ===
+                        "function"
+                        ?
+                        verifiedName(
+                            caller
+                        )
+                        :
+                        esc(
+                            caller.display_name ||
+                            caller.username
+                        )
+                    }
+
+                </p>
+
+
+                <div
+                    style="
+                        display:flex;
+                        gap:8px;
+                    ">
+
+                    <button
+                        id="shadowDeclineCall"
+                        class="red-action"
+                        style="
+                            flex:1;
+                            padding:13px;
+                            font-size:12px;
+                            border-radius:13px;
+                        ">
+
+                        Decline
+
+                    </button>
+
+
+                    <button
+                        id="shadowAcceptCall"
+                        class="green-action"
+                        style="
+                            flex:1;
+                            padding:13px;
+                            font-size:12px;
+                            border-radius:13px;
+                        ">
+
+                        Accept
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        `;
+
+
+        document.body.appendChild(
+            box
+        );
+
+
+        box
+            .querySelector(
+                "#shadowDeclineCall"
+            )
+            .onclick =
+                async () => {
+
+                    const call =
+                        ringingCall;
+
+
+                    clearIncomingRing();
+
+
+                    say(
+                        "Call declined."
+                    );
+
+
+                    await restartIncomingChannel(
+                        call?.caller?.id
+                    );
+
+                };
+
+
+        box
+            .querySelector(
+                "#shadowAcceptCall"
+            )
+            .onclick =
+                async () => {
+
+                    const call =
+                        ringingCall;
+
+
+                    clearIncomingRing();
+
+
+                    if(!call)
+                        return;
+
+
+                    selectedFriend =
+                        call.caller;
+
+
+                    callType =
+                        call.callType;
+
+
+                    try{
+
+                        callChannel =
+                            call.channel;
+
+
+                        await handleSignal(
+                            call.data
+                        );
+
+
+                        say(
+                            "Call connected 📞"
+                        );
+
+                    }catch(e){
+
+                        console.error(
+                            e
+                        );
+
+
+                        say(
+                            "Could not accept call."
+                        );
+
+
+                        try{
+
+                            await endCall();
+
+                        }catch(err){}
+
+                    }
+
+                };
+
+
+        if(
+            "Notification" in window
+        ){
+
+            try{
+
+                if(
+                    Notification.permission ===
+                    "granted"
+                ){
+
+                    new Notification(
+                        "Incoming call 📞",
+                        {
+                            body:
+                                (
+                                    caller.display_name ||
+                                    caller.username ||
+                                    "Someone"
+                                ) +
+                                " is calling you."
+                        }
+                    );
+
+                }
+
+            }catch(e){}
+
+        }
+
+    }
+
+
+    function clearIncomingRing(){
+
+        ringStop();
+
+
+        clearTimeout(
+            ringTimer
+        );
+
+
+        ringTimer =
+            null;
+
+
+        ringingCall =
+            null;
+
+
+        document
+            .getElementById(
+                "shadowIncomingCall"
+            )
+            ?.remove();
+
+    }
+
+
+    async function makeMissedCallNotification(
+        callerId,
+        callType
+    ){
+
+        if(
+            !currentUser ||
+            !callerId
+        )
+            return;
+
+
+        const caller =
+            friends.find(
+                f =>
+                    f.id ===
+                    callerId
+            );
+
+
+        const callerName =
+            caller?.display_name ||
+            caller?.username ||
+            "Someone";
+
+
+        const msg =
+            `Missed ${callType} call from ${callerName} 📞`;
+
+
+        const insertResult =
+            await sb
+                .from("notifications")
+                .insert({
+
+                    recipient_id:
+                        currentUser.id,
+
+                    actor_id:
+                        callerId,
+
+                    type:
+                        "missed_call",
+
+                    message:
+                        msg,
+
+                    read:
+                        false
+
+                });
+
+
+        if(
+            insertResult.error
+        ){
+
+            notificationRows.unshift({
+
+                id:
+                    "local-missed-" +
+                    Date.now(),
+
+                recipient_id:
+                    currentUser.id,
+
+                actor_id:
+                    callerId,
+
+                type:
+                    "missed_call",
+
+                message:
+                    msg,
+
+                post_id:
+                    null,
+
+                comment_id:
+                    null,
+
+                created_at:
+                    new Date()
+                        .toISOString(),
+
+                read:
+                    false,
+
+                read_at:
+                    null
+
+            });
+
+
+            notificationRows =
+                notificationRows.slice(
+                    0,
+                    100
+                );
+
+
+            updateNotificationDot();
+
+        }
+
+
+        notificationSound();
+
+
+        say(
+            msg
+        );
+
+
+        if(
+            "Notification" in window &&
+            Notification.permission ===
+            "granted"
+        ){
+
+            try{
+
+                new Notification(
+                    "You missed a call 📵",
+                    {
+                        body:
+                            msg
+                    }
+                );
+
+            }catch(e){}
+
+        }
+
+    }
+
+
+    function subscribeIncomingForFriend(
+        friend
+    ){
+
+        if(
+            !currentUser ||
+            !friend?.id ||
+            friend.id ===
+            currentUser.id ||
+            incomingChannels[
+                friend.id
+            ]
+        )
+            return;
+
+
+        const ids =
+            [
+                currentUser.id,
+                friend.id
+            ]
+            .sort();
+
+
+        const name =
+            "call-" +
+            ids.join(
+                "-"
+            );
+
+
+        const channel =
+            sb.channel(
+                name
+            );
+
+
+        incomingChannels[
+            friend.id
+        ] =
+            channel;
+
+
+        channel
+            .on(
+                "broadcast",
+                {
+                    event:
+                        "signal"
+                },
+                payload => {
+
+                    const data =
+                        payload.payload;
+
+
+                    if(
+                        !data ||
+                        data.to !==
+                        currentUser.id ||
+                        data.from !==
+                        friend.id ||
+                        !data.offer
+                    )
+                        return;
+
+
+                    showIncomingCall(
+                        friend,
+                        data,
+                        channel
+                    );
+
+
+                    clearTimeout(
+                        ringTimer
+                    );
+
+
+                    ringTimer =
+                        setTimeout(
+                            async () => {
+
+                                if(
+                                    ringingCall?.caller?.id ===
+                                    friend.id
+                                ){
+
+                                    const type =
+                                        ringingCall.callType;
+
+
+                                    clearIncomingRing();
+
+
+                                    await makeMissedCallNotification(
+                                        friend.id,
+                                        type
+                                    );
+
+
+                                    say(
+                                        "You missed a call from " +
+                                        (
+                                            friend.display_name ||
+                                            friend.username
+                                        ) +
+                                        " 📵"
+                                    );
+
+
+                                    await restartIncomingChannel(
+                                        friend.id
+                                    );
+
+                                }
+
+                            },
+                            30000
+                        );
+
+                }
+            )
+            .subscribe();
+
+    }
+
+
+    async function restartIncomingChannel(
+        friendId
+    ){
+
+        if(!friendId)
+            return;
+
+
+        const ch =
+            incomingChannels[
+                friendId
+            ];
+
+
+        if(ch){
+
+            try{
+
+                sb.removeChannel(
+                    ch
+                );
+
+            }catch(e){}
+
+
+            delete incomingChannels[
+                friendId
+            ];
+
+        }
+
+
+        const friend =
+            friends.find(
+                f =>
+                    f.id ===
+                    friendId
+            );
+
+
+        if(friend)
+            await wait(200);
+
+
+        subscribeIncomingForFriend(
+            friend
+        );
+
+    }
+
+
+    function stopIncomingChannels(){
+
+        Object.keys(
+            incomingChannels
+        )
+        .forEach(
+            id => {
+
+                try{
+
+                    sb.removeChannel(
+                        incomingChannels[
+                            id
+                        ]
+                    );
+
+                }catch(e){}
+
+
+                delete incomingChannels[
+                    id
+                ];
+
+            }
+        );
+
+    }
+
+
+    function startIncomingChannels(){
+
+        if(
+            !currentUser ||
+            !Array.isArray(
+                friends
+            )
+        )
+            return;
+
+
+        friends.forEach(
+            subscribeIncomingForFriend
+        );
+
+    }
+
+
+    function patchEndCallForIncoming(){
+
+        if(
+            typeof window.endCall !==
+            "function" ||
+            window.endCall.__shadowWrapped
+        )
+            return;
+
+
+        const original =
+            window.endCall;
+
+
+        async function wrapped(){
+
+            const result =
+                await original();
+
+
+            await wait(
+                300
+            );
+
+
+            startIncomingChannels();
+
+
+            return result;
+
+        }
+
+
+        wrapped.__shadowWrapped =
+            true;
+
+
+        window.endCall =
+            wrapped;
+
+    }
+
+
+    /* =====================================================
+       8) SWITCH ACCOUNT + LOGOUT
+    ===================================================== */
+
+    function switchAccount(){
+
+        if(
+            typeof logout ===
+            "function"
+        ){
+
+            logout();
+
+        }
+
+    }
+
+
+    window.switchAccount =
+        switchAccount;
+
+
+    function addSwitchAccountButtons(){
+
+        const bottom =
+            document.querySelector(
+                ".sidebar-bottom"
+            );
+
+
+        if(
+            bottom &&
+            !document.getElementById(
+                "shadowSwitchAccount"
+            )
+        ){
+
+            const logoutBtn =
+                bottom.querySelector(
+                    ".logout-btn"
+                );
+
+
+            const b =
+                document.createElement(
+                    "button"
+                );
+
+
+            b.id =
+                "shadowSwitchAccount";
+
+
+            b.className =
+                "logout-btn";
+
+
+            b.style.cssText =
+                `
+                background:#eef8ff;
+                color:#0284c7;
+                margin-bottom:8px;
+                `;
+
+
+            b.textContent =
+                "🔄 Switch Account";
+
+
+            b.onclick =
+                switchAccount;
+
+
+            bottom.insertBefore(
+                b,
+                logoutBtn
+            );
+
+        }
+
+
+        const profile =
+            document.getElementById(
+                "page-profile"
+            );
+
+
+        const card =
+            profile?.querySelector(
+                ".profile-card"
+            );
+
+
+        if(
+            card &&
+            !document.getElementById(
+                "shadowMobileAccountActions"
+            )
+        ){
+
+            const wrap =
+                document.createElement(
+                    "div"
+                );
+
+
+            wrap.id =
+                "shadowMobileAccountActions";
+
+
+            wrap.style.cssText =
+                `
+                display:flex;
+                gap:8px;
+                flex-wrap:wrap;
+                margin-top:20px;
+                `;
+
+
+            wrap.innerHTML = `
+
+                <button
+                    class="blue-action"
+                    style="
+                        flex:1;
+                        min-width:140px;
+                        padding:12px;
+                        font-size:12px;
+                    "
+                    onclick="switchAccount()">
+
+                    🔄 Switch Account
+
+                </button>
+
+
+                <button
+                    class="red-action"
+                    style="
+                        flex:1;
+                        min-width:140px;
+                        padding:12px;
+                        font-size:12px;
+                    "
+                    onclick="logout()">
+
+                    🚪 Logout
+
+                </button>
+
+            `;
+
+
+            card.appendChild(
+                wrap
+            );
+
+        }
+
+    }
+
+
+    /* =====================================================
+       9) INIT / REFRESH WITHOUT REPLACING OLD FEATURES
+    ===================================================== */
+
+    async function refreshPatch(){
+
+        if(!currentUser)
+            return;
+
+
+        addFriendsSearchButton();
+
+        addTopbarSearch();
+
+        addSwitchAccountButtons();
+
+        setupNotificationBell();
+
+        watchSearchResults();
+
+        patchUniversalProfile();
+
+        patchComments();
+
+        patchVoiceUsers();
+
+        patchEndCallForIncoming();
+
+        setupWallpaper(
+            "public",
+            "#page-public .chat-header"
+        );
+
+        setupWallpaper(
+            "private",
+            "#page-private .chat-header"
+        );
+
+        await startNotifications();
+
+        startIncomingChannels();
+
+    }
+
+
+    const patchTimer =
+        setInterval(
+            () => {
+
+                if(currentUser)
+                    refreshPatch();
+
+            },
+            1200
+        );
+
+
+    window.addEventListener(
+        "beforeunload",
+        () => {
+
+            try{
+
+                clearInterval(
+                    patchTimer
+                );
+
+            }catch(e){}
+
+
+            stopIncomingChannels();
+
+
+            if(
+                notificationChannel
+            ){
+
+                try{
+
+                    sb.removeChannel(
+                        notificationChannel
+                    );
+
+                }catch(e){}
+
+            }
+
+
+            clearIncomingRing();
+
+        }
+    );
+
+
+    /* Notification permission only after first user gesture. */
+
+    document.addEventListener(
+        "click",
+        async () => {
+
+            if(
+                "Notification" in window &&
+                Notification.permission ===
+                "default"
+            ){
+
+                try{
+
+                    await Notification.requestPermission();
+
+                }catch(e){}
+
+            }
+
+        },
+        {
+            once:true
+        }
+    );
+
+})();
+</script>
 </body>
 </html>
