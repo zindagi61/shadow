@@ -26,11 +26,10 @@
     --text:#102a43;
     --muted:#6b7c93;
     --border:#d9edf8;
-    --white:#ffffff;
+    --white:#fff;
     --danger:#ef4444;
     --green:#22c55e;
     --dark:#07111f;
-    --dark2:#0d1c30;
     --shadow:0 15px 45px rgba(14,165,233,.12);
 }
 
@@ -64,6 +63,33 @@ button{
 .hidden{
     display:none !important;
 }
+
+/* =========================================================
+   VERIFIED BLUE TICK
+========================================================= */
+
+.verified-badge{
+    display:inline-flex;
+    width:17px;
+    height:17px;
+    margin-left:4px;
+    vertical-align:-3px;
+    align-items:center;
+    justify-content:center;
+}
+
+.verified-badge svg{
+    width:17px;
+    height:17px;
+    display:block;
+}
+
+.verified-name{
+    display:inline-flex;
+    align-items:center;
+    gap:2px;
+}
+
 
 /* =========================================================
    AUTH
@@ -151,7 +177,8 @@ button{
 .search-input,
 .compose-input,
 .comment-input,
-.chat-input{
+.chat-input,
+.admin-search{
     width:100%;
     border:1px solid var(--border);
     background:#fff;
@@ -166,7 +193,8 @@ button{
 .search-input:focus,
 .compose-input:focus,
 .comment-input:focus,
-.chat-input:focus{
+.chat-input:focus,
+.admin-search:focus{
     border-color:var(--blue);
     box-shadow:0 0 0 4px rgba(56,189,248,.1);
 }
@@ -211,6 +239,7 @@ button{
     border-radius:16px;
     padding:14px;
 }
+
 
 /* =========================================================
    APP
@@ -401,6 +430,7 @@ button{
     display:block;
 }
 
+
 /* =========================================================
    COMMON
 ========================================================= */
@@ -495,6 +525,7 @@ button{
     font-size:11px;
 }
 
+
 /* =========================================================
    FEED
 ========================================================= */
@@ -539,10 +570,6 @@ button{
     display:flex;
     gap:10px;
     align-items:flex-start;
-}
-
-.composer-input{
-    margin-top:2px;
 }
 
 .compose-input{
@@ -607,11 +634,12 @@ button{
 }
 
 .post-user-text strong{
-    display:block;
+    display:inline-flex;
     font-size:14px;
 }
 
 .post-user-text span{
+    display:block;
     color:var(--muted);
     font-size:10px;
 }
@@ -741,6 +769,7 @@ button{
     font-weight:800;
 }
 
+
 /* =========================================================
    CHAT
 ========================================================= */
@@ -766,11 +795,12 @@ button{
 }
 
 .chat-header-info strong{
-    display:block;
+    display:inline-flex;
     font-size:14px;
 }
 
 .chat-header-info span{
+    display:block;
     color:var(--muted);
     font-size:10px;
 }
@@ -859,6 +889,7 @@ button{
     font-weight:800;
 }
 
+
 /* =========================================================
    PRIVATE
 ========================================================= */
@@ -911,6 +942,7 @@ button{
     color:var(--muted);
     font-size:9px;
 }
+
 
 /* =========================================================
    FRIENDS
@@ -966,7 +998,8 @@ button{
 
 .blue-action,
 .red-action,
-.green-action{
+.green-action,
+.purple-action{
     border:0;
     color:#fff;
     padding:8px 10px;
@@ -986,6 +1019,11 @@ button{
 .green-action{
     background:var(--green);
 }
+
+.purple-action{
+    background:var(--purple);
+}
+
 
 /* =========================================================
    PROFILE
@@ -1074,8 +1112,9 @@ button{
     font-size:9px;
 }
 
+
 /* =========================================================
-   PROFILE POST GRID / INSTAGRAM STYLE
+   PROFILE POST GRID
 ========================================================= */
 
 .profile-post-grid{
@@ -1085,7 +1124,7 @@ button{
 }
 
 .profile-post-tile{
-    min-height:145px;
+    min-height:150px;
     border-radius:15px;
     overflow:hidden;
     border:1px solid var(--border);
@@ -1110,7 +1149,7 @@ button{
     word-break:break-word;
     color:#263c51;
     display:-webkit-box;
-    -webkit-line-clamp:6;
+    -webkit-line-clamp:7;
     -webkit-box-orient:vertical;
     overflow:hidden;
 }
@@ -1123,16 +1162,9 @@ button{
     font-size:8px;
 }
 
-.profile-post-detail{
-    display:none;
-}
-
-.profile-post-detail.show{
-    display:block;
-}
 
 /* =========================================================
-   PROFILE MODAL
+   MODAL PROFILE
 ========================================================= */
 
 .modal{
@@ -1153,7 +1185,7 @@ button{
 
 .profile-modal-card{
     width:100%;
-    max-width:720px;
+    max-width:760px;
     max-height:90vh;
     overflow-y:auto;
     border-radius:26px;
@@ -1216,6 +1248,9 @@ button{
 
 .profile-modal-name h2{
     font-size:22px;
+    display:flex;
+    align-items:center;
+    gap:3px;
 }
 
 .profile-modal-name p{
@@ -1261,6 +1296,143 @@ button{
     background:#eef7ff;
     color:var(--blue3);
 }
+
+
+/* =========================================================
+   ADMIN
+========================================================= */
+
+.admin-wrap{
+    max-width:900px;
+    margin:auto;
+}
+
+.admin-hero{
+    border-radius:24px;
+    padding:22px;
+    color:#fff;
+    margin-bottom:15px;
+    background:
+        radial-gradient(circle at top right,rgba(56,189,248,.26),transparent 30%),
+        radial-gradient(circle at bottom left,rgba(139,92,246,.24),transparent 32%),
+        linear-gradient(135deg,#07111f,#12263d);
+}
+
+.admin-hero h2{
+    font-size:24px;
+}
+
+.admin-hero p{
+    color:#b8cbe0;
+    font-size:12px;
+    margin-top:5px;
+}
+
+.admin-search-box{
+    background:#fff;
+    border:1px solid var(--border);
+    border-radius:18px;
+    padding:12px;
+    margin-bottom:15px;
+    box-shadow:var(--shadow);
+}
+
+.admin-user-grid{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:12px;
+}
+
+.admin-user-card{
+    background:#fff;
+    border:1px solid var(--border);
+    border-radius:19px;
+    padding:14px;
+    box-shadow:var(--shadow);
+}
+
+.admin-user-top{
+    display:flex;
+    gap:10px;
+    align-items:center;
+}
+
+.admin-user-info{
+    min-width:0;
+    flex:1;
+}
+
+.admin-user-name{
+    font-size:13px;
+    font-weight:800;
+}
+
+.admin-user-username{
+    color:var(--muted);
+    font-size:10px;
+}
+
+.admin-badges{
+    display:flex;
+    gap:5px;
+    flex-wrap:wrap;
+    margin-top:7px;
+}
+
+.admin-label{
+    font-size:8px;
+    padding:4px 7px;
+    border-radius:20px;
+    background:#eef8ff;
+    color:var(--blue3);
+    font-weight:800;
+}
+
+.admin-label.verified{
+    color:#0ea5e9;
+    background:#e8f8ff;
+}
+
+.admin-label.admin{
+    color:#7c3aed;
+    background:#f2eaff;
+}
+
+.admin-actions{
+    display:flex;
+    gap:6px;
+    flex-wrap:wrap;
+    margin-top:12px;
+}
+
+.admin-actions button{
+    border:0;
+    border-radius:10px;
+    padding:8px 10px;
+    font-size:10px;
+    font-weight:800;
+}
+
+.verify-admin-btn{
+    color:#fff;
+    background:var(--blue2);
+}
+
+.unverify-admin-btn{
+    color:#fff;
+    background:#64748b;
+}
+
+.make-admin-btn{
+    color:#fff;
+    background:var(--purple);
+}
+
+.remove-admin-btn{
+    color:#fff;
+    background:#be123c;
+}
+
 
 /* =========================================================
    VOICE
@@ -1329,6 +1501,7 @@ button{
     background:#ef4444;
     color:#fff;
 }
+
 
 /* =========================================================
    CALL
@@ -1404,6 +1577,7 @@ button{
     color:#fff;
 }
 
+
 /* =========================================================
    TOAST
 ========================================================= */
@@ -1430,13 +1604,19 @@ button{
     box-shadow:0 15px 30px rgba(0,0,0,.18);
 }
 
+
 /* =========================================================
-   MOBILE
+   MOBILE NAV
 ========================================================= */
 
 .mobile-nav{
     display:none;
 }
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
 
 @media(max-width:1050px){
 
@@ -1446,6 +1626,10 @@ button{
 
     .friends-grid{
         grid-template-columns:repeat(2,1fr);
+    }
+
+    .admin-user-grid{
+        grid-template-columns:1fr;
     }
 }
 
@@ -1604,7 +1788,7 @@ button{
 
 
 <!-- =========================================================
-     AUTH SCREEN
+     AUTH
 ========================================================= -->
 
 <div id="authScreen" class="auth-screen">
@@ -1641,6 +1825,7 @@ button{
 
         </div>
 
+
         <div id="signupFields" class="hidden">
 
             <div class="field">
@@ -1658,6 +1843,7 @@ button{
 
             </div>
 
+
             <div class="field">
 
                 <label>
@@ -1674,6 +1860,7 @@ button{
 
         </div>
 
+
         <div class="field">
 
             <label>
@@ -1687,6 +1874,7 @@ button{
                 placeholder="you@example.com">
 
         </div>
+
 
         <div class="field">
 
@@ -1702,12 +1890,14 @@ button{
 
         </div>
 
+
         <button
             id="authButton"
             class="main-auth-btn"
             onclick="handleAuth()">
             Sign In
         </button>
+
 
         <div class="auth-links">
 
@@ -1723,10 +1913,12 @@ button{
 
         </div>
 
+
         <div
             id="authMessage"
             class="auth-message">
         </div>
+
 
         <div
             id="resetBox"
@@ -1745,6 +1937,7 @@ button{
 
             </div>
 
+
             <div class="field">
 
                 <label>
@@ -1758,10 +1951,13 @@ button{
 
             </div>
 
+
             <button
                 class="main-auth-btn"
                 onclick="updatePassword()">
+
                 Update Password
+
             </button>
 
         </div>
@@ -1814,12 +2010,14 @@ button{
                 🏠 Home
             </button>
 
+
             <button
                 class="nav-btn"
                 data-page="feed"
                 onclick="openPage('feed')">
                 ✨ Shadow Feed
             </button>
+
 
             <button
                 class="nav-btn"
@@ -1828,12 +2026,14 @@ button{
                 🌎 Public Chat
             </button>
 
+
             <button
                 class="nav-btn"
                 data-page="private"
                 onclick="openPage('private')">
                 💬 Private Chats
             </button>
+
 
             <button
                 class="nav-btn"
@@ -1842,6 +2042,7 @@ button{
                 👥 Friends
             </button>
 
+
             <button
                 class="nav-btn"
                 data-page="voice"
@@ -1849,11 +2050,23 @@ button{
                 🎙️ Voice Room
             </button>
 
+
             <button
                 class="nav-btn"
                 data-page="profile"
                 onclick="openPage('profile')">
                 👤 Profile
+            </button>
+
+
+            <button
+                id="adminNav"
+                class="nav-btn hidden"
+                data-page="admin"
+                onclick="openPage('admin')">
+
+                🛡️ Admin Panel
+
             </button>
 
         </nav>
@@ -1868,6 +2081,7 @@ button{
                     class="avatar">
                     👻
                 </div>
+
 
                 <div class="sidebar-profile-info">
 
@@ -1884,6 +2098,7 @@ button{
                 </div>
 
             </div>
+
 
             <button
                 class="logout-btn"
@@ -1906,6 +2121,7 @@ button{
                 Home
             </h1>
 
+
             <div class="topbar-actions">
 
                 <button
@@ -1921,10 +2137,17 @@ button{
 
                 </button>
 
+
                 <button
                     class="icon-btn"
-                    onclick="openUserProfile(currentUser?.id)">
+                    onclick="
+                        openUserProfile(
+                            currentUser?.id
+                        )
+                    ">
+
                     👤
+
                 </button>
 
             </div>
@@ -2073,6 +2296,7 @@ button{
                             👻
                         </div>
 
+
                         <textarea
                             id="postContent"
                             class="compose-input"
@@ -2082,6 +2306,7 @@ button{
 
                     </div>
 
+
                     <div class="composer-bottom">
 
                         <span
@@ -2089,6 +2314,7 @@ button{
                             class="char-counter">
                             0 / 5000
                         </span>
+
 
                         <button
                             class="post-btn"
@@ -2110,7 +2336,7 @@ button{
         </section>
 
 
-        <!-- PUBLIC CHAT -->
+        <!-- PUBLIC -->
 
         <section
             id="page-public"
@@ -2120,10 +2346,10 @@ button{
 
                 <div class="chat-header">
 
-                    <div
-                        class="avatar">
+                    <div class="avatar">
                         🌎
                     </div>
+
 
                     <div class="chat-header-info">
 
@@ -2160,6 +2386,7 @@ button{
                             }
                         ">
 
+
                     <button
                         class="chat-send"
                         onclick="sendPublicMessage()">
@@ -2180,6 +2407,7 @@ button{
             class="page">
 
             <div class="private-layout">
+
 
                 <div
                     id="privateFriendList"
@@ -2208,6 +2436,7 @@ button{
                     <div
                         id="privateShell"
                         class="chat-shell hidden">
+
 
                         <div class="chat-header">
 
@@ -2247,6 +2476,7 @@ button{
                                     📞
                                 </button>
 
+
                                 <button
                                     class="icon-btn"
                                     onclick="startCall('video')">
@@ -2277,6 +2507,7 @@ button{
                                         sendPrivateMessage();
                                     }
                                 ">
+
 
                             <button
                                 class="chat-send"
@@ -2393,21 +2624,29 @@ button{
                         id="joinVoiceBtn"
                         class="join-btn"
                         onclick="joinVoiceRoom()">
+
                         🎙️ Join Room
+
                     </button>
+
 
                     <button
                         id="muteVoiceBtn"
                         class="mute-btn hidden"
                         onclick="toggleVoiceMute()">
+
                         🔇 Mute
+
                     </button>
+
 
                     <button
                         id="leaveVoiceBtn"
                         class="leave-btn hidden"
                         onclick="leaveVoiceRoom()">
+
                         Leave Room
+
                     </button>
 
                 </div>
@@ -2417,13 +2656,14 @@ button{
         </section>
 
 
-        <!-- MY PROFILE -->
+        <!-- PROFILE -->
 
         <section
             id="page-profile"
             class="page">
 
             <div class="profile-card">
+
 
                 <div class="profile-head">
 
@@ -2435,6 +2675,7 @@ button{
                             👻
                         </div>
 
+
                         <input
                             id="avatarFile"
                             type="file"
@@ -2442,10 +2683,13 @@ button{
                             class="hidden"
                             onchange="uploadAvatar()">
 
+
                         <label
                             class="upload-btn"
                             for="avatarFile">
+
                             Change Photo
+
                         </label>
 
                     </div>
@@ -2560,7 +2804,9 @@ button{
                 <button
                     class="save-profile-btn"
                     onclick="saveProfile()">
+
                     Save Profile
+
                 </button>
 
 
@@ -2577,6 +2823,50 @@ button{
 
                 <div
                     id="myProfilePosts">
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ADMIN PANEL -->
+
+        <section
+            id="page-admin"
+            class="page">
+
+            <div class="admin-wrap">
+
+
+                <div class="admin-hero">
+
+                    <h2>
+                        🛡️ Shadow Admin Panel
+                    </h2>
+
+                    <p>
+                        Verify users with the blue badge
+                        and manage administrator access.
+                    </p>
+
+                </div>
+
+
+                <div class="admin-search-box">
+
+                    <input
+                        id="adminSearch"
+                        class="admin-search"
+                        placeholder="Search username or display name..."
+                        oninput="loadAdminUsers()">
+
+                </div>
+
+
+                <div
+                    id="adminUsers"
+                    class="admin-user-grid">
                 </div>
 
             </div>
@@ -2603,11 +2893,13 @@ button{
         🏠<br>Home
     </button>
 
+
     <button
         data-mobile-page="feed"
         onclick="openPage('feed')">
         ✨<br>Feed
     </button>
+
 
     <button
         data-mobile-page="public"
@@ -2615,11 +2907,13 @@ button{
         🌎<br>Public
     </button>
 
+
     <button
         data-mobile-page="private"
         onclick="openPage('private')">
         💬<br>Private
     </button>
+
 
     <button
         data-mobile-page="profile"
@@ -2631,7 +2925,7 @@ button{
 
 
 <!-- =========================================================
-     UNIVERSAL PROFILE
+     PROFILE MODAL
 ========================================================= -->
 
 <div
@@ -2643,6 +2937,7 @@ button{
         }
     ">
 
+
     <div class="profile-modal-card">
 
         <div class="profile-modal-cover">
@@ -2650,6 +2945,7 @@ button{
 
 
         <div class="profile-modal-body">
+
 
             <div class="profile-modal-top">
 
@@ -2675,6 +2971,7 @@ button{
                     id="modalProfileName">
                     User
                 </h2>
+
 
                 <p
                     id="modalProfileUsername">
@@ -2763,7 +3060,7 @@ button{
 
 
 <!-- =========================================================
-     CALL MODAL
+     CALL
 ========================================================= -->
 
 <div
@@ -2772,13 +3069,11 @@ button{
 
     <div class="call-card">
 
-        <h3
-            id="callTitle">
+        <h3 id="callTitle">
             Call
         </h3>
 
-        <p
-            id="callStatus">
+        <p id="callStatus">
             Connecting...
         </p>
 
@@ -2790,6 +3085,7 @@ button{
                 autoplay
                 playsinline>
             </video>
+
 
             <video
                 id="localVideo"
@@ -2803,15 +3099,15 @@ button{
 
         <div class="call-controls">
 
-            <button
-                onclick="toggleCallMic()">
+            <button onclick="toggleCallMic()">
                 🎤 Mic
             </button>
 
-            <button
-                onclick="toggleCallCamera()">
+
+            <button onclick="toggleCallCamera()">
                 📷 Camera
             </button>
+
 
             <button
                 class="call-end"
@@ -2863,45 +3159,29 @@ const sb =
 ========================================================= */
 
 let currentUser = null;
-
 let currentProfile = null;
-
 let authMode = "login";
 
 let friends = [];
-
 let selectedFriend = null;
 
 let publicChannel = null;
-
 let privateChannel = null;
-
 let presenceChannel = null;
-
 let feedChannel = null;
 
 let voiceChannel = null;
-
 let voiceJoined = false;
-
 let voiceMuted = false;
-
 let voiceStream = null;
-
 let voicePeers = {};
-
 let voiceIceQueues = {};
 
 let callChannel = null;
-
 let callPeer = null;
-
 let callStream = null;
-
 let callType = "audio";
-
 let callMic = true;
-
 let callCamera = true;
 
 
@@ -2932,7 +3212,9 @@ function toast(message){
         return;
 
     const item =
-        document.createElement("div");
+        document.createElement(
+            "div"
+        );
 
     item.className =
         "toast";
@@ -2959,8 +3241,8 @@ function initials(name){
 
     const parts =
         String(name)
-            .trim()
-            .split(/\s+/);
+        .trim()
+        .split(/\s+/);
 
     if(parts.length >= 2){
 
@@ -2977,17 +3259,84 @@ function initials(name){
 }
 
 
+/* =========================================================
+   BLUE VERIFIED BADGE
+========================================================= */
+
+function verifiedBadge(){
+
+    return `
+        <span
+            class="verified-badge"
+            title="Verified">
+
+            <svg
+                viewBox="0 0 24 24"
+                aria-label="Verified">
+
+                <circle
+                    cx="12"
+                    cy="12"
+                    r="11"
+                    fill="#0EA5E9"/>
+
+                <path
+                    d="M7.8 12.3l2.7 2.7 5.9-6"
+                    fill="none"
+                    stroke="#fff"
+                    stroke-width="2.4"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"/>
+
+            </svg>
+
+        </span>
+    `;
+
+}
+
+
+function verifiedName(profile){
+
+    const name =
+        escapeHtml(
+            profile?.display_name ||
+            profile?.username ||
+            "User"
+        );
+
+    return `
+        <span class="verified-name">
+
+            ${name}
+
+            ${
+                profile?.is_verified
+                ?
+                verifiedBadge()
+                :
+                ""
+            }
+
+        </span>
+    `;
+
+}
+
+
 function avatarHtml(profile){
 
     if(profile?.avatar_url){
 
         return `
             <div class="avatar">
+
                 <img
                     src="${escapeHtml(
                         profile.avatar_url
                     )}"
                     alt="">
+
             </div>
         `;
 
@@ -2995,6 +3344,7 @@ function avatarHtml(profile){
 
     return `
         <div class="avatar">
+
             ${escapeHtml(
                 initials(
                     profile?.display_name ||
@@ -3002,6 +3352,7 @@ function avatarHtml(profile){
                     "User"
                 )
             )}
+
         </div>
     `;
 
@@ -3103,7 +3454,7 @@ function scrollChat(box){
 
 
 /* =========================================================
-   USERNAME CHECK
+   USERNAME
 ========================================================= */
 
 async function usernameExists(
@@ -3121,8 +3472,12 @@ async function usernameExists(
     if(!clean)
         return false;
 
-    let query =
-        sb
+
+    const {
+        data,
+        error
+    } =
+        await sb
             .from("profiles")
             .select("id")
             .ilike(
@@ -3131,21 +3486,20 @@ async function usernameExists(
             )
             .limit(1);
 
-    const {data,error} =
-        await query;
 
     if(error){
 
         console.error(
-            "Username check:",
             error
         );
 
         return false;
     }
 
+
     if(!data?.length)
         return false;
+
 
     if(
         excludeUserId &&
@@ -3156,6 +3510,7 @@ async function usernameExists(
         return false;
     }
 
+
     return true;
 
 }
@@ -3165,10 +3520,13 @@ async function usernameExists(
    AUTH
 ========================================================= */
 
-function showAuthMode(mode){
+function showAuthMode(
+    mode
+){
 
     authMode =
         mode;
+
 
     const loginTab =
         document.getElementById(
@@ -3189,6 +3547,7 @@ function showAuthMode(mode){
         document.getElementById(
             "authButton"
         );
+
 
     if(mode === "login"){
 
@@ -3246,10 +3605,12 @@ async function handleAuth(){
             )
             .value;
 
+
     const message =
         document.getElementById(
             "authMessage"
         );
+
 
     if(!email || !password){
 
@@ -3271,6 +3632,7 @@ async function handleAuth(){
                 .trim()
                 .toLowerCase();
 
+
         const displayName =
             document
                 .getElementById(
@@ -3280,7 +3642,10 @@ async function handleAuth(){
                 .trim();
 
 
-        if(!username || !displayName){
+        if(
+            !username ||
+            !displayName
+        ){
 
             message.textContent =
                 "Username and display name required.";
@@ -3302,10 +3667,20 @@ async function handleAuth(){
         }
 
 
+        if(username.length < 3){
+
+            message.textContent =
+                "Username minimum 3 characters ka hona chahiye.";
+
+            return;
+        }
+
+
         const taken =
             await usernameExists(
                 username
             );
+
 
         if(taken){
 
@@ -3395,6 +3770,7 @@ async function handleAuth(){
     currentUser =
         data.user;
 
+
     await enterApp();
 
 }
@@ -3409,6 +3785,7 @@ async function resendVerification(){
             )
             .value
             .trim();
+
 
     if(!email){
 
@@ -3461,6 +3838,7 @@ async function forgotPassword(){
             .value
             .trim();
 
+
     if(!email){
 
         document.getElementById(
@@ -3508,6 +3886,7 @@ async function updatePassword(){
             )
             .value;
 
+
     const p2 =
         document
             .getElementById(
@@ -3541,7 +3920,8 @@ async function updatePassword(){
     } =
         await sb.auth.updateUser({
 
-            password:p1
+            password:
+                p1
 
         });
 
@@ -3568,11 +3948,9 @@ async function updatePassword(){
         );
 
 
-    document
-        .getElementById(
-            "authMessage"
-        )
-        .textContent =
+    document.getElementById(
+        "authMessage"
+    ).textContent =
         "Password updated. Sign in again.";
 
 }
@@ -3584,39 +3962,50 @@ async function logout(){
         await leaveVoiceRoom();
     }catch(e){}
 
+
     try{
         await endCall();
     }catch(e){}
 
-    if(feedChannel){
-        sb.removeChannel(
-            feedChannel
-        );
-        feedChannel=null;
-    }
 
-    if(publicChannel){
-        sb.removeChannel(
-            publicChannel
-        );
-        publicChannel=null;
-    }
+    [
+        feedChannel,
+        publicChannel,
+        privateChannel,
+        presenceChannel
+    ]
+    .forEach(
+        channel=>{
 
-    if(privateChannel){
-        sb.removeChannel(
-            privateChannel
-        );
-        privateChannel=null;
-    }
+            if(channel){
 
-    if(presenceChannel){
-        sb.removeChannel(
-            presenceChannel
-        );
-        presenceChannel=null;
-    }
+                try{
+                    sb.removeChannel(
+                        channel
+                    );
+                }catch(e){}
+
+            }
+
+        }
+    );
+
+
+    feedChannel =
+        null;
+
+    publicChannel =
+        null;
+
+    privateChannel =
+        null;
+
+    presenceChannel =
+        null;
+
 
     await sb.auth.signOut();
+
 
     currentUser =
         null;
@@ -3627,6 +4016,7 @@ async function logout(){
     selectedFriend =
         null;
 
+
     document
         .getElementById(
             "app"
@@ -3634,6 +4024,7 @@ async function logout(){
         .classList.add(
             "hidden"
         );
+
 
     document
         .getElementById(
@@ -3643,6 +4034,7 @@ async function logout(){
             "hidden"
         );
 
+
     document
         .getElementById(
             "authScreen"
@@ -3650,6 +4042,7 @@ async function logout(){
         .classList.remove(
             "hidden"
         );
+
 
     showAuthMode(
         "login"
@@ -3728,7 +4121,9 @@ async function ensureProfile(){
         username;
 
 
-    let tries = 0;
+    let tries =
+        0;
+
 
     while(
         await usernameExists(
@@ -3743,10 +4138,13 @@ async function ensureProfile(){
                 username.slice(
                     0,
                     23
-                ) +
-                "_" +
+                )
+                +
+                "_"
+                +
                 Math.floor(
-                    Math.random()*999999
+                    Math.random() *
+                    999999
                 )
             )
             .slice(
@@ -3778,6 +4176,9 @@ async function ensureProfile(){
 
                 bio:
                     "",
+
+                avatar_url:
+                    null,
 
                 social_likes:
                     [],
@@ -3855,6 +4256,8 @@ async function loadProfile(){
 
     updateProfileUI();
 
+    updateAdminUI();
+
 }
 
 
@@ -3866,10 +4269,10 @@ function updateSidebar(){
 
     document.getElementById(
         "sidebarName"
-    ).textContent =
-        currentProfile.display_name ||
-        currentProfile.username ||
-        "User";
+    ).innerHTML =
+        verifiedName(
+            currentProfile
+        );
 
 
     document.getElementById(
@@ -3935,10 +4338,10 @@ function updateProfileUI(){
 
     document.getElementById(
         "myProfileDisplayName"
-    ).textContent =
-        currentProfile.display_name ||
-        currentProfile.username ||
-        "User";
+    ).innerHTML =
+        verifiedName(
+            currentProfile
+        );
 
 
     document.getElementById(
@@ -4020,7 +4423,10 @@ async function saveProfile(){
             .trim();
 
 
-    if(!displayName || !username){
+    if(
+        !displayName ||
+        !username
+    ){
 
         toast(
             "Name and username required."
@@ -4100,7 +4506,8 @@ async function saveProfile(){
     if(error){
 
         if(
-            error.code === "23505"
+            error.code ===
+            "23505"
         ){
 
             toast(
@@ -4131,6 +4538,7 @@ async function saveProfile(){
 
     await loadMyProfilePosts();
 
+
     toast(
         "Profile saved ✅"
     );
@@ -4140,13 +4548,12 @@ async function saveProfile(){
 
 async function uploadAvatar(){
 
-    const fileInput =
-        document.getElementById(
-            "avatarFile"
-        );
-
     const file =
-        fileInput.files?.[0];
+        document
+            .getElementById(
+                "avatarFile"
+            )
+            .files?.[0];
 
 
     if(!file)
@@ -4161,9 +4568,6 @@ async function uploadAvatar(){
         toast(
             "Image must be 200KB or smaller."
         );
-
-        fileInput.value =
-            "";
 
         return;
     }
@@ -4215,20 +4619,6 @@ async function uploadAvatar(){
             );
 
 
-    const avatarUrl =
-        urlData?.publicUrl;
-
-
-    if(!avatarUrl){
-
-        toast(
-            "Could not get image URL."
-        );
-
-        return;
-    }
-
-
     const {
         data,
         error
@@ -4238,7 +4628,7 @@ async function uploadAvatar(){
             .update({
 
                 avatar_url:
-                    avatarUrl
+                    urlData.publicUrl
 
             })
             .eq(
@@ -4267,9 +4657,426 @@ async function uploadAvatar(){
 
     updateProfileUI();
 
+
     toast(
         "Profile photo updated ✅"
     );
+
+}
+
+
+/* =========================================================
+   ADMIN UI
+========================================================= */
+
+function updateAdminUI(){
+
+    const nav =
+        document.getElementById(
+            "adminNav"
+        );
+
+
+    if(
+        currentProfile?.is_admin
+    ){
+
+        nav.classList.remove(
+            "hidden"
+        );
+
+    }else{
+
+        nav.classList.add(
+            "hidden"
+        );
+
+    }
+
+}
+
+
+async function loadAdminUsers(){
+
+    if(
+        !currentProfile?.is_admin
+    ){
+
+        toast(
+            "Admin access required."
+        );
+
+        return;
+    }
+
+
+    const query =
+        document
+            .getElementById(
+                "adminSearch"
+            )
+            .value
+            .trim();
+
+
+    let request =
+        sb
+            .from("profiles")
+            .select(
+                "id,username,display_name,avatar_url,is_verified,is_admin"
+            )
+            .neq(
+                "id",
+                currentUser.id
+            )
+            .order(
+                "username",
+                {
+                    ascending:true
+                }
+            )
+            .limit(
+                100
+            );
+
+
+    if(query){
+
+        request =
+            request.or(
+                `username.ilike.%${query}%,display_name.ilike.%${query}%`
+            );
+
+    }
+
+
+    const {
+        data,
+        error
+    } =
+        await request;
+
+
+    const box =
+        document.getElementById(
+            "adminUsers"
+        );
+
+
+    if(error){
+
+        toast(
+            error.message
+        );
+
+        return;
+    }
+
+
+    box.innerHTML =
+        "";
+
+
+    if(!data?.length){
+
+        box.innerHTML =
+            `
+            <div
+                class="hero"
+                style="
+                    grid-column:1/-1">
+
+                <h2>
+                    No users found
+                </h2>
+
+            </div>
+            `;
+
+        return;
+    }
+
+
+    data.forEach(
+        user=>{
+
+            const card =
+                document.createElement(
+                    "div"
+                );
+
+
+            card.className =
+                "admin-user-card";
+
+
+            card.innerHTML =
+                `
+
+                <div class="admin-user-top">
+
+                    ${avatarHtml(
+                        user
+                    )}
+
+                    <div
+                        class="admin-user-info">
+
+                        <div
+                            class="admin-user-name">
+
+                            ${verifiedName(
+                                user
+                            )}
+
+                        </div>
+
+                        <div
+                            class="admin-user-username">
+
+                            @${escapeHtml(
+                                user.username
+                            )}
+
+                        </div>
+
+
+                        <div class="admin-badges">
+
+                            ${
+                                user.is_verified
+                                ?
+                                `
+                                <span
+                                    class="admin-label verified">
+                                    ✓ Verified
+                                </span>
+                                `
+                                :
+                                ""
+                            }
+
+
+                            ${
+                                user.is_admin
+                                ?
+                                `
+                                <span
+                                    class="admin-label admin">
+                                    🛡 Admin
+                                </span>
+                                `
+                                :
+                                ""
+                            }
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="admin-actions">
+
+                    <button
+                        class="${
+                            user.is_verified
+                            ?
+                            "unverify-admin-btn"
+                            :
+                            "verify-admin-btn"
+                        }"
+                        onclick="
+                            setUserVerified(
+                                '${user.id}',
+                                ${!user.is_verified}
+                            )
+                        ">
+
+                        ${
+                            user.is_verified
+                            ?
+                            "Remove Blue Tick"
+                            :
+                            "Give Blue Tick"
+                        }
+
+                    </button>
+
+
+                    <button
+                        class="${
+                            user.is_admin
+                            ?
+                            "remove-admin-btn"
+                            :
+                            "make-admin-btn"
+                        }"
+                        onclick="
+                            setUserAdmin(
+                                '${user.id}',
+                                ${!user.is_admin}
+                            )
+                        ">
+
+                        ${
+                            user.is_admin
+                            ?
+                            "Remove Admin"
+                            :
+                            "Make Admin"
+                        }
+
+                    </button>
+
+                </div>
+
+                `;
+
+
+            box.appendChild(
+                card
+            );
+
+        }
+    );
+
+}
+
+
+async function setUserVerified(
+    userId,
+    newStatus
+){
+
+    if(
+        !currentProfile?.is_admin
+    ){
+
+        toast(
+            "Admin access required."
+        );
+
+        return;
+    }
+
+
+    const {
+        error
+    } =
+        await sb.rpc(
+            "admin_set_user_verified",
+            {
+                target_user_id:
+                    userId,
+
+                new_status:
+                    newStatus
+            }
+        );
+
+
+    if(error){
+
+        toast(
+            error.message
+        );
+
+        return;
+    }
+
+
+    toast(
+        newStatus
+        ?
+        "Blue verified tick added ✅"
+        :
+        "Blue verified tick removed."
+    );
+
+
+    await loadAdminUsers();
+
+
+    if(
+        userId ===
+        currentUser.id
+    ){
+
+        await loadProfile();
+
+    }
+
+}
+
+
+async function setUserAdmin(
+    userId,
+    newStatus
+){
+
+    if(
+        !currentProfile?.is_admin
+    ){
+
+        toast(
+            "Admin access required."
+        );
+
+        return;
+    }
+
+
+    if(
+        userId ===
+        currentUser.id &&
+        newStatus === false
+    ){
+
+        toast(
+            "You cannot remove your own admin access."
+        );
+
+        return;
+    }
+
+
+    const {
+        error
+    } =
+        await sb.rpc(
+            "admin_set_user_admin",
+            {
+                target_user_id:
+                    userId,
+
+                new_status:
+                    newStatus
+            }
+        );
+
+
+    if(error){
+
+        toast(
+            error.message
+        );
+
+        return;
+    }
+
+
+    toast(
+        newStatus
+        ?
+        "Admin access granted 🛡️"
+        :
+        "Admin access removed."
+    );
+
+
+    await loadAdminUsers();
 
 }
 
@@ -4299,12 +5106,28 @@ const pageNames = {
         "Voice Room",
 
     profile:
-        "Profile"
+        "Profile",
+
+    admin:
+        "Admin Panel"
 
 };
 
 
 function openPage(page){
+
+    if(
+        page === "admin" &&
+        !currentProfile?.is_admin
+    ){
+
+        toast(
+            "Admin access required."
+        );
+
+        return;
+    }
+
 
     document
         .querySelectorAll(
@@ -4338,12 +5161,9 @@ function openPage(page){
             btn=>{
 
                 btn.classList.toggle(
-
                     "active",
-
                     btn.dataset.page ===
                     page
-
                 );
 
             }
@@ -4358,12 +5178,9 @@ function openPage(page){
             btn=>{
 
                 btn.classList.toggle(
-
                     "active",
-
                     btn.dataset.mobilePage ===
                     page
-
                 );
 
             }
@@ -4377,18 +5194,12 @@ function openPage(page){
         page;
 
 
-    if(page === "feed"){
-
+    if(page === "feed")
         loadFeed();
 
-    }
 
-
-    if(page === "public"){
-
+    if(page === "public")
         loadPublicMessages();
-
-    }
 
 
     if(page === "friends"){
@@ -4414,6 +5225,13 @@ function openPage(page){
         loadMyProfileStats();
 
         loadMyProfilePosts();
+
+    }
+
+
+    if(page === "admin"){
+
+        loadAdminUsers();
 
     }
 
@@ -4455,6 +5273,7 @@ async function enterApp(){
 
     await ensureProfile();
 
+
     if(!currentProfile)
         return;
 
@@ -4466,6 +5285,7 @@ async function enterApp(){
     await loadFriendRequests();
 
     await loadPublicMessages();
+
 
     subscribePublic();
 
@@ -4503,8 +5323,7 @@ async function boot(){
 
 
         if(
-            session.user
-                .email_confirmed_at
+            session.user.email_confirmed_at
         ){
 
             await enterApp();
@@ -4556,7 +5375,6 @@ async function boot(){
                     );
 
                 return;
-
             }
 
 
@@ -4592,10 +5410,6 @@ async function boot(){
 ========================================================= */
 
 async function createPost(){
-
-    if(!currentUser)
-        return;
-
 
     const input =
         document.getElementById(
@@ -4656,6 +5470,7 @@ async function createPost(){
     input.value =
         "";
 
+
     updatePostCounter();
 
 
@@ -4697,7 +5512,9 @@ async function loadFeed(){
                     ascending:false
                 }
             )
-            .limit(80);
+            .limit(
+                80
+            );
 
 
     if(error){
@@ -4776,6 +5593,7 @@ async function loadFeed(){
                     ids
                 );
 
+
         profiles =
             profileData ||
             [];
@@ -4789,11 +5607,10 @@ async function loadFeed(){
 
     profiles.forEach(
         p=>{
-
             profileMap[
                 p.id
-            ] = p;
-
+            ] =
+                p;
         }
     );
 
@@ -4814,10 +5631,15 @@ async function loadFeed(){
             {
                 id:
                     post.user_id,
+
                 username:
                     "user",
+
                 display_name:
-                    "User"
+                    "User",
+
+                is_verified:
+                    false
             };
 
 
@@ -4874,6 +5696,7 @@ async function buildPostCard(
 
             <div class="post-user">
 
+
                 <button
                     class="profile-open-btn"
                     data-open-user="${escapeHtml(
@@ -4889,6 +5712,7 @@ async function buildPostCard(
 
                 <div class="post-user-text">
 
+
                     <button
                         class="profile-open-btn"
                         data-open-user="${escapeHtml(
@@ -4896,10 +5720,8 @@ async function buildPostCard(
                         )}">
 
                         <strong>
-                            ${escapeHtml(
-                                profile.display_name ||
-                                profile.username ||
-                                "User"
+                            ${verifiedName(
+                                profile
                             )}
                         </strong>
 
@@ -4907,10 +5729,12 @@ async function buildPostCard(
 
 
                     <span>
+
                         @${escapeHtml(
                             profile.username ||
                             "user"
                         )}
+
                     </span>
 
                 </div>
@@ -4940,13 +5764,20 @@ async function buildPostCard(
 
         <div class="post-actions">
 
+
             <button
                 class="post-action-btn post-like-btn ${
                     social.currentUserLiked
-                    ? "liked"
-                    : ""
+                    ?
+                    "liked"
+                    :
+                    ""
                 }"
-                onclick="likePost('${post.id}')">
+                onclick="
+                    likePost(
+                        '${post.id}'
+                    )
+                ">
 
                 <span class="like-icon">
 
@@ -4971,11 +5802,16 @@ async function buildPostCard(
 
             <button
                 class="post-action-btn"
-                onclick="focusComment('${post.id}')">
+                onclick="
+                    focusComment(
+                        '${post.id}'
+                    )
+                ">
 
                 💬
 
-                <span class="post-comment-count">
+                <span
+                    class="post-comment-count">
 
                     ${social.comments.length}
 
@@ -4987,14 +5823,21 @@ async function buildPostCard(
             <button
                 class="post-action-btn post-share-btn ${
                     social.currentUserShared
-                    ? "shared"
-                    : ""
+                    ?
+                    "shared"
+                    :
+                    ""
                 }"
-                onclick="sharePost('${post.id}')">
+                onclick="
+                    sharePost(
+                        '${post.id}'
+                    )
+                ">
 
                 🔄
 
-                <span class="post-share-count">
+                <span
+                    class="post-share-count">
 
                     ${social.shares}
 
@@ -5010,7 +5853,11 @@ async function buildPostCard(
                 <button
                     class="post-action-btn"
                     style="color:#ef4444"
-                    onclick="deletePost('${post.id}')">
+                    onclick="
+                        deletePost(
+                            '${post.id}'
+                        )
+                    ">
 
                     Delete
 
@@ -5020,16 +5867,19 @@ async function buildPostCard(
                 ""
             }
 
+
         </div>
 
 
         <div class="comment-area">
+
 
             <div class="comment-list">
             </div>
 
 
             <div class="comment-compose-row">
+
 
                 <input
                     id="comment-${escapeHtml(
@@ -5038,10 +5888,13 @@ async function buildPostCard(
                     class="comment-input"
                     maxlength="57"
                     placeholder="Write a comment (max 57)..."
-                    oninput="limitCommentInput(this)"
+                    oninput="
+                        limitCommentInput(this)
+                    "
                     onkeydown="
                         if(event.key==='Enter'){
                             event.preventDefault();
+
                             addPostComment(
                                 '${post.id}',
                                 'comment-${post.id}'
@@ -5067,17 +5920,13 @@ async function buildPostCard(
 
         </div>
 
-    `;
-
-
-    const commentList =
-        card.querySelector(
-            ".comment-list"
-        );
+        `;
 
 
     renderComments(
-        commentList,
+        card.querySelector(
+            ".comment-list"
+        ),
         social.comments
     );
 
@@ -5136,8 +5985,6 @@ function renderComments(
 
 
     box.innerHTML =
-        visible.length
-        ?
         visible
             .map(
                 comment=>
@@ -5146,6 +5993,7 @@ function renderComments(
                     <div class="comment-item">
 
                         ${avatarHtml({
+
                             avatar_url:
                                 comment.avatar_url,
 
@@ -5153,7 +6001,11 @@ function renderComments(
                                 comment.display_name,
 
                             username:
-                                comment.username
+                                comment.username,
+
+                            is_verified:
+                                comment.is_verified
+
                         })}
 
 
@@ -5170,6 +6022,7 @@ function renderComments(
 
                             </strong>
 
+
                             <p>
 
                                 ${escapeHtml(
@@ -5177,6 +6030,7 @@ function renderComments(
                                 )}
 
                             </p>
+
 
                             <small>
 
@@ -5192,9 +6046,7 @@ function renderComments(
 
                     `
             )
-            .join("")
-        :
-        "";
+            .join("");
 
 }
 
@@ -5224,7 +6076,7 @@ function limitCommentInput(
 
 
 /* =========================================================
-   SOCIAL DATA
+   SOCIAL
 ========================================================= */
 
 async function getPostSocial(
@@ -5245,26 +6097,16 @@ async function getPostSocial(
     if(error){
 
         console.error(
-            "Social read error:",
             error
         );
 
         return {
 
-            likes:
-                0,
-
-            shares:
-                0,
-
-            comments:
-                [],
-
-            currentUserLiked:
-                false,
-
-            currentUserShared:
-                false
+            likes:0,
+            shares:0,
+            comments:[],
+            currentUserLiked:false,
+            currentUserShared:false
 
         };
 
@@ -5294,7 +6136,7 @@ async function getPostSocial(
     .forEach(
         profile=>{
 
-            const userLikes =
+            const likesArray =
                 Array.isArray(
                     profile.social_likes
                 )
@@ -5304,7 +6146,7 @@ async function getPostSocial(
                 [];
 
 
-            const userShares =
+            const sharesArray =
                 Array.isArray(
                     profile.social_shares
                 )
@@ -5314,7 +6156,7 @@ async function getPostSocial(
                 [];
 
 
-            const userComments =
+            const commentsArray =
                 Array.isArray(
                     profile.social_comments
                 )
@@ -5325,7 +6167,7 @@ async function getPostSocial(
 
 
             if(
-                userLikes.includes(
+                likesArray.includes(
                     postId
                 )
             ){
@@ -5347,7 +6189,7 @@ async function getPostSocial(
 
 
             if(
-                userShares.includes(
+                sharesArray.includes(
                     postId
                 )
             ){
@@ -5368,7 +6210,7 @@ async function getPostSocial(
             }
 
 
-            userComments.forEach(
+            commentsArray.forEach(
                 comment=>{
 
                     if(
@@ -5392,13 +6234,9 @@ async function getPostSocial(
     return {
 
         likes,
-
         shares,
-
         comments,
-
         currentUserLiked,
-
         currentUserShared
 
     };
@@ -5406,17 +6244,9 @@ async function getPostSocial(
 }
 
 
-/* =========================================================
-   LIKE
-========================================================= */
-
 async function likePost(
     postId
 ){
-
-    if(!currentUser)
-        return;
-
 
     const {
         data,
@@ -5516,18 +6346,10 @@ async function likePost(
 }
 
 
-/* =========================================================
-   COMMENT
-========================================================= */
-
 async function addPostComment(
     postId,
     inputId
 ){
-
-    if(!currentUser)
-        return;
-
 
     const input =
         document.getElementById(
@@ -5540,8 +6362,7 @@ async function addPostComment(
 
 
     const text =
-        input.value
-            .trim();
+        input.value.trim();
 
 
     if(!text)
@@ -5629,6 +6450,10 @@ async function addPostComment(
             currentProfile?.avatar_url ||
             "",
 
+        is_verified:
+            currentProfile?.is_verified ||
+            false,
+
         content:
             text,
 
@@ -5686,17 +6511,9 @@ async function addPostComment(
 }
 
 
-/* =========================================================
-   SHARE
-========================================================= */
-
 async function sharePost(
     postId
 ){
-
-    if(!currentUser)
-        return;
-
 
     const {
         data,
@@ -5804,10 +6621,6 @@ async function sharePost(
 }
 
 
-/* =========================================================
-   SOCIAL REFRESH
-========================================================= */
-
 async function refreshPostSocial(
     postId
 ){
@@ -5861,12 +6674,6 @@ async function refreshPostSocial(
     const shareCount =
         card.querySelector(
             ".post-share-count"
-        );
-
-
-    const commentList =
-        card.querySelector(
-            ".comment-list"
         );
 
 
@@ -5927,7 +6734,9 @@ async function refreshPostSocial(
 
 
     renderComments(
-        commentList,
+        card.querySelector(
+            ".comment-list"
+        ),
         social.comments
     );
 
@@ -5964,10 +6773,6 @@ function focusComment(
 
 }
 
-
-/* =========================================================
-   DELETE POST
-========================================================= */
 
 async function deletePost(
     postId
@@ -6021,10 +6826,6 @@ async function deletePost(
 }
 
 
-/* =========================================================
-   POST COUNTER
-========================================================= */
-
 function updatePostCounter(){
 
     const input =
@@ -6054,7 +6855,7 @@ function updatePostCounter(){
 
 
 /* =========================================================
-   MY PROFILE STATS
+   MY PROFILE
 ========================================================= */
 
 async function getFollowingIds(
@@ -6077,15 +6878,8 @@ async function getFollowingIds(
             .single();
 
 
-    if(error){
-
-        console.error(
-            error
-        );
-
+    if(error)
         return [];
-
-    }
 
 
     return Array.isArray(
@@ -6197,10 +6991,6 @@ async function loadMyProfileStats(){
 }
 
 
-/* =========================================================
-   MY PROFILE POSTS
-========================================================= */
-
 async function loadMyProfilePosts(){
 
     if(!currentUser)
@@ -6211,10 +7001,6 @@ async function loadMyProfilePosts(){
         document.getElementById(
             "myProfilePosts"
         );
-
-
-    if(!box)
-        return;
 
 
     const {
@@ -6234,7 +7020,9 @@ async function loadMyProfilePosts(){
                     ascending:false
                 }
             )
-            .limit(60);
+            .limit(
+                60
+            );
 
 
     if(error){
@@ -6345,8 +7133,9 @@ async function loadMyProfilePosts(){
 
             tile.onclick =
                 ()=>{
-                    openPostDetails(
-                        post.id
+                    openProfilePostDetail(
+                        post,
+                        currentProfile
                     );
                 };
 
@@ -6356,310 +7145,6 @@ async function loadMyProfilePosts(){
             );
 
         }
-    );
-
-}
-
-
-/* =========================================================
-   OPEN POST FROM PROFILE
-========================================================= */
-
-async function openPostDetails(
-    postId
-){
-
-    const {
-        data:post,
-        error
-    } =
-        await sb
-            .from("posts")
-            .select("*")
-            .eq(
-                "id",
-                postId
-            )
-            .maybeSingle();
-
-
-    if(error || !post){
-
-        toast(
-            "Post not found."
-        );
-
-        return;
-    }
-
-
-    const {
-        data:profile
-    } =
-        await sb
-            .from("profiles")
-            .select("*")
-            .eq(
-                "id",
-                post.user_id
-            )
-            .maybeSingle();
-
-
-    const old =
-        document.getElementById(
-            "postDetailOverlay"
-        );
-
-
-    if(old)
-        old.remove();
-
-
-    const overlay =
-        document.createElement(
-            "div"
-        );
-
-
-    overlay.id =
-        "postDetailOverlay";
-
-
-    overlay.className =
-        "modal";
-
-
-    overlay.style.display =
-        "flex";
-
-
-    overlay.innerHTML =
-        `
-
-        <div
-            style="
-                width:100%;
-                max-width:650px;
-                max-height:88vh;
-                overflow-y:auto;
-                background:#fff;
-                border-radius:24px;
-                padding:18px;
-                box-shadow:0 30px 80px rgba(0,0,0,.3);">
-
-            <div
-                style="
-                    display:flex;
-                    justify-content:space-between;
-                    align-items:center;
-                    margin-bottom:10px;">
-
-                <strong>
-                    Post
-                </strong>
-
-                <button
-                    class="close-modal"
-                    onclick="
-                        document
-                            .getElementById(
-                                'postDetailOverlay'
-                            )
-                            ?.remove();
-                    ">
-                    ✕
-                </button>
-
-            </div>
-
-            <div
-                id="postDetailHolder">
-            </div>
-
-        </div>
-
-        `;
-
-
-    document.body.appendChild(
-        overlay
-    );
-
-
-    const card =
-        await buildPostCard(
-            post,
-            profile ||
-            {
-                id:
-                    post.user_id,
-                username:
-                    "user",
-                display_name:
-                    "User"
-            }
-        );
-
-
-    document.getElementById(
-        "postDetailHolder"
-    ).appendChild(
-        card
-    );
-
-
-    overlay.onclick =
-        event=>{
-
-            if(
-                event.target ===
-                overlay
-            ){
-
-                overlay.remove();
-
-            }
-
-        };
-
-}
-
-
-/* =========================================================
-   FOLLOW
-========================================================= */
-
-async function isFollowingUser(
-    userId
-){
-
-    const ids =
-        await getFollowingIds(
-            currentUser.id
-        );
-
-
-    return ids.includes(
-        userId
-    );
-
-}
-
-
-async function followUser(
-    userId
-){
-
-    if(
-        !currentUser ||
-        userId ===
-        currentUser.id
-    )
-        return;
-
-
-    const {
-        data,
-        error
-    } =
-        await sb
-            .from("profiles")
-            .select(
-                "social_following"
-            )
-            .eq(
-                "id",
-                currentUser.id
-            )
-            .single();
-
-
-    if(error){
-
-        toast(
-            error.message
-        );
-
-        return;
-    }
-
-
-    let following =
-        Array.isArray(
-            data.social_following
-        )
-        ?
-        [
-            ...data.social_following
-        ]
-        :
-        [];
-
-
-    const index =
-        following.indexOf(
-            userId
-        );
-
-
-    if(index === -1){
-
-        following.push(
-            userId
-        );
-
-        toast(
-            "Following ✅"
-        );
-
-    }else{
-
-        following.splice(
-            index,
-            1
-        );
-
-        toast(
-            "Unfollowed."
-        );
-
-    }
-
-
-    const {
-        error:updateError
-    } =
-        await sb
-            .from("profiles")
-            .update({
-
-                social_following:
-                    following
-
-            })
-            .eq(
-                "id",
-                currentUser.id
-            );
-
-
-    if(updateError){
-
-        toast(
-            updateError.message
-        );
-
-        return;
-    }
-
-
-    currentProfile.social_following =
-        following;
-
-
-    await refreshUniversalProfile(
-        userId
     );
 
 }
@@ -6766,10 +7251,10 @@ async function renderUniversalProfile(
 
     document.getElementById(
         "modalProfileName"
-    ).textContent =
-        profile.display_name ||
-        profile.username ||
-        "User";
+    ).innerHTML =
+        verifiedName(
+            profile
+        );
 
 
     document.getElementById(
@@ -6805,7 +7290,9 @@ async function renderUniversalProfile(
                     ascending:false
                 }
             )
-            .limit(60);
+            .limit(
+                60
+            );
 
 
     document.getElementById(
@@ -6921,7 +7408,7 @@ async function renderUniversalProfile(
 
         const isFriend =
             friends.some(
-                f=>
+                f =>
                     f.id ===
                     profile.id
             );
@@ -7107,8 +7594,7 @@ async function refreshUniversalProfile(
 ){
 
     const {
-        data,
-        error
+        data
     } =
         await sb
             .from("profiles")
@@ -7120,7 +7606,7 @@ async function refreshUniversalProfile(
             .maybeSingle();
 
 
-    if(error || !data)
+    if(!data)
         return;
 
 
@@ -7215,7 +7701,9 @@ async function openProfilePostDetail(
 
             </div>
 
-            <div id="profilePostDetailHolder"></div>
+            <div
+                id="profilePostDetailHolder">
+            </div>
 
         </div>
         `;
@@ -7233,11 +7721,13 @@ async function openProfilePostDetail(
         );
 
 
-    document.getElementById(
-        "profilePostDetailHolder"
-    ).appendChild(
-        card
-    );
+    document
+        .getElementById(
+            "profilePostDetailHolder"
+        )
+        .appendChild(
+            card
+        );
 
 
     overlay.onclick =
@@ -7253,6 +7743,141 @@ async function openProfilePostDetail(
             }
 
         };
+
+}
+
+
+async function isFollowingUser(
+    userId
+){
+
+    const ids =
+        await getFollowingIds(
+            currentUser.id
+        );
+
+
+    return ids.includes(
+        userId
+    );
+
+}
+
+
+async function followUser(
+    userId
+){
+
+    if(
+        !currentUser ||
+        userId ===
+        currentUser.id
+    )
+        return;
+
+
+    const {
+        data,
+        error
+    } =
+        await sb
+            .from("profiles")
+            .select(
+                "social_following"
+            )
+            .eq(
+                "id",
+                currentUser.id
+            )
+            .single();
+
+
+    if(error){
+
+        toast(
+            error.message
+        );
+
+        return;
+    }
+
+
+    let following =
+        Array.isArray(
+            data.social_following
+        )
+        ?
+        [
+            ...data.social_following
+        ]
+        :
+        [];
+
+
+    const index =
+        following.indexOf(
+            userId
+        );
+
+
+    if(index === -1){
+
+        following.push(
+            userId
+        );
+
+        toast(
+            "Following ✅"
+        );
+
+    }else{
+
+        following.splice(
+            index,
+            1
+        );
+
+        toast(
+            "Unfollowed."
+        );
+
+    }
+
+
+    const {
+        error:updateError
+    } =
+        await sb
+            .from("profiles")
+            .update({
+
+                social_following:
+                    following
+
+            })
+            .eq(
+                "id",
+                currentUser.id
+            );
+
+
+    if(updateError){
+
+        toast(
+            updateError.message
+        );
+
+        return;
+    }
+
+
+    currentProfile.social_following =
+        following;
+
+
+    await refreshUniversalProfile(
+        userId
+    );
 
 }
 
@@ -7275,10 +7900,6 @@ function openFriendProfile(){
 ========================================================= */
 
 async function loadFriends(){
-
-    if(!currentUser)
-        return;
-
 
     const {
         data,
@@ -7448,9 +8069,8 @@ function renderFriends(){
 
                 <h3>
 
-                    ${escapeHtml(
-                        friend.display_name ||
-                        friend.username
+                    ${verifiedName(
+                        friend
                     )}
 
                 </h3>
@@ -7465,7 +8085,8 @@ function renderFriends(){
                 </p>
 
 
-                <div class="card-actions">
+                <div
+                    class="card-actions">
 
                     <button
                         class="blue-action"
@@ -7626,9 +8247,8 @@ async function searchUsers(){
 
                 <h3>
 
-                    ${escapeHtml(
-                        user.display_name ||
-                        user.username
+                    ${verifiedName(
+                        user
                     )}
 
                 </h3>
@@ -7905,9 +8525,8 @@ async function loadFriendRequests(){
 
                 <h3>
 
-                    ${escapeHtml(
-                        profile.display_name ||
-                        profile.username
+                    ${verifiedName(
+                        profile
                     )}
 
                 </h3>
@@ -7922,7 +8541,8 @@ async function loadFriendRequests(){
                 </p>
 
 
-                <div class="card-actions">
+                <div
+                    class="card-actions">
 
                     <button
                         class="green-action"
@@ -7968,7 +8588,7 @@ async function loadFriendRequests(){
             "notificationDot"
         )
         .style.display =
-            "block";
+        "block";
 
 }
 
@@ -8303,11 +8923,9 @@ function refreshPrivateFriendList(){
 
             btn.onclick =
                 ()=>{
-
                     openPrivateWith(
                         friend.id
                     );
-
                 };
 
 
@@ -8322,9 +8940,8 @@ function refreshPrivateFriendList(){
 
                     <div class="friend-name">
 
-                        ${escapeHtml(
-                            friend.display_name ||
-                            friend.username
+                        ${verifiedName(
+                            friend
                         )}
 
                     </div>
@@ -8420,9 +9037,10 @@ async function openPrivateWith(
 
     document.getElementById(
         "privateName"
-    ).textContent =
-        selectedFriend.display_name ||
-        selectedFriend.username;
+    ).innerHTML =
+        verifiedName(
+            selectedFriend
+        );
 
 
     document.getElementById(
@@ -8444,6 +9062,7 @@ async function openPrivateWith(
 
 
     refreshPrivateFriendList();
+
 
     await loadPrivateMessages();
 
@@ -8593,12 +9212,11 @@ function renderPrivateMessage(
         <div
             class="message-content">
 
+
             <div class="message-name">
 
-                ${escapeHtml(
-                    message.nickname ||
-                    senderProfile?.display_name ||
-                    "User"
+                ${verifiedName(
+                    senderProfile
                 )}
 
             </div>
@@ -8904,7 +9522,7 @@ function subscribePrivate(){
 
 
 /* =========================================================
-   PUBLIC CHAT
+   PUBLIC
 ========================================================= */
 
 async function loadPublicMessages(){
@@ -8913,10 +9531,6 @@ async function loadPublicMessages(){
         document.getElementById(
             "publicMessages"
         );
-
-
-    if(!box)
-        return;
 
 
     const {
@@ -9076,7 +9690,10 @@ function renderPublicMessage(
                 message.nickname,
 
             avatar_url:
-                message.avatar_url
+                message.avatar_url,
+
+            is_verified:
+                false
         };
 
 
@@ -9100,6 +9717,7 @@ function renderPublicMessage(
 
         <div class="message-content">
 
+
             <button
                 class="profile-open-btn"
                 onclick="
@@ -9110,11 +9728,8 @@ function renderPublicMessage(
 
                 <div class="message-name">
 
-                    ${escapeHtml(
-                        message.nickname ||
-                        p.display_name ||
-                        p.username ||
-                        "User"
+                    ${verifiedName(
+                        p
                     )}
 
                 </div>
@@ -9237,11 +9852,18 @@ function subscribePublic(){
             .on(
                 "postgres_changes",
                 {
-                    event:"INSERT",
-                    schema:"public",
-                    table:"messages",
+                    event:
+                        "INSERT",
+
+                    schema:
+                        "public",
+
+                    table:
+                        "messages",
+
                     filter:
                         "room=eq.public"
+
                 },
                 async payload=>{
 
@@ -9287,7 +9909,7 @@ function subscribePublic(){
 
 
 /* =========================================================
-   NOTIFICATION
+   NOTIFICATIONS
 ========================================================= */
 
 function notifyMessage(
@@ -9732,8 +10354,7 @@ async function createVoicePeer(
                     "failed",
                     "closed",
                     "disconnected"
-                ]
-                .includes(
+                ].includes(
                     peer.connectionState
                 )
             ){
@@ -10337,14 +10958,7 @@ function renderVoiceUsers(){
 
 
             item.className =
-                "voice-user " +
-                (
-                    user.mic
-                    ?
-                    "mic-on"
-                    :
-                    ""
-                );
+                "voice-user";
 
 
             item.innerHTML =
@@ -10558,10 +11172,13 @@ async function leaveVoiceRoom(){
         );
 
 
-    if(joinBtn)
+    if(joinBtn){
+
         joinBtn.classList.remove(
             "hidden"
         );
+
+    }
 
 
     if(muteBtn){
@@ -10576,10 +11193,13 @@ async function leaveVoiceRoom(){
     }
 
 
-    if(leaveBtn)
+    if(leaveBtn){
+
         leaveBtn.classList.add(
             "hidden"
         );
+
+    }
 
 
     const room =
@@ -10588,16 +11208,10 @@ async function leaveVoiceRoom(){
         );
 
 
-    if(room)
+    if(room){
+
         room.innerHTML =
             "";
-
-
-    if(currentUser){
-
-        toast(
-            "You left the room."
-        );
 
     }
 
@@ -10649,14 +11263,6 @@ async function startCall(
         type;
 
 
-    callMic =
-        true;
-
-
-    callCamera =
-        true;
-
-
     try{
 
         callStream =
@@ -10695,7 +11301,7 @@ async function startCall(
 
     document.getElementById(
         "callTitle"
-    ).textContent =
+    ).innerHTML =
         "Calling " +
         (
             selectedFriend.display_name ||
@@ -10736,12 +11342,10 @@ async function startCall(
         .getTracks()
         .forEach(
             track=>
-
                 callPeer.addTrack(
                     track,
                     callStream
                 )
-
         );
 
 
@@ -10996,11 +11600,9 @@ async function handleSignal(
                 callStream;
 
 
-            document
-                .getElementById(
-                    "localVideo"
-                )
-                .style.display =
+            document.getElementById(
+                "localVideo"
+            ).style.display =
                 callType ===
                 "video"
                 ?
@@ -11018,23 +11620,11 @@ async function handleSignal(
                 );
 
 
-            document.getElementById(
-                "callTitle"
-            ).textContent =
-                "Incoming Call";
-
-
         }catch(e){
 
             console.error(
                 e
             );
-
-
-            toast(
-                "Could not access microphone/camera."
-            );
-
 
             return;
 
@@ -11221,32 +11811,26 @@ async function endCall(){
     }
 
 
-    const remoteVideo =
+    const remote =
         document.getElementById(
             "remoteVideo"
         );
 
 
-    const localVideo =
+    const local =
         document.getElementById(
             "localVideo"
         );
 
 
-    if(remoteVideo){
-
-        remoteVideo.srcObject =
+    if(remote)
+        remote.srcObject =
             null;
 
-    }
 
-
-    if(localVideo){
-
-        localVideo.srcObject =
+    if(local)
+        local.srcObject =
             null;
-
-    }
 
 
     document
@@ -11267,64 +11851,7 @@ async function endCall(){
 
 
 /* =========================================================
-   FEED REALTIME
-========================================================= */
-
-function subscribeFeed(){
-
-    if(feedChannel){
-
-        sb.removeChannel(
-            feedChannel
-        );
-
-    }
-
-
-    feedChannel =
-        sb
-            .channel(
-                "shadow-feed-live"
-            )
-            .on(
-                "postgres_changes",
-                {
-                    event:
-                        "INSERT",
-
-                    schema:
-                        "public",
-
-                    table:
-                        "posts"
-                },
-                ()=>{
-                    loadFeed();
-                }
-            )
-            .on(
-                "postgres_changes",
-                {
-                    event:
-                        "DELETE",
-
-                    schema:
-                        "public",
-
-                    table:
-                        "posts"
-                },
-                ()=>{
-                    loadFeed();
-                }
-            )
-            .subscribe();
-
-}
-
-
-/* =========================================================
-   INPUT EVENTS
+   START
 ========================================================= */
 
 document
@@ -11337,15 +11864,11 @@ document
     );
 
 
-/* =========================================================
-   START
-========================================================= */
-
 window.addEventListener(
     "load",
     async ()=>{
 
-        askNotificationPermission();
+        await askNotificationPermission();
 
         await boot();
 
